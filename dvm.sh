@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-get_arch() {
+get_package_name() {
   if [ "$(uname -m)" != 'x86_64' ]
   then
     echo 'Only x64 binaries are supported.'
@@ -9,14 +9,58 @@ get_arch() {
 
   case $(uname -s) in
   Darwin)
-    DVM_ARCH='x86_64-apple-darwin'
+    target_name='deno-x86_64-apple-darwin.zip'
     ;;
   Linux)
-    DVM_ARCH='x86_64-unknown-linux-gnu'
+    target_name='deno-x86_64-unknown-linux-gnu.zip'
     ;;
   *)
     echo "Unsupported architecture $(uname -s)"
   esac
+}
+
+download_file() {
+  if [ ! -d "$DVM_DIR/download/$1" ]
+  then
+    mkdir -p "$DVM_DIR/download/$1"
+  fi
+
+  get_package_name "$1"
+
+  if [ -x "$(command -v wget)" ]
+  then
+    wget "https://github.com/denoland/deno/releases/download/$1/$target_name" \
+      -O "$DVM_DIR/download/$1/deno-downloading.zip"
+  else
+    curl -LJ "https://github.com/denoland/deno/releases/download/$1/$target_name" \
+      -o "$DVM_DIR/download/$1/deno-downloading.zip"
+  fi
+
+  if [ ! -x "$?" ]
+  then
+    file_type=$(file "$DVM_DIR/download/$1/deno-downloading.zip")
+
+    if [[ $file_type == *"Zip"* ]]
+    then
+      mv "$DVM_DIR/download/$1/deno-downloading.zip" "$DVM_DIR/download/$1/deno.zip"
+      return
+    fi
+  fi
+
+  rm "$DVM_DIR/download/$1/deno-downloading.zip"
+  echo "Failed to download."
+  exit 1
+}
+
+extract_file() {
+  target_dir="$DVM_DIR/versions/$1"
+
+  if [ ! -d "$target_dir" ]
+  then
+    mkdir -p "$target_dir"
+  fi
+
+  unzip -f "$DVM_DIR/download/$1/deno.zip" -d "$target_dir" > /dev/null
 }
 
 check_local_version() {
@@ -34,22 +78,8 @@ check_local_version() {
 
 install_version() {
   check_local_version "$1"
-  get_arch
-
-  DVM_TMP_DIR=$(mktemp -d -t dvm)
-
-  remote_url="https://github.com/denoland/deno/releases/download/$1/deno-$DVM_ARCH.zip"
-
-  curl -LJ "$remote_url" -o "$DVM_TMP_DIR/deno-$1.zip"
-
-  target_dir="$DVM_DIR/versions/$1"
-
-  if [ ! -d "$target_dir" ]
-  then
-    mkdir "$target_dir"
-  fi
-
-  unzip -f "$DVM_TMP_DIR/deno-$1.zip" -d "$target_dir"
+  download_file "$1"
+  extract_file "$1"
 }
 
 set -e
