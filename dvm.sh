@@ -60,7 +60,7 @@ extract_file() {
     mkdir -p "$target_dir"
   fi
 
-  unzip -f "$DVM_DIR/download/$1/deno.zip" -d "$target_dir" > /dev/null
+  unzip "$DVM_DIR/download/$1/deno.zip" -d "$target_dir" > /dev/null
 }
 
 check_local_version() {
@@ -71,7 +71,7 @@ check_local_version() {
 
   if [ -f "$DVM_DIR/versions/$1/deno" ]
   then
-    echo "deno $1 has been installed"
+    echo "deno $1 has been installed."
     exit 1
   fi
 }
@@ -80,6 +80,8 @@ install_version() {
   check_local_version "$1"
   download_file "$1"
   extract_file "$1"
+
+  echo "deno $1 has installed."
 }
 
 uninstall_version() {
@@ -87,6 +89,17 @@ uninstall_version() {
   then
     rm -rf "$DVM_DIR/versions/$1"
   fi
+}
+
+list_local_versions() {
+  # shellcheck disable=SC2012
+  ls "$DVM_DIR/versions" | while read -r dir
+  do
+    if [ -f $"$DVM_DIR/versions/$dir/deno" ]
+    then
+      echo "$dir"
+    fi
+  done
 }
 
 set -e
@@ -112,9 +125,11 @@ uninstall)
 
   uninstall_version "$2"
   ;;
-# list | ls)
-#   # list all local versions
-#   ;;
+list | ls)
+  # list all local versions
+
+  list_local_versions
+  ;;
 # list-remote | ls-remote)
 #   # list all remote versions
 #   ;;
