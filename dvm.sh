@@ -82,6 +82,13 @@ install_version() {
   extract_file "$1"
 }
 
+uninstall_version() {
+  if [ -f "$DVM_DIR/versions/$1/deno" ]
+  then
+    rm -rf "$DVM_DIR/versions/$1"
+  fi
+}
+
 set -e
 
 DVM_DIR="$HOME/.dvm"
@@ -95,9 +102,16 @@ install)
   fi
   install_version "$2"
   ;;
-# uninstall)
-#   # uninstall the specified version
-#   ;;
+uninstall)
+  # uninstall the specified version
+  if [ -z "$2" ]
+  then
+    echo "Must specify target version"
+    exit 1
+  fi
+
+  uninstall_version "$2"
+  ;;
 # list | ls)
 #   # list all local versions
 #   ;;
