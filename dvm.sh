@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+compare_version() {
+  test "$(printf '%s\n' "$@" | sort -V | head -n 1)" != "$2"
+}
+
 get_package_name() {
   if [ "$(uname -m)" != 'x86_64' ]
   then
@@ -7,15 +11,31 @@ get_package_name() {
     exit 1
   fi
 
-  case $(uname -s) in
+  local host_os
+  local min_version
+
+  host_os=$(uname -s)
+  min_version="v0.36.0"
+
+  case $host_os in
   Darwin)
-    target_name='deno-x86_64-apple-darwin.zip'
+    if compare_version "$1" "$min_version"
+    then
+      DVM_TARGET_NAME='deno_osx_x64.gz'
+      return
+    fi
+    DVM_TARGET_NAME='deno-x86_64-apple-darwin.zip'
     ;;
   Linux)
-    target_name='deno-x86_64-unknown-linux-gnu.zip'
+    if compare_version "$1" "$min_version"
+    then
+      DVM_TARGET_NAME='deno_linux_x64.gz'
+      return
+    fi
+    DVM_TARGET_NAME='deno-x86_64-unknown-linux-gnu.zip'
     ;;
   *)
-    echo "Unsupported architecture $(uname -s)"
+    echo "Unsupported operating system $host_os"
   esac
 }
 
@@ -29,15 +49,16 @@ download_file() {
 
   if [ -x "$(command -v wget)" ]
   then
-    wget "https://github.com/denoland/deno/releases/download/$1/$target_name" \
+    wget "https://github.com/denoland/deno/releases/download/$1/$DVM_TARGET_NAME" \
       -O "$DVM_DIR/download/$1/deno-downloading.zip"
   else
-    curl -LJ "https://github.com/denoland/deno/releases/download/$1/$target_name" \
+    curl -LJ "https://github.com/denoland/deno/releases/download/$1/$DVM_TARGET_NAME" \
       -o "$DVM_DIR/download/$1/deno-downloading.zip"
   fi
 
   if [ ! -x "$?" ]
   then
+    local file_type
     file_type=$(file "$DVM_DIR/download/$1/deno-downloading.zip")
 
     if [[ $file_type == *"Zip"* ]]
