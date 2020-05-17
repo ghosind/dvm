@@ -102,45 +102,57 @@ list_local_versions() {
   done
 }
 
+check_dvm_dir() {
+  if [ -z "$DVM_DIR" ]
+  then
+    # set default dvm directory
+    DVM_DIR="$HOME/.dvm"
+  fi
+}
+
+dvm() {
+  case $1 in
+  install)
+    if [ -z "$2" ]
+    then
+      echo "Must specify target version"
+      exit 1
+    fi
+    install_version "$2"
+    ;;
+  uninstall)
+    # uninstall the specified version
+    if [ -z "$2" ]
+    then
+      echo "Must specify target version"
+      exit 1
+    fi
+
+    uninstall_version "$2"
+    ;;
+  list | ls)
+    # list all local versions
+
+    list_local_versions
+    ;;
+  # list-remote | ls-remote)
+  #   # list all remote versions
+  #   ;;
+  # current)
+  #   # get the current version
+  #   ;;
+  # use)
+  #   # change current version to specified version
+  #   ;;
+  *)
+    echo "Unknown command $1"
+    exit 1
+    ;;
+  esac
+}
+
 set -e
 
-DVM_DIR="$HOME/.dvm"
+check_dvm_dir
 
-case $1 in
-install)
-  if [ -z "$2" ]
-  then
-    echo "Must specify target version"
-    exit 1
-  fi
-  install_version "$2"
-  ;;
-uninstall)
-  # uninstall the specified version
-  if [ -z "$2" ]
-  then
-    echo "Must specify target version"
-    exit 1
-  fi
-
-  uninstall_version "$2"
-  ;;
-list | ls)
-  # list all local versions
-
-  list_local_versions
-  ;;
-# list-remote | ls-remote)
-#   # list all remote versions
-#   ;;
-# current)
-#   # get the current version
-#   ;;
-# use)
-#   # change current version to specified version
-#   ;;
-*)
-  echo "Unknown command $1"
-  exit 1
-  ;;
-esac
+dvm "$@"
