@@ -82,23 +82,26 @@ extract_file() {
   fi
 
   unzip "$DVM_DIR/download/$1/deno.zip" -d "$target_dir" > /dev/null
+
+  rm -rf "$DVM_DIR/download/$1"
 }
 
 check_local_version() {
-  if [ ! -d "$DVM_DIR/versions/$1" ]
+  if [ -f "$DVM_DIR/versions/$1/deno" ]
   then
-    return
+    return 1
   fi
 
-  if [ -f "$DVM_DIR/versions/$1/deno" ]
+  return 0
+}
+
+install_version() {
+  if ! check_local_version "$1"
   then
     echo "deno $1 has been installed."
     exit 1
   fi
-}
 
-install_version() {
-  check_local_version "$1"
   download_file "$1"
   extract_file "$1"
 
@@ -171,8 +174,6 @@ dvm() {
     ;;
   esac
 }
-
-set -e
 
 check_dvm_dir
 
