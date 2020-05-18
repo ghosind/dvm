@@ -135,29 +135,40 @@ check_dvm_dir() {
 }
 
 dvm() {
+  check_dvm_dir
+
   case $1 in
   install)
-    if [ -z "$2" ]
-    then
-      echo "Must specify target version"
-      exit 1
-    fi
-    install_version "$2"
-    ;;
-  uninstall)
-    # uninstall the specified version
-    if [ -z "$2" ]
+    # install the specified version
+    shift
+
+    if [ -z "$1" ]
     then
       echo "Must specify target version"
       exit 1
     fi
 
-    uninstall_version "$2"
+    install_version "$1"
+
+    ;;
+  uninstall)
+    # uninstall the specified version
+    shift
+
+    if [ -z "$1" ]
+    then
+      echo "Must specify target version"
+      exit 1
+    fi
+
+    uninstall_version "$1"
+
     ;;
   list | ls)
     # list all local versions
 
     list_local_versions
+
     ;;
   # list-remote | ls-remote)
   #   # list all remote versions
@@ -168,13 +179,30 @@ dvm() {
   # use)
   #   # change current version to specified version
   #   ;;
+  help)
+    # print help
+    shift
+
+    printf "
+Deno Version Manager
+
+Usage:
+  dvm install <version>       Download and install the specified version from source.
+  dvm uninstall <version>     Uninstall a version.
+  dvm ls                      List all installed versions.
+
+Examples:
+  dvm install v1.0.0
+  dvm uninstall v0.42.0
+
+"
+
+    ;;
   *)
     echo "Unknown command $1"
     exit 1
     ;;
   esac
 }
-
-check_dvm_dir
 
 dvm "$@"
