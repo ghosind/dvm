@@ -82,8 +82,6 @@ extract_file() {
   fi
 
   unzip "$DVM_DIR/download/$1/deno.zip" -d "$target_dir" > /dev/null
-
-  rm -rf "$DVM_DIR/download/$1"
 }
 
 check_local_version() {
@@ -95,6 +93,15 @@ check_local_version() {
   return 0
 }
 
+check_download_cache() {
+  if [ -f "$DVM_DIR/download/$1/deno.zip" ]
+  then
+    return 0
+  fi
+
+  return 1
+}
+
 install_version() {
   if ! check_local_version "$1"
   then
@@ -102,7 +109,11 @@ install_version() {
     exit 1
   fi
 
-  download_file "$1"
+  if check_download_cache "$1"
+  then
+    download_file "$1"
+  fi
+
   extract_file "$1"
 
   echo "deno $1 has installed."
@@ -119,7 +130,7 @@ list_local_versions() {
   # shellcheck disable=SC2012
   ls "$DVM_DIR/versions" | while read -r dir
   do
-    if [ -f $"$DVM_DIR/versions/$dir/deno" ]
+    if [ -f "$DVM_DIR/versions/$dir/deno" ]
     then
       echo "$dir"
     fi
@@ -132,6 +143,20 @@ check_dvm_dir() {
     # set default dvm directory
     DVM_DIR="$HOME/.dvm"
   fi
+}
+
+clean_download_cache() {
+  # shellcheck disable=SC2012
+  ls "$DVM_DIR/download" | while read -r dir
+  do
+    [ -f "$DVM_DIR/download/$dir/deno-downloading.zip" ] && \
+      rm "$DVM_DIR/download/$dir/deno-downloading.zip"
+
+    [ -f "$DVM_DIR/download/$dir/deno.zip" ] && \
+      rm "$DVM_DIR/download/$dir/deno.zip"
+
+    rmdir "$DVM_DIR/download/$dir"
+  done
 }
 
 dvm() {
@@ -179,6 +204,10 @@ dvm() {
   # use)
   #   # change current version to specified version
   #   ;;
+  clean)
+    # remove all download packages.
+    clean_download_cache
+    ;;
   help)
     # print help
     shift
@@ -190,6 +219,7 @@ Usage:
   dvm install <version>       Download and install the specified version from source.
   dvm uninstall <version>     Uninstall a version.
   dvm ls                      List all installed versions.
+  dvm clean                   Remove all downloaded packages.
 
 Examples:
   dvm install v1.0.0
