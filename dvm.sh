@@ -4,7 +4,7 @@ compare_version() {
   test "$(printf '%s\n' "$@" | sort -V | head -n 1)" != "$2"
 }
 
-get_package_name() {
+get_package_data() {
   if [ "$(uname -m)" != 'x86_64' ]
   then
     echo 'Only x64 binaries are supported.'
@@ -17,26 +17,36 @@ get_package_name() {
   host_os=$(uname -s)
   min_version="v0.36.0"
 
-  case $host_os in
-  Darwin)
-    if compare_version "$1" "$min_version"
-    then
+  if compare_version "$1" "$min_version"
+  then
+    case $host_os in
+    "Darwin")
       DVM_TARGET_NAME='deno_osx_x64.gz'
-      return
-    fi
-    DVM_TARGET_NAME='deno-x86_64-apple-darwin.zip'
-    ;;
-  Linux)
-    if compare_version "$1" "$min_version"
-    then
+      ;;
+    "Linux")
       DVM_TARGET_NAME='deno_linux_x64.gz'
-      return
-    fi
-    DVM_TARGET_NAME='deno-x86_64-unknown-linux-gnu.zip'
-    ;;
-  *)
-    echo "Unsupported operating system $host_os"
-  esac
+      ;;
+    *)
+      echo "Unsupported operating system $host_os"
+      ;;
+    esac
+    DVM_TARGET_TYPE="gz"
+    DVM_FILE_TYPE="gzip compressed data"
+  else
+    case $host_os in
+    "Darwin")
+      DVM_TARGET_NAME='deno-x86_64-apple-darwin.zip'
+      ;;
+    "Linux")
+      DVM_TARGET_NAME='deno-x86_64-unknown-linux-gnu.zip'
+      ;;
+    *)
+      echo "Unsupported operating system $host_os"
+      ;;
+    esac
+    DVM_TARGET_TYPE="zip"
+    DVM_FILE_TYPE="Zip archive data"
+  fi
 }
 
 download_file() {
@@ -45,30 +55,29 @@ download_file() {
     mkdir -p "$DVM_DIR/download/$1"
   fi
 
-  get_package_name "$1"
-
   if [ -x "$(command -v wget)" ]
   then
     wget "https://github.com/denoland/deno/releases/download/$1/$DVM_TARGET_NAME" \
-      -O "$DVM_DIR/download/$1/deno-downloading.zip"
+      -O "$DVM_DIR/download/$1/deno-downloading.$DVM_TARGET_TYPE"
   else
     curl -LJ "https://github.com/denoland/deno/releases/download/$1/$DVM_TARGET_NAME" \
-      -o "$DVM_DIR/download/$1/deno-downloading.zip"
+      -o "$DVM_DIR/download/$1/deno-downloading.$DVM_TARGET_TYPE"
   fi
 
   if [ ! -x "$?" ]
   then
     local file_type
-    file_type=$(file "$DVM_DIR/download/$1/deno-downloading.zip")
+    file_type=$(file "$DVM_DIR/download/$1/deno-downloading.$DVM_TARGET_TYPE")
 
-    if [[ $file_type == *"Zip"* ]]
+    if [[ $file_type == *"$DVM_FILE_TYPE"* ]]
     then
-      mv "$DVM_DIR/download/$1/deno-downloading.zip" "$DVM_DIR/download/$1/deno.zip"
+      mv "$DVM_DIR/download/$1/deno-downloading.$DVM_TARGET_TYPE" \
+        "$DVM_DIR/download/$1/deno.$DVM_TARGET_TYPE"
       return
     fi
   fi
 
-  rm "$DVM_DIR/download/$1/deno-downloading.zip"
+  rm "$DVM_DIR/download/$1/deno-downloading.$DVM_TARGET_TYPE"
   echo "Failed to download."
   exit 1
 }
@@ -81,35 +90,29 @@ extract_file() {
     mkdir -p "$target_dir"
   fi
 
-  unzip "$DVM_DIR/download/$1/deno.zip" -d "$target_dir" > /dev/null
-}
-
-check_local_version() {
-  if [ -f "$DVM_DIR/versions/$1/deno" ]
-  then
-    return 1
-  fi
-
-  return 0
-}
-
-check_download_cache() {
-  if [ -f "$DVM_DIR/download/$1/deno.zip" ]
-  then
-    return 0
-  fi
-
-  return 1
+  case $DVM_TARGET_TYPE in
+  "zip")
+    unzip "$DVM_DIR/download/$1/deno.zip" -d "$target_dir" > /dev/null
+    ;;
+  "gz")
+    gunzip -c "$DVM_DIR/download/$1/deno.gz" > "$target_dir/deno"
+    chmod +x "$target_dir/deno"
+    ;;
+  *)
+    ;;
+  esac
 }
 
 install_version() {
-  if ! check_local_version "$1"
+  if [ -f "$DVM_DIR/versions/$1/deno" ]
   then
     echo "deno $1 has been installed."
     exit 1
   fi
 
-  if check_download_cache "$1"
+  get_package_data "$1"
+
+  if [ ! -f "$DVM_DIR/download/$1/deno.$DVM_TARGET_TYPE" ]
   then
     download_file "$1"
   fi
@@ -152,8 +155,14 @@ clean_download_cache() {
     [ -f "$DVM_DIR/download/$dir/deno-downloading.zip" ] && \
       rm "$DVM_DIR/download/$dir/deno-downloading.zip"
 
+    [ -f "$DVM_DIR/download/$dir/deno-downloading.gz" ] && \
+      rm "$DVM_DIR/download/$dir/deno-downloading.gz"
+
     [ -f "$DVM_DIR/download/$dir/deno.zip" ] && \
       rm "$DVM_DIR/download/$dir/deno.zip"
+
+    [ -f "$DVM_DIR/download/$dir/deno.gz" ] && \
+      rm "$DVM_DIR/download/$dir/deno.gz"
 
     rmdir "$DVM_DIR/download/$dir"
   done
