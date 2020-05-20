@@ -168,6 +168,36 @@ clean_download_cache() {
   done
 }
 
+use_version() {
+  if [ -f "$DVM_DIR/versions/$1/deno" ]
+  then
+    export DVM_BIN="$DVM_DIR/versions/$1"
+    export PATH="$PATH:$DVM_BIN"
+  else
+    echo "deno $1 is not installed."
+    exit 1
+  fi
+}
+
+print_help() {
+  printf "
+Deno Version Manager
+
+Usage:
+  dvm install <version>       Download and install the specified version from source.
+  dvm uninstall <version>     Uninstall a version.
+  dvm use <version>           Modify PATH to use the specified version.
+  dvm ls                      List all installed versions.
+  dvm clean                   Remove all downloaded packages.
+
+Examples:
+  dvm install v1.0.0
+  dvm uninstall v0.42.0
+  dvm use v1.0.0
+
+"
+}
+
 dvm() {
   check_dvm_dir
 
@@ -179,6 +209,7 @@ dvm() {
     if [ -z "$1" ]
     then
       echo "Must specify target version"
+      print_help
       exit 1
     fi
 
@@ -192,6 +223,7 @@ dvm() {
     if [ -z "$1" ]
     then
       echo "Must specify target version"
+      print_help
       exit 1
     fi
 
@@ -210,35 +242,32 @@ dvm() {
   # current)
   #   # get the current version
   #   ;;
-  # use)
-  #   # change current version to specified version
-  #   ;;
+  use)
+    # change current version to specified version
+    shift
+
+    if [ -z "$1" ]
+    then
+      echo "Must specify target version."
+      print_help
+      exit 1
+    fi
+
+    use_version "$1"
+    ;;
   clean)
     # remove all download packages.
     clean_download_cache
     ;;
   help)
     # print help
-    shift
-
-    printf "
-Deno Version Manager
-
-Usage:
-  dvm install <version>       Download and install the specified version from source.
-  dvm uninstall <version>     Uninstall a version.
-  dvm ls                      List all installed versions.
-  dvm clean                   Remove all downloaded packages.
-
-Examples:
-  dvm install v1.0.0
-  dvm uninstall v0.42.0
-
-"
+    print_help
 
     ;;
   *)
     echo "Unknown command $1"
+    print_help
+
     exit 1
     ;;
   esac
