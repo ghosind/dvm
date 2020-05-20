@@ -179,6 +179,16 @@ use_version() {
   fi
 }
 
+get_current_version() {
+  if [ -z "$DVM_BIN" ] || [ ! -f "$DVM_BIN/deno" ]
+  then
+    echo "none"
+    exit 1
+  fi
+
+  "$DVM_BIN/deno" --version | grep deno | cut -d " " -f 2
+}
+
 print_help() {
   printf "
 Deno Version Manager
@@ -239,9 +249,11 @@ dvm() {
   # list-remote | ls-remote)
   #   # list all remote versions
   #   ;;
-  # current)
-  #   # get the current version
-  #   ;;
+  current)
+    # get the current version
+    get_current_version
+
+    ;;
   use)
     # change current version to specified version
     shift
