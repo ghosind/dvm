@@ -140,6 +140,15 @@ list_local_versions() {
   done
 }
 
+list_remote_versions() {
+  local releases_url
+
+  # TODO: Get releases with pagination
+  releases_url="https://api.github.com/repos/denoland/deno/releases?per_page=100"
+
+  curl "$releases_url" 2>/dev/null | grep tag_name | cut -d '"' -f 4
+}
+
 check_dvm_dir() {
   if [ -z "$DVM_DIR" ]
   then
@@ -197,7 +206,9 @@ Usage:
   dvm install <version>       Download and install the specified version from source.
   dvm uninstall <version>     Uninstall a version.
   dvm use <version>           Modify PATH to use the specified version.
+  dvm current                 Display the current version of Deno.
   dvm ls                      List all installed versions.
+  dvm ls-remote               List all remote versions.
   dvm clean                   Remove all downloaded packages.
 
 Examples:
@@ -246,9 +257,11 @@ dvm() {
     list_local_versions
 
     ;;
-  # list-remote | ls-remote)
-  #   # list all remote versions
-  #   ;;
+  list-remote | ls-remote)
+    # list all remote versions
+    list_remote_versions
+
+    ;;
   current)
     # get the current version
     get_current_version
