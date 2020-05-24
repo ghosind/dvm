@@ -142,11 +142,27 @@ list_local_versions() {
 
 list_remote_versions() {
   local releases_url
+  local all_versions
+  local page
+  local size
+  local num
 
-  # TODO: Get releases with pagination
-  releases_url="https://api.github.com/repos/denoland/deno/releases?per_page=100"
+  page=1
+  size=100
+  num="$size"
+  releases_url="https://api.github.com/repos/denoland/deno/releases?per_page=$size"
+  
+  while [ "$num" -eq "$size" ]
+  do
+    local versions
+    versions=$(curl "$releases_url&page=$page" 2>/dev/null | grep tag_name | cut -d '"' -f 4)
+    num=$(echo "$versions" | wc -l)
+    page=$((page + 1))
 
-  curl "$releases_url" 2>/dev/null | grep tag_name | cut -d '"' -f 4
+    all_versions="$all_versions\n$versions"
+  done
+
+  echo -e "$all_versions"
 }
 
 check_dvm_dir() {
