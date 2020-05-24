@@ -19,34 +19,30 @@ get_package_data() {
 
   if compare_version "$1" "$min_version"
   then
-    case $host_os in
-    "Darwin")
-      DVM_TARGET_NAME='deno_osx_x64.gz'
-      ;;
-    "Linux")
-      DVM_TARGET_NAME='deno_linux_x64.gz'
-      ;;
-    *)
-      echo "Unsupported operating system $host_os"
-      ;;
-    esac
     DVM_TARGET_TYPE="gz"
     DVM_FILE_TYPE="gzip compressed data"
   else
-    case $host_os in
-    "Darwin")
+    DVM_TARGET_TYPE="zip"
+    DVM_FILE_TYPE="Zip archive data"
+  fi
+
+  case "$host_os:$DVM_TARGET_TYPE" in
+    "Darwin:gz")
+      DVM_TARGET_NAME='deno_osx_x64.gz'
+      ;;
+    "Linux:gz")
+      DVM_TARGET_NAME='deno_linux_x64.gz'
+      ;;
+    "Darwin:zip")
       DVM_TARGET_NAME='deno-x86_64-apple-darwin.zip'
       ;;
-    "Linux")
+    "Linux:zip")
       DVM_TARGET_NAME='deno-x86_64-unknown-linux-gnu.zip'
       ;;
     *)
       echo "Unsupported operating system $host_os"
       ;;
-    esac
-    DVM_TARGET_TYPE="zip"
-    DVM_FILE_TYPE="Zip archive data"
-  fi
+  esac
 }
 
 download_file() {
