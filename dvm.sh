@@ -167,6 +167,11 @@ check_dvm_dir() {
     # set default dvm directory
     DVM_DIR="$HOME/.dvm"
   fi
+
+  if [ -z "$DVM_BIN" ]
+  then
+    DVM_BIN="$DVM_DIR/bin"
+  fi
 }
 
 clean_download_cache() {
@@ -190,10 +195,14 @@ clean_download_cache() {
 }
 
 use_version() {
+  if [ ! -d "$DVM_BIN" ]
+  then
+    mkdir -p "$DVM_BIN"
+  fi
+
   if [ -f "$DVM_DIR/versions/$1/deno" ]
   then
-    export DVM_BIN="$DVM_DIR/versions/$1"
-    export PATH="$PATH:$DVM_BIN"
+    ln -s "$DVM_DIR/versions/$1/deno" "$DVM_BIN/deno"
   else
     echo "deno $1 is not installed."
     exit 1

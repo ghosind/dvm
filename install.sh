@@ -20,9 +20,10 @@ add_nvm_into_rc_file() {
   echo "
 # Deno Version Manager
 export DVM_DIR=\"\$HOME/.dvm\"
-[ -f \"\$DVM_DIR/init.sh\" ] && source \"\$DVM_DIR/init.sh\"
+export DVM_BIN=\"\$DVM_DIR/bin\"
+export PATH=\"\$PATH:\$DVM_BIN\"
 [ -f \"\$DVM_DIR/dvm.sh\" ] && alias dvm=\"\$DVM_DIR/dvm.sh\"
-  " >> "$rc_file"
+" >> "$rc_file"
 }
 
 add_nvm_into_rc_file
