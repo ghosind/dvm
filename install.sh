@@ -51,7 +51,7 @@ install_latest_version() {
 }
 
 set_dvm_dir() {
-  DVM_DIR="$HOME/.test"
+  DVM_DIR="$HOME/.dvm"
 
   if [ ! -d "$DVM_DIR" ]
   then
