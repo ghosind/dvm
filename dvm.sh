@@ -147,7 +147,7 @@ list_remote_versions() {
   size=100
   num="$size"
   releases_url="https://api.github.com/repos/denoland/deno/releases?per_page=$size"
-  
+
   while [ "$num" -eq "$size" ]
   do
     local versions
@@ -226,7 +226,8 @@ Deno Version Manager
 Usage:
   dvm install <version>       Download and install the specified version from source.
   dvm uninstall <version>     Uninstall a version.
-  dvm use <version>           Modify PATH to use the specified version.
+  dvm use                     Use the specified version read from .dvmrc.
+  dvm use <version>           Use the specified version pass by argument.
   dvm current                 Display the current version of Deno.
   dvm ls                      List all installed versions.
   dvm ls-remote               List all remote versions.
@@ -292,14 +293,21 @@ dvm() {
     # change current version to specified version
     shift
 
-    if [ -z "$1" ]
+    local version
+
+    if [ -n "$1" ]
     then
+      version="$1"
+    elif [ -f ".dvmrc" ]
+    then
+      version=$(cat .dvmrc)
+    else
       echo "Must specify target version."
       print_help
       exit 1
     fi
 
-    use_version "$1"
+    use_version "$version"
     ;;
   clean)
     # remove all download packages.
