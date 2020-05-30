@@ -119,6 +119,14 @@ install_version() {
 }
 
 uninstall_version() {
+  local current_bin_path
+  current_bin_path=$(file -h "$DVM_BIN/deno" | grep link | cut -d " " -f 5)
+
+  if [ "$current_bin_path" = "$DVM_DIR/versions/$1/deno" ]
+  then
+    rm "$DVM_BIN/deno"
+  fi
+
   if [ -f "$DVM_DIR/versions/$1/deno" ]
   then
     rm -rf "$DVM_DIR/versions/$1"
