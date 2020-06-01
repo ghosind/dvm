@@ -59,14 +59,23 @@ set_dvm_dir() {
   fi
 }
 
+install_local_version() {
+  cp "./dvm.sh" "$DVM_DIR"
+}
+
 install_dvm() {
   set -e
 
   set_dvm_dir
 
-  get_latest_version
-  download_latest_version
-  install_latest_version
+  if [ -f "./dvm.sh" ]
+  then
+    install_local_version
+  else
+    get_latest_version
+    download_latest_version
+    install_latest_version
+  fi
 
   add_nvm_into_rc_file
 }
