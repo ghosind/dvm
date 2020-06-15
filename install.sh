@@ -17,6 +17,13 @@ get_rc_file() {
 add_nvm_into_rc_file() {
   get_rc_file
 
+  defined=$(grep DVM_DIR < "$rc_file")
+
+  if [ -n "$defined" ]
+  then
+    return
+  fi
+
   echo "
 # Deno Version Manager
 export DVM_DIR=\"\$HOME/.dvm\"
