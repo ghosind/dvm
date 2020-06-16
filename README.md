@@ -2,7 +2,7 @@
 
 ![shellcheck](https://github.com/ghosind/dvm/workflows/shellcheck/badge.svg)
 
-Dvm is a nvm-like version manager for [Deno](https://deno.land/).
+Dvm is an nvm-like version manager for [Deno](https://deno.land/).
 
 ## Installation
 
