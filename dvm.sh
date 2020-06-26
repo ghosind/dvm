@@ -246,6 +246,18 @@ set_alias() {
   echo "$2" >> "$DVM_DIR/aliases/$1"
 }
 
+rm_alias() {
+  check_alias_dir
+
+  if [ ! -f "$DVM_DIR/aliases/$1" ]
+  then
+    echo "Alias $1 does not exist."
+    exit 1
+  fi
+
+  rm "$DVM_DIR/aliases/$1"
+}
+
 print_help() {
   printf "
 Deno Version Manager
@@ -256,6 +268,7 @@ Usage:
   dvm use                     Use the specified version read from .dvmrc.
   dvm use <version>           Use the specified version pass by argument.
   dvm alias <name> <version>  Set an alias name to specified version.
+  dvm unalias <name>          Delete the specified alias name.
   dvm current                 Display the current version of Deno.
   dvm ls                      List all installed versions.
   dvm ls-remote               List all remote versions.
@@ -359,6 +372,18 @@ dvm() {
 
     set_alias "$@"
 
+    ;;
+  unalias)
+    shift
+
+    if [ "$#" != "1" ]
+    then
+      echo "Must specify alias name."
+      print_help
+      exit 1
+    fi
+
+    rm_alias "$1"
     ;;
   *)
     echo "Unknown command $1"
