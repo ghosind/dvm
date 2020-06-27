@@ -208,11 +208,23 @@ use_version() {
     mkdir -p "$DVM_BIN"
   fi
 
-  if [ -f "$DVM_DIR/versions/$1/deno" ]
+  if [ -f "$DVM_DIR/aliases/$1" ]
   then
-    ln -s "$DVM_DIR/versions/$1/deno" "$DVM_BIN/deno"
+    version=$(cat "$DVM_DIR/aliases/$1")
+
+    if [ ! -f "$DVM_DIR/versions/$1/deno" ]
+    then
+      version="$1"
+    fi
   else
-    echo "deno $1 is not installed."
+    version="$1"
+  fi
+
+  if [ -f "$DVM_DIR/versions/$version/deno" ]
+  then
+    ln -s "$DVM_DIR/versions/$version/deno" "$DVM_BIN/deno"
+  else
+    echo "deno $version is not installed."
     exit 1
   fi
 }
@@ -266,7 +278,8 @@ Usage:
   dvm install <version>       Download and install the specified version from source.
   dvm uninstall <version>     Uninstall a version.
   dvm use                     Use the specified version read from .dvmrc.
-  dvm use <version>           Use the specified version pass by argument.
+  dvm use <name>              Use the specified version of the alias name that passed by argument.
+  dvm use <version>           Use the specified version that passed by argument.
   dvm alias <name> <version>  Set an alias name to specified version.
   dvm unalias <name>          Delete the specified alias name.
   dvm current                 Display the current version of Deno.
@@ -344,7 +357,7 @@ dvm() {
     then
       version=$(cat .dvmrc)
     else
-      echo "Must specify target version."
+      echo "Must specify target version or alias name."
       print_help
       exit 1
     fi

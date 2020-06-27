@@ -98,7 +98,8 @@ DVM supported the following commands:
 | `install` | `dvm install <version>` | Download and install the specified version from source.|
 | `uninstall` | `dvm uninstall <version>` | Uninstall the specified version. |
 | `use` | `dvm use` | Use the specified version read from .dvmrc. |
-| | `dvm use <version>` | Use the specified version pass by argument. |
+| | `dvm use <version>` | Use the specified version that passed by argument. |
+| | `dvm use <name>` | Use the specified version of the alias name that passed by argument. |
 | `alias` | `dvm alias <name> <version>` | Set an alias name to specified version. |
 | `unalias` | `dvm unalias <name>` | Delete the specified alias name. |
 | `current` | `dvm current` | Display the current version of Deno. |
