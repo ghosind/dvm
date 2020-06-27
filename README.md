@@ -22,7 +22,7 @@ Download/dvm $ ./install.sh
 
 ## Getting Start
 
-After installed dvm, you can use it to manage 
+After installed dvm, you can use it to manage
 
 Use `dvm install <version>` command to download and install a specified version from the source.
 
@@ -88,6 +88,25 @@ export DVM_BIN="$DVM_DIR/bin"
 export PATH="$PATH:$DVM_BIN"
 [ -f "$DVM_DIR/dvm.sh" ] && alias dvm="$DVM_DIR/dvm.sh"
 ```
+
+## Commands
+
+DVM supported the following commands:
+
+| Command | Usage | Description |
+|:-------:|:-----:|:-----------:|
+| `install` | `dvm install <version>` | Download and install the specified version from source.|
+| `uninstall` | `dvm uninstall <version>` | Uninstall the specified version. |
+| `use` | `dvm use` | Use the specified version read from .dvmrc. |
+| | `dvm use <version>` | Use the specified version pass by argument. |
+| `alias` | `dvm alias <name> <version>` | Set an alias name to specified version. |
+| `unalias` | `dvm unalias <name>` | Delete the specified alias name. |
+| `current` | `dvm current` | Display the current version of Deno. |
+| `ls` | `dvm ls` | List all installed versions. |
+| `list` | `dvm list` | Same as `ls` command. |
+| `ls-remote` | `dvm ls-remote` | List all remote versions. |
+| `list-remote` | `dvm list-remote` | Same as `ls-remote` command. |
+| `clean` | `dvm clean` | Remove all downloaded packages. |
 
 ## Contribution
 
