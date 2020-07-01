@@ -226,6 +226,11 @@ use_version() {
 
   if [ -f "$DVM_DIR/versions/$version/deno" ]
   then
+    if [ -f "$DVM_BIN/deno" ]
+    then
+      rm "$DVM_BIN/deno"
+    fi
+
     ln -s "$DVM_DIR/versions/$version/deno" "$DVM_BIN/deno"
   else
     echo "deno $version is not installed."
