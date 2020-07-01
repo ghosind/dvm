@@ -202,12 +202,7 @@ clean_download_cache() {
   done
 }
 
-use_version() {
-  if [ ! -d "$DVM_BIN" ]
-  then
-    mkdir -p "$DVM_BIN"
-  fi
-
+get_version() {
   if [ -f "$DVM_DIR/aliases/$1" ]
   then
     version=$(cat "$DVM_DIR/aliases/$1")
@@ -219,6 +214,15 @@ use_version() {
   else
     version="$1"
   fi
+}
+
+use_version() {
+  if [ ! -d "$DVM_BIN" ]
+  then
+    mkdir -p "$DVM_BIN"
+  fi
+
+  get_version "$1"
 
   if [ -f "$DVM_DIR/versions/$version/deno" ]
   then
@@ -270,6 +274,20 @@ rm_alias() {
   rm "$DVM_DIR/aliases/$1"
 }
 
+run_with_version() {
+  get_version "$1"
+  
+  if [ ! -f "$DVM_DIR/versions/$version/deno" ]
+  then
+    echo "deno $version is not installed."
+    exit 1
+  fi
+
+  shift
+
+  "$DVM_DIR/versions/$version/deno" "$@"
+}
+
 print_help() {
   printf "
 Deno Version Manager
@@ -280,6 +298,7 @@ Usage:
   dvm use                     Use the specified version read from .dvmrc.
   dvm use <name>              Use the specified version of the alias name that passed by argument.
   dvm use <version>           Use the specified version that passed by argument.
+  dvm run <name> [args]       Run deno on the specified version with arguments.
   dvm alias <name> <version>  Set an alias name to specified version.
   dvm unalias <name>          Delete the specified alias name.
   dvm current                 Display the current version of Deno.
@@ -397,6 +416,19 @@ dvm() {
     fi
 
     rm_alias "$1"
+    ;;
+  run)
+    shift
+
+    if [ "$#" = "0" ]
+    then
+      echo "Must specify target version"
+      print_help
+      exit 1
+    fi
+
+    run_with_version "$@"
+
     ;;
   *)
     echo "Unknown command $1"
