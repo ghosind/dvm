@@ -151,12 +151,21 @@ list_aliases() {
 }
 
 list_local_versions() {
+  get_current_version
+
   # shellcheck disable=SC2012
   ls "$DVM_DIR/versions" | while read -r dir
   do
-    if [ -f "$DVM_DIR/versions/$dir/deno" ]
+    if [ ! -f "$DVM_DIR/versions/$dir/deno" ]
     then
-      echo "$dir"
+      continue
+    fi
+
+    if [ "$dir" = "$DVM_CURRENT_VERSION" ]
+    then
+      echo "-> $dir"
+    else
+      echo "   $dir"
     fi
   done
 
@@ -264,7 +273,7 @@ get_current_version() {
     exit 1
   fi
 
-  "$DVM_BIN/deno" --version | grep deno | cut -d " " -f 2
+  DVM_CURRENT_VERSION=v$("$DVM_BIN/deno" --version | grep deno | cut -d " " -f 2)
 }
 
 check_alias_dir() {
@@ -379,7 +388,7 @@ dvm() {
     ;;
   list | ls)
     # list all local versions
-
+    
     list_local_versions
 
     ;;
@@ -391,6 +400,7 @@ dvm() {
   current)
     # get the current version
     get_current_version
+    echo "$DVM_CURRENT_VERSION"
 
     ;;
   use)
