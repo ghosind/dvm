@@ -133,6 +133,23 @@ uninstall_version() {
   fi
 }
 
+list_aliases() {
+  local aliased_version
+
+  # shellcheck disable=SC2012
+  ls "$DVM_DIR/aliases" | while read -r name
+  do
+    aliased_version=$(cat "$DVM_DIR/aliases/$name")
+
+    if [ -z "$aliased_version" ] || [ ! -f "$DVM_DIR/versions/$aliased_version/deno" ]
+    then
+      echo "$name -> N/A"
+    else
+      echo "$name -> $aliased_version"
+    fi
+  done
+}
+
 list_local_versions() {
   # shellcheck disable=SC2012
   ls "$DVM_DIR/versions" | while read -r dir
@@ -142,6 +159,8 @@ list_local_versions() {
       echo "$dir"
     fi
   done
+
+  list_aliases
 }
 
 list_remote_versions() {
@@ -322,6 +341,12 @@ Examples:
 
 dvm() {
   check_dvm_dir
+
+  if [ "$#" = "0" ]
+  then
+    print_help
+    exit 0
+  fi
 
   case $1 in
   install)
