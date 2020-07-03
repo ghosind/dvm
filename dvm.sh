@@ -321,23 +321,42 @@ run_with_version() {
   "$DVM_DIR/versions/$version/deno" "$@"
 }
 
+locate_version() {
+  local which_version
+  if [ "$1" = "current" ]
+  then
+    get_current_version
+    which_version="$DVM_CURRENT_VERSION"
+  else
+    which_version="$1"
+  fi
+
+  if [ -f "$DVM_DIR/versions/$which_version/deno" ]
+  then
+    echo "$DVM_DIR/versions/$which_version/deno"
+  else
+    echo "deno $which_version is not installed."
+  fi
+}
+
 print_help() {
   printf "
 Deno Version Manager
 
 Usage:
-  dvm install <version>       Download and install the specified version from source.
-  dvm uninstall <version>     Uninstall a version.
-  dvm use                     Use the specified version read from .dvmrc.
-  dvm use <name>              Use the specified version of the alias name that passed by argument.
-  dvm use <version>           Use the specified version that passed by argument.
-  dvm run <name> [args]       Run deno on the specified version with arguments.
-  dvm alias <name> <version>  Set an alias name to specified version.
-  dvm unalias <name>          Delete the specified alias name.
-  dvm current                 Display the current version of Deno.
-  dvm ls                      List all installed versions.
-  dvm ls-remote               List all remote versions.
-  dvm clean                   Remove all downloaded packages.
+  dvm install <version>             Download and install the specified version from source.
+  dvm uninstall <version>           Uninstall a version.
+  dvm use                           Use the specified version read from .dvmrc.
+  dvm use <name>                    Use the specified version of the alias name that passed by argument.
+  dvm use <version>                 Use the specified version that passed by argument.
+  dvm run <name> [args]             Run deno on the specified version with arguments.
+  dvm alias <name> <version>        Set an alias name to specified version.
+  dvm unalias <name>                Delete the specified alias name.
+  dvm current                       Display the current version of Deno.
+  dvm ls                            List all installed versions.
+  dvm ls-remote                     List all remote versions.
+  dvm which [current | version]     Display the path of installed version.
+  dvm clean                         Remove all downloaded packages.
 
 Examples:
   dvm install v1.0.0
@@ -468,6 +487,18 @@ dvm() {
     fi
 
     run_with_version "$@"
+
+    ;;
+  which)
+    shift
+
+    if [ "$#" != "1" ]
+    then
+      print_help
+      exit 1
+    fi
+
+    locate_version "$1"
 
     ;;
   *)
