@@ -108,7 +108,8 @@ DVM supported the following commands:
 | `list` | `dvm list` | Same as `ls` command. |
 | `ls-remote` | `dvm ls-remote` | List all remote versions. |
 | `list-remote` | `dvm list-remote` | Same as `ls-remote` command. |
-| `which` | `dvm which current` | Display the path of the current version. |
+| `which` | `dvm which` | Display the path of the version that specified in .dvmrc. |
+| | `dvm which current` | Display the path of the current version. |
 | | `dvm which <version>` | Display the path of specified version. |
 | `clean` | `dvm clean` | Remove all downloaded packages. |
 

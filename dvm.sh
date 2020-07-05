@@ -381,7 +381,7 @@ dvm() {
     # install the specified version
     shift
 
-    if [ -z "$1" ]
+    if [ "$#" != "1" ]
     then
       echo "Must specify target version"
       print_help
@@ -395,7 +395,7 @@ dvm() {
     # uninstall the specified version
     shift
 
-    if [ -z "$1" ]
+    if [ "$#" != "1" ]
     then
       echo "Must specify target version"
       print_help
@@ -407,7 +407,6 @@ dvm() {
     ;;
   list | ls)
     # list all local versions
-    
     list_local_versions
 
     ;;
@@ -445,6 +444,7 @@ dvm() {
   clean)
     # remove all download packages.
     clean_download_cache
+
     ;;
   help)
     # print help
@@ -492,13 +492,27 @@ dvm() {
   which)
     shift
 
-    if [ "$#" != "1" ]
+    local version
+
+    if [ -n "$1" ]
     then
+      version="$1"
+    elif [ -f ".dvmrc" ]
+    then
+      version=$(cat .dvmrc)
+
+      if [ -z "$version" ]
+      then
+        echo "Must specify target version in .dvmrc file."
+        exit 1
+      fi
+    else
+      echo "Must specify target version / name, or exists .dvmrc file."
       print_help
       exit 1
     fi
 
-    locate_version "$1"
+    locate_version "$version"
 
     ;;
   *)
