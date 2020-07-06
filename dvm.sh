@@ -309,7 +309,7 @@ rm_alias() {
 
 run_with_version() {
   get_version "$1"
-  
+
   if [ ! -f "$DVM_DIR/versions/$version/deno" ]
   then
     echo "deno $version is not installed."

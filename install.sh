@@ -53,8 +53,7 @@ install_latest_version() {
   version=$(echo "$DVM_LATEST_VERSION" | cut -d "v" -f 2)
 
   tar -xzvf "$DVM_TMP_DIR/dvm.tar.gz" -C "$DVM_TMP_DIR"
-  # shellcheck disable=SC2086
-  mv $DVM_TMP_DIR/dvm-$version/* "$DVM_DIR"
+  cp -r "$DVM_TMP_DIR/dvm-$version/." "$DVM_DIR"
 }
 
 set_dvm_dir() {
@@ -67,12 +66,10 @@ set_dvm_dir() {
 }
 
 install_local_version() {
-  cp "./dvm.sh" "$DVM_DIR"
+  cp -r "." "$DVM_DIR"
 }
 
 install_dvm() {
-  set -e
-
   set_dvm_dir
 
   if [ -f "./dvm.sh" ]
@@ -85,6 +82,8 @@ install_dvm() {
   fi
 
   add_nvm_into_rc_file
+
+  echo "DVM has been installed, please restart your terminal to apply changes."
 }
 
 install_dvm
