@@ -99,13 +99,15 @@ set_dvm_dir() {
 }
 
 install_local_version() {
-  cp -r "." "$DVM_DIR"
+  cp -r "$script_dir/." "$DVM_DIR"
 }
 
 install_dvm() {
   set_dvm_dir
 
-  if [ -f "./dvm.sh" ]
+  script_dir=${0%/*}
+
+  if [ -f "$script_dir/dvm.sh" ]
   then
     install_local_version
   else
