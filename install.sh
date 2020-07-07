@@ -35,17 +35,50 @@ export PATH=\"\$PATH:\$DVM_BIN\"
 
 get_latest_version() {
   local request_url
+  local response
 
   request_url="https://api.github.com/repos/ghosind/dvm/releases/latest"
 
-  DVM_LATEST_VERSION=$(curl "$request_url" 2>/dev/null | grep tag_name | cut -d '"' -f 4)
+  if [ -x "$(command -v wget)" ]
+  then
+    # TODO: test
+    response=$(wget -O- "$request_url")
+  elif [ -x "$(command -v curl)" ]
+  then
+    response=$(curl -s "$request_url")
+  else
+    echo "wget or curl is required."
+    exit 1
+  fi
+
+  # shellcheck disable=SC2181
+  if [ "$?" != "0" ]
+  then
+    echo "failed to get the latest DVM version."
+    exit 1
+  fi
+
+  DVM_LATEST_VERSION=$(echo "$response" | grep tag_name | cut -d '"' -f 4)
 }
 
 download_latest_version() {
   DVM_TMP_DIR=$(mktemp -d -t dvm)
 
-  curl -LJ "https://github.com/ghosind/dvm/archive/$DVM_LATEST_VERSION.tar.gz" \
-      -o "$DVM_TMP_DIR/dvm.tar.gz"
+  if [ -x "$(command -v wget)" ]
+  then
+    wget "https://github.com/ghosind/dvm/archive/$DVM_LATEST_VERSION.tar.gz" \
+        -O "$DVM_TMP_DIR/dvm.tar.gz"
+  else
+    curl -LJ "https://github.com/ghosind/dvm/archive/$DVM_LATEST_VERSION.tar.gz" \
+        -o "$DVM_TMP_DIR/dvm.tar.gz"
+  fi
+
+  # shellcheck disable=SC2181
+  if [ "$?" != "0" ]
+  then
+    echo "failed to download DVM."
+    exit 1
+  fi
 }
 
 install_latest_version() {
