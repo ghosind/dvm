@@ -140,6 +140,11 @@ uninstall_version() {
 list_aliases() {
   local aliased_version
 
+  if [ ! -d "$DVM_DIR/aliases" ]
+  then
+    return
+  fi
+
   # shellcheck disable=SC2012
   ls "$DVM_DIR/aliases" | while read -r name
   do
