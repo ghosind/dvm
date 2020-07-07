@@ -291,13 +291,10 @@ use_version() {
 }
 
 get_current_version() {
-  if [ -z "$DVM_BIN" ] || [ ! -f "$DVM_BIN/deno" ]
+  if [ -f "$DVM_BIN/deno" ]
   then
-    echo "none"
-    exit 1
+    DVM_CURRENT_VERSION=v$("$DVM_BIN/deno" --version | grep deno | cut -d " " -f 2)
   fi
-
-  DVM_CURRENT_VERSION=v$("$DVM_BIN/deno" --version | grep deno | cut -d " " -f 2)
 }
 
 check_alias_dir() {
@@ -436,6 +433,12 @@ dvm() {
     ;;
   list-remote | ls-remote)
     # list all remote versions
+    if [ -z "$DVM_BIN" ] || [ ! -f "$DVM_BIN/deno" ]
+    then
+      echo "none"
+      exit 1
+    fi
+
     list_remote_versions
 
     ;;
