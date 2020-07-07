@@ -54,10 +54,14 @@ download_file() {
   if [ -x "$(command -v wget)" ]
   then
     wget "https://github.com/denoland/deno/releases/download/$1/$DVM_TARGET_NAME" \
-      -O "$DVM_DIR/download/$1/deno-downloading.$DVM_TARGET_TYPE"
-  else
+        -O "$DVM_DIR/download/$1/deno-downloading.$DVM_TARGET_TYPE"
+  elif [ -x "$(command -v curl)" ]
+  then
     curl -LJ "https://github.com/denoland/deno/releases/download/$1/$DVM_TARGET_NAME" \
-      -o "$DVM_DIR/download/$1/deno-downloading.$DVM_TARGET_TYPE"
+        -o "$DVM_DIR/download/$1/deno-downloading.$DVM_TARGET_TYPE"
+  else
+    echo "wget or curl is required."
+    exit 1
   fi
 
   if [ ! -x "$?" ]
@@ -178,6 +182,8 @@ list_remote_versions() {
   local page
   local size
   local num
+  local tmp_versions
+  local response
 
   page=1
   size=100
@@ -186,12 +192,30 @@ list_remote_versions() {
 
   while [ "$num" -eq "$size" ]
   do
-    local versions
-    versions=$(curl "$releases_url&page=$page" 2>/dev/null | grep tag_name | cut -d '"' -f 4)
-    num=$(echo "$versions" | wc -l)
+    if [ -x "$(command -v wget)" ]
+    then
+      # TODO: test
+      response=$(wget -O- "$releases_url&page=$page")
+    elif [ -x "$(command -v curl)" ]
+    then
+      response=$(curl -s "$releases_url&page=$page")
+    else
+      echo "wget or curl is required."
+      exit 1
+    fi
+
+    # shellcheck disable=SC2181
+    if [ "$?" != "0" ]
+    then
+      echo "failed to list remote versions"
+      exit 1
+    fi
+
+    tmp_versions=$(echo "$response" | grep tag_name | cut -d '"' -f 4)
+    num=$(echo "$tmp_versions" | wc -l)
     page=$((page + 1))
 
-    all_versions="$all_versions\n$versions"
+    all_versions="$all_versions\n$tmp_versions"
   done
 
   echo -e "$all_versions"
