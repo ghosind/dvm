@@ -199,8 +199,7 @@ list_remote_versions() {
   do
     if [ -x "$(command -v wget)" ]
     then
-      # TODO: test
-      response=$(wget -O- "$releases_url&page=$page")
+      response=$(wget -O- "$releases_url&page=$page" -nv)
     elif [ -x "$(command -v curl)" ]
     then
       response=$(curl -s "$releases_url&page=$page")

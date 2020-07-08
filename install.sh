@@ -41,8 +41,7 @@ get_latest_version() {
 
   if [ -x "$(command -v wget)" ]
   then
-    # TODO: test
-    response=$(wget -O- "$request_url")
+    response=$(wget -O- "$request_url" -nv)
   elif [ -x "$(command -v curl)" ]
   then
     response=$(curl -s "$request_url")
