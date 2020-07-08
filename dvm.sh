@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+DVM_VERSION="v0.1.0"
+
 compare_version() {
   test "$(printf '%s\n' "$@" | sort -V | head -n 1)" != "$2"
 }
@@ -477,7 +479,7 @@ dvm() {
     clean_download_cache
 
     ;;
-  help)
+  help|--help|-h)
     # print help
     print_help
 
@@ -544,6 +546,12 @@ dvm() {
     fi
 
     locate_version "$version"
+
+    ;;
+  --version)
+    # print dvm version
+
+    echo "$DVM_VERSION"
 
     ;;
   *)
