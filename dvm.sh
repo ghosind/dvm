@@ -164,21 +164,24 @@ list_aliases() {
 list_local_versions() {
   get_current_version
 
-  # shellcheck disable=SC2012
-  ls "$DVM_DIR/versions" | while read -r dir
-  do
-    if [ ! -f "$DVM_DIR/versions/$dir/deno" ]
-    then
-      continue
-    fi
+  if [ -d "$DVM_DIR/versions" ]
+  then
+    # shellcheck disable=SC2012
+    ls "$DVM_DIR/versions" | while read -r dir
+    do
+      if [ ! -f "$DVM_DIR/versions/$dir/deno" ]
+      then
+        continue
+      fi
 
-    if [ "$dir" = "$DVM_CURRENT_VERSION" ]
-    then
-      echo "-> $dir"
-    else
-      echo "   $dir"
-    fi
-  done
+      if [ "$dir" = "$DVM_CURRENT_VERSION" ]
+      then
+        echo "-> $dir"
+      else
+        echo "   $dir"
+      fi
+    done
+  fi
 
   list_aliases
 }
