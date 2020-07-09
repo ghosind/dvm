@@ -85,7 +85,7 @@ install_latest_version() {
   version=$(echo "$DVM_LATEST_VERSION" | cut -d "v" -f 2)
 
   tar -xzvf "$DVM_TMP_DIR/dvm.tar.gz" -C "$DVM_TMP_DIR"
-  cp -r "$DVM_TMP_DIR/dvm-$version/." "$DVM_DIR"
+  cp -R "$DVM_TMP_DIR/dvm-$version/"* "$DVM_DIR"
 }
 
 set_dvm_dir() {
@@ -98,7 +98,7 @@ set_dvm_dir() {
 }
 
 install_local_version() {
-  cp -r "$script_dir/." "$DVM_DIR"
+  cp -R "$script_dir/"* "$DVM_DIR"
 }
 
 install_dvm() {
