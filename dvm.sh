@@ -13,10 +13,9 @@ get_package_data() {
     exit 1
   fi
 
-  local host_os
   local min_version
 
-  host_os=$(uname -s)
+  DVM_TARGET_OS=$(uname -s)
   min_version="v0.36.0"
 
   if compare_version "$1" "$min_version"
@@ -28,7 +27,7 @@ get_package_data() {
     DVM_FILE_TYPE="Zip archive data"
   fi
 
-  case "$host_os:$DVM_TARGET_TYPE" in
+  case "$DVM_TARGET_OS:$DVM_TARGET_TYPE" in
     "Darwin:gz")
       DVM_TARGET_NAME='deno_osx_x64.gz'
       ;;
@@ -42,7 +41,7 @@ get_package_data() {
       DVM_TARGET_NAME='deno-x86_64-unknown-linux-gnu.zip'
       ;;
     *)
-      echo "Unsupported operating system $host_os"
+      echo "Unsupported operating system $DVM_TARGET_OS"
       ;;
   esac
 }
@@ -94,11 +93,27 @@ extract_file() {
 
   case $DVM_TARGET_TYPE in
   "zip")
-    unzip "$DVM_DIR/download/$1/deno.zip" -d "$target_dir" > /dev/null
+    if [ -x "$(command -v unzip)" ]
+    then
+      unzip "$DVM_DIR/download/$1/deno.zip" -d "$target_dir" > /dev/null
+    elif [ "$DVM_TARGET_OS" = "Linx" ] && [ -x "$(command -v gunzip)" ]
+    then
+      gunzip -c "$DVM_DIR/download/$1/deno.zip" > "$target_dir/deno"
+      chmod +x "$target_dir/deno"
+    else
+      echo "unzip is required."
+      exit 1
+    fi
     ;;
   "gz")
-    gunzip -c "$DVM_DIR/download/$1/deno.gz" > "$target_dir/deno"
-    chmod +x "$target_dir/deno"
+    if [ -x "$(command -v gunzip)" ]
+    then
+      gunzip -c "$DVM_DIR/download/$1/deno.gz" > "$target_dir/deno"
+      chmod +x "$target_dir/deno"
+    else
+      echo "gunzip is required."
+      exit 1
+    fi
     ;;
   *)
     ;;
