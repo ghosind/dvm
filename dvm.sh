@@ -96,7 +96,7 @@ extract_file() {
     if [ -x "$(command -v unzip)" ]
     then
       unzip "$DVM_DIR/download/$1/deno.zip" -d "$target_dir" > /dev/null
-    elif [ "$DVM_TARGET_OS" = "Linx" ] && [ -x "$(command -v gunzip)" ]
+    elif [ "$DVM_TARGET_OS" = "Linux" ] && [ -x "$(command -v gunzip)" ]
     then
       gunzip -c "$DVM_DIR/download/$1/deno.zip" > "$target_dir/deno"
       chmod +x "$target_dir/deno"
