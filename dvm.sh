@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-DVM_VERSION="v0.1.0"
+DVM_VERSION="v0.2.0-alpha-1"
 
 compare_version() {
   test "$(printf '%s\n' "$@" | sort -V | head -n 1)" != "$2"
@@ -394,7 +394,7 @@ Usage:
   dvm use                           Use the specified version read from .dvmrc.
   dvm use <name>                    Use the specified version of the alias name that passed by argument.
   dvm use <version>                 Use the specified version that passed by argument.
-  dvm run <name> [args]             Run deno on the specified version with arguments.
+  dvm run <name | version> [args]   Run deno on the specified version with arguments.
   dvm alias <name> <version>        Set an alias name to specified version.
   dvm unalias <name>                Delete the specified alias name.
   dvm current                       Display the current version of Deno.
@@ -408,6 +408,7 @@ Examples:
   dvm uninstall v0.42.0
   dvm use v1.0.0
   dvm alias default v1.0.0
+  dvm run v1.0.0 app.ts
 
 "
 }

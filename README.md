@@ -71,6 +71,13 @@ $ dvm ls-remote
 $ dvm list-remote
 ```
 
+Use `dvm run` command to run Deno on the specified version with arguments.
+
+```sh
+# Run app.ts with Deno v1.0.0
+$ dvm run v1.0.0 app.ts
+```
+
 ## Uninstalling dvm
 
 You can execute following command to uninstall dvm:
