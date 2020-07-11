@@ -61,7 +61,7 @@ get_latest_version() {
 }
 
 download_latest_version() {
-  DVM_TMP_DIR=$(mktemp -d -t dvm)
+  DVM_TMP_DIR=$(mktemp -d)
 
   if [ -x "$(command -v wget)" ]
   then
