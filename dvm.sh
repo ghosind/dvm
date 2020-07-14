@@ -315,9 +315,13 @@ use_version() {
 }
 
 get_current_version() {
+  local current_version
   if [ -f "$DVM_BIN/deno" ]
   then
-    DVM_CURRENT_VERSION=v$("$DVM_BIN/deno" --version | grep deno | cut -d " " -f 2)
+    if current_version=$("$DVM_BIN/deno" --version | grep deno | cut -d " " -f 2)
+    then
+      DVM_CURRENT_VERSION="v$current_version"
+    fi
   fi
 }
 
@@ -470,7 +474,13 @@ dvm() {
   current)
     # get the current version
     get_current_version
-    echo "$DVM_CURRENT_VERSION"
+
+    if [ -n "$DVM_CURRENT_VERSION" ]
+    then
+      echo "$DVM_CURRENT_VERSION"
+    else
+      echo "none"
+    fi
 
     ;;
   use)
