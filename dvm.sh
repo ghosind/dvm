@@ -151,6 +151,10 @@ uninstall_version() {
   if [ -f "$DVM_DIR/versions/$1/deno" ]
   then
     rm -rf "$DVM_DIR/versions/$1"
+
+    echo "uninstalled deno $version."
+  else
+    echo "deno $version is not installed."
   fi
 }
 
@@ -342,9 +346,13 @@ set_alias() {
   fi
 
   echo "$2" >> "$DVM_DIR/aliases/$1"
+
+  echo "$1 -> $2"
 }
 
 rm_alias() {
+  local aliased_version
+
   check_alias_dir
 
   if [ ! -f "$DVM_DIR/aliases/$1" ]
@@ -353,7 +361,12 @@ rm_alias() {
     exit 1
   fi
 
+  aliased_version=$(cat "$DVM_DIR/aliases/$1")
+
   rm "$DVM_DIR/aliases/$1"
+
+  echo "Deleted alias $1."
+  echo "Restore it with 'dvm alias $1 $aliased_version'"
 }
 
 run_with_version() {
