@@ -287,7 +287,7 @@ get_version() {
   then
     version=$(cat "$DVM_DIR/aliases/$1")
 
-    if [ ! -f "$DVM_DIR/versions/$1/deno" ]
+    if [ ! -f "$DVM_DIR/versions/$version/deno" ]
     then
       version="$1"
     fi
@@ -312,6 +312,8 @@ use_version() {
     fi
 
     ln -s "$DVM_DIR/versions/$version/deno" "$DVM_BIN/deno"
+
+    echo "using deno $version now."
   else
     echo "deno $version is not installed."
     exit 1
