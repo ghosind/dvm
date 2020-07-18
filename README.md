@@ -2,6 +2,8 @@
 
 ![shellcheck](https://github.com/ghosind/dvm/workflows/shellcheck/badge.svg)
 
+English | [简体中文](./README-CN.md)
+
 Dvm is an nvm-like version manager for [Deno](https://deno.land/).
 
 ## Installation
@@ -22,7 +24,7 @@ Download/dvm $ ./install.sh
 
 ## Getting Start
 
-After installed dvm, you can use it to manage
+After installed dvm, you can use it to manage multiple version Deno environments.
 
 Use `dvm install <version>` command to download and install a specified version from the source.
 
