@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+_dvm_completion() {
+  local cur
+  local opts
+
+  COMPREPLY=()
+  cur="${COMP_WORDS[COMP_CWORD]}"
+  opts="install uninstall use run alias unalias current ls ls-remote list list-remote which clean help"
+
+  if [[ ${cur} == * ]]
+  then
+    # shellcheck disable=SC2207
+    COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+  fi
+}
+
+complete -F _dvm_completion dvm
