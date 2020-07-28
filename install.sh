@@ -30,6 +30,7 @@ export DVM_DIR=\"\$HOME/.dvm\"
 export DVM_BIN=\"\$DVM_DIR/bin\"
 export PATH=\"\$PATH:\$DVM_BIN\"
 [ -f \"\$DVM_DIR/dvm.sh\" ] && alias dvm=\"\$DVM_DIR/dvm.sh\"
+[ -f \"\$DVM_DIR/bash_completion\" ] && . \"\$DVM_DIR/bash_completion\"
 " >> "$rc_file"
 }
 
