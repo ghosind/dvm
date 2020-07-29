@@ -2,17 +2,27 @@
 
 _dvm_completion() {
   local cur
+  local prev
   local opts
 
   COMPREPLY=()
   cur="${COMP_WORDS[COMP_CWORD]}"
-  opts="install uninstall use run alias unalias current ls ls-remote list list-remote which clean help"
-
-  if [[ ${cur} == * ]]
+  prev="${COMP_WORDS[COMP_CWORD-1]}"
+  
+  if [ "$1" == "$prev" ]
   then
-    # shellcheck disable=SC2207
-    COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+    if [[ ${cur} == -* ]]
+    then
+      opts="--help --version -h"
+    elif [[ ${cur} == * ]]
+    then
+      opts="alias clean current help install list list-remote
+        ls ls-remote run unalias uninstall use which"
+    fi
   fi
+
+  # shellcheck disable=SC2207
+  COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
 }
 
 complete -F _dvm_completion dvm
