@@ -3,23 +3,34 @@
 _dvm_completion() {
   local cur
   local prev
-  local opts
 
   COMPREPLY=()
   cur="${COMP_WORDS[COMP_CWORD]}"
   prev="${COMP_WORDS[COMP_CWORD-1]}"
-  
-  if [ "$1" == "$prev" ]
-  then
+
+  case "$prev" in
+  use|uninstall|which)
+    if [ -d "$DVM_DIR/versions" ]
+    then
+      opts=$(ls "$DVM_DIR/versions")
+    fi
+    ;;
+  unalias)
+    if [ -d "$DVM_DIR/aliases" ]
+    then
+      opts=$(ls "$DVM_DIR/aliases")
+    fi
+    ;;
+  *)
     if [[ ${cur} == -* ]]
     then
       opts="--help --version -h"
-    elif [[ ${cur} == * ]]
-    then
+    else
       opts="alias clean current help install list list-remote
         ls ls-remote run unalias uninstall use which"
     fi
-  fi
+    ;;
+  esac
 
   # shellcheck disable=SC2207
   COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
