@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+if [ ! -x "$(command -v dvm)" ]
+then
+  return
+fi
+
 _dvm_completion() {
   local cur
   local prev
@@ -35,5 +40,11 @@ _dvm_completion() {
   # shellcheck disable=SC2207
   COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
 }
+
+if [ -n "$ZSH_NAME" ]
+then
+  autoload -U +X compinit && compinit
+  autoload -U +X bashcompinit && bashcompinit
+fi
 
 complete -F _dvm_completion dvm
