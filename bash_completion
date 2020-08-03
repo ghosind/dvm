@@ -12,7 +12,7 @@ _dvm_completion() {
   COMPREPLY=()
   cur="${COMP_WORDS[COMP_CWORD]}"
   prev="${COMP_WORDS[COMP_CWORD-1]}"
-
+  
   case "$prev" in
   use|uninstall|which)
     if [ -d "$DVM_DIR/versions" ]
@@ -26,7 +26,7 @@ _dvm_completion() {
       opts=$(ls "$DVM_DIR/aliases")
     fi
     ;;
-  dvm)
+  dvm|"$DVM_DIR/dvm.sh")
     if [[ ${cur} == -* ]]
     then
       opts="--help --version -h"
@@ -48,6 +48,7 @@ if [ -n "$ZSH_NAME" ]
 then
   autoload -U +X compinit && compinit
   autoload -U +X bashcompinit && bashcompinit
+  complete -F _dvm_completion "$DVM_DIR/dvm.sh"
+else 
+  complete -F _dvm_completion dvm
 fi
-
-complete -F _dvm_completion dvm
