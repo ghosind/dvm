@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-if [ ! -x "$(command -v dvm)" ]
+if ! type dvm &> /dev/null
 then
   return
 fi
@@ -26,7 +26,7 @@ _dvm_completion() {
       opts=$(ls "$DVM_DIR/aliases")
     fi
     ;;
-  *)
+  dvm)
     if [[ ${cur} == -* ]]
     then
       opts="--help --version -h"
@@ -34,6 +34,9 @@ _dvm_completion() {
       opts="alias clean current help install list list-remote
         ls ls-remote run unalias uninstall use which"
     fi
+    ;;
+  *)
+    opts=""
     ;;
   esac
 
