@@ -477,12 +477,6 @@ dvm() {
     ;;
   list-remote | ls-remote)
     # list all remote versions
-    if [ -z "$DVM_BIN" ] || [ ! -f "$DVM_BIN/deno" ]
-    then
-      echo "none"
-      exit 1
-    fi
-
     list_remote_versions
 
     ;;
