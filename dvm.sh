@@ -243,10 +243,15 @@ list_remote_versions() {
     num=$(echo "$tmp_versions" | wc -l)
     page=$((page + 1))
 
-    all_versions="$all_versions\n$tmp_versions"
+    if [ -n "$all_versions" ]
+    then
+      all_versions="$all_versions\n$tmp_versions"
+    else
+      all_versions="$tmp_versions"
+    fi
   done
 
-  echo -e "$all_versions"
+  echo -e "$all_versions" | sed 'x;1!H;$!d;x'
 }
 
 check_dvm_dir() {
