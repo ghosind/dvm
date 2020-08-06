@@ -38,7 +38,14 @@ get_latest_version() {
   local request_url
   local response
 
-  request_url="https://api.github.com/repos/ghosind/dvm/releases/latest"
+  case "$DVM_SOURCE" in
+  gitee)
+    request_url="https://gitee.com/api/v5/repos/ghosind/dvm/releases/latest"
+    ;;
+  github|*)
+    request_url="https://api.github.com/repos/ghosind/dvm/releases/latest"
+    ;;
+  esac
 
   if [ -x "$(command -v wget)" ]
   then
@@ -64,12 +71,14 @@ get_latest_version() {
 download_latest_version() {
   DVM_TMP_DIR=$(mktemp -d)
 
+  archive_url="https://github.com/ghosind/dvm/archive/$DVM_LATEST_VERSION.tar.gz"
+
   if [ -x "$(command -v wget)" ]
   then
-    wget "https://github.com/ghosind/dvm/archive/$DVM_LATEST_VERSION.tar.gz" \
+    wget "$archive_url" \
         -O "$DVM_TMP_DIR/dvm.tar.gz"
   else
-    curl -LJ "https://github.com/ghosind/dvm/archive/$DVM_LATEST_VERSION.tar.gz" \
+    curl -LJ "$archive_url" \
         -o "$DVM_TMP_DIR/dvm.tar.gz"
   fi
 
@@ -118,7 +127,14 @@ install_dvm() {
 
   add_nvm_into_rc_file
 
-  echo "DVM has been installed, please restart your terminal to apply changes."
+  echo "DVM has been installed, please restart your terminal or run \`source $rc_file\` to apply changes."
 }
+
+if [ "$1" = "--gitee" ]
+then
+  DVM_SOURCE="gitee"
+else
+  DVM_SOURCE="github"
+fi
 
 install_dvm

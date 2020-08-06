@@ -16,6 +16,12 @@ There are two ways to install dvm now:
 $ curl -o- https://raw.githubusercontent.com/ghosind/dvm/master/install.sh | bash
 ```
 
+For Chinese user, you can also install it from Gitee by the following command:
+
+```sh
+$ curl -o- https://gitee.com/ghosind/dvm/raw/master/install.sh | bash -s --gitee
+```
+
 2. Download and extract release zip, and execute `install.sh` script to install dvm:
 
 ```sh

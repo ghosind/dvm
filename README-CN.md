@@ -16,6 +16,16 @@ DVM提供了两种安装方式：
 $ curl -o- https://raw.githubusercontent.com/ghosind/dvm/master/install.sh | bash
 ```
 
+对于国内的用户，可使用DVM的Gitee镜像以提高下载速度：
+
+```sh
+$ curl -o- https://gitee.com/ghosind/dvm/raw/master/install.sh | bash
+# 为了提高速度也可指定从Gitee获取其它信息
+$ curl -o- https://gitee.com/ghosind/dvm/raw/master/install.sh | bash -s --gitee
+```
+
+当前暂时只支持从Gitee获取安装文件及最新版本信息，后续计划添加对国内安装及下载的优化。
+
 2. 下载release包，解压后运行`install.sh`脚本：
 
 ```sh
