@@ -17,7 +17,8 @@ _dvm_completion() {
   use|uninstall|which)
     if [ -d "$DVM_DIR/versions" ]
     then
-      opts=$(ls "$DVM_DIR/versions")
+      opts=$([ -d "$DVM_DIR/versions" ] && ls "$DVM_DIR/versions")
+      opts="$opts $([ -d "$DVM_DIR/aliases" ] && ls "$DVM_DIR/aliases")"
     fi
     ;;
   unalias)
