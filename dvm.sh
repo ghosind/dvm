@@ -411,6 +411,46 @@ locate_version() {
   fi
 }
 
+get_dvm_latest_version() {
+  local request_url
+  local field
+  local request
+  local response
+
+  DVM_SOURCE="gitee"
+
+  case "$DVM_SOURCE" in
+  gitee)
+    request_url="https://gitee.com/api/v5/repos/ghosind/dvm/releases/latest"
+    field="6"
+    ;;
+  github|*)
+    request_url="https://api.github.com/repos/ghosind/dvm/releases/latest"
+    field="4"
+    ;;
+  esac
+
+  if [ -x "$(command -v wget)" ]
+  then
+    request="wget -O- $request_url -nv"
+  elif [ -x "$(command -v curl)" ]
+  then
+    request="curl -s $request_url"
+  else
+    echo "wget or curl is required."
+    exit 1
+  fi
+
+  if ! response=$($request)
+  then
+    echo "failed to get the latest DVM version."
+    exit 1
+  fi
+
+  # shellcheck disable=SC2034
+  DVM_LATEST_VERSION=$(echo "$response" | grep tag_name | cut -d '"' -f $field)
+}
+
 print_help() {
   printf "
 Deno Version Manager
@@ -593,6 +633,15 @@ dvm() {
 
     locate_version "$version"
 
+    ;;
+  upgrade)
+    # TODO: update dvm itself
+    get_dvm_latest_version
+
+    if [ "$DVM_LATEST_VERSION" = "$DVM_VERSION" ]
+    then
+      echo "dvm is update to date."
+    fi
     ;;
   --version)
     # print dvm version
