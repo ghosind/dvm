@@ -71,34 +71,32 @@ get_latest_version() {
   DVM_LATEST_VERSION=$(echo "$response" | grep tag_name | cut -d '"' -f $field)
 }
 
-download_latest_version() {
-  DVM_TMP_DIR=$(mktemp -d)
+install_latest_version() {
+  local git_url
+  local cmd
 
-  archive_url="https://github.com/ghosind/dvm/archive/$DVM_LATEST_VERSION.tar.gz"
+  case "$DVM_SOURCE" in
+  gitee)
+    git_url="https://gitee.com/ghosind/dvm.git"
+    ;;
+  github|*)
+    git_url="https://github.com/ghosind/dvm.git"
+    ;;
+  esac
 
-  if [ -x "$(command -v wget)" ]
+  if [ ! -x "$(command -v git)" ]
   then
-    wget "$archive_url" \
-        -O "$DVM_TMP_DIR/dvm.tar.gz"
-  else
-    curl -LJ "$archive_url" \
-        -o "$DVM_TMP_DIR/dvm.tar.gz"
+    echo "git is require."
+    exit 1
   fi
 
-  # shellcheck disable=SC2181
-  if [ "$?" != "0" ]
+  cmd="git clone -b $DVM_LATEST_VERSION $git_url $DVM_DIR"
+
+  if ! ${cmd}
   then
     echo "failed to download DVM."
     exit 1
   fi
-}
-
-install_latest_version() {
-  local version
-  version=$(echo "$DVM_LATEST_VERSION" | cut -d "v" -f 2)
-
-  tar -xzvf "$DVM_TMP_DIR/dvm.tar.gz" -C "$DVM_TMP_DIR"
-  cp -R "$DVM_TMP_DIR/dvm-$version/"* "$DVM_DIR"
 }
 
 set_dvm_dir() {
@@ -110,10 +108,6 @@ set_dvm_dir() {
   fi
 }
 
-install_local_version() {
-  cp -R "$script_dir/"* "$DVM_DIR"
-}
-
 install_dvm() {
   set_dvm_dir
 
@@ -121,11 +115,11 @@ install_dvm() {
 
   if [ -f "$script_dir/dvm.sh" ]
   then
-    install_local_version
+    # Copy all files to DVM_DIR
+    cp -R "$script_dir/". "$DVM_DIR"
   else
     get_latest_version
     download_latest_version
-    install_latest_version
   fi
 
   add_nvm_into_rc_file
