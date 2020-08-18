@@ -8,17 +8,31 @@ Dvm is an nvm-like version manager for [Deno](https://deno.land/).
 
 ## Installation
 
-Install dvm by the following command:
+There are two ways to install DVM.
+
+1. Install dvm from network by the following command:
 
 ```sh
-$ curl -o- https://raw.githubusercontent.com/ghosind/dvm/master/install.sh | bash
+$ curl -o- "https://raw.githubusercontent.com/ghosind/dvm/master/install.sh" | bash
 ```
 
 For Chinese user, you can also install it from Gitee by the following command:
 
 ```sh
-$ curl -o- https://gitee.com/ghosind/dvm/raw/master/install.sh | bash -s --gitee
+$ curl -o- "https://gitee.com/ghosind/dvm/raw/master/install.sh" | bash -s --gitee
 ```
+
+2. Clone this project and execute `install.sh` script:
+
+```sh
+$ git clone "https://github.com/ghosind/dvm.git"
+# you can also clone it from gitee
+# git clone "https://gitee.com/ghosind/dvm.git"
+$ cd dvm
+$ ./install.sh
+```
+
+After installed dvm, please restart your terminal or use `source <your_rc_file>` to apply changes.
 
 ## Getting Start
 
@@ -78,22 +92,10 @@ Use `dvm run` command to run Deno on the specified version with arguments.
 $ dvm run v1.0.0 app.ts
 ```
 
-## Uninstalling dvm
-
-You can execute following command to uninstall dvm:
+Use `dvm upgrade` command to update dvm itself (Since v0.3.0).
 
 ```sh
-rm -rf "$DVM_DIR"
-```
-
-Edit shell config file (like `.bashrc` or `.zshrc`), and remove the following lines:
-
-```sh
-# Deno Version Manager
-export DVM_DIR="$HOME/.dvm"
-export DVM_BIN="$DVM_DIR/bin"
-export PATH="$PATH:$DVM_BIN"
-[ -f "$DVM_DIR/dvm.sh" ] && alias dvm="$DVM_DIR/dvm.sh"
+$ dvm upgrade
 ```
 
 ## Commands
@@ -119,6 +121,25 @@ DVM supported the following commands:
 | | `dvm which current` | Display the path of the current version. |
 | | `dvm which <version>` | Display the path of specified version. |
 | `clean` | `dvm clean` | Remove all downloaded packages. |
+| `upgrade` | `dvm upgrade` | Update dvm itself. |
+
+## Uninstalling dvm
+
+You can execute following command to uninstall dvm:
+
+```sh
+rm -rf "$DVM_DIR"
+```
+
+Edit shell config file (like `.bashrc` or `.zshrc`), and remove the following lines:
+
+```sh
+# Deno Version Manager
+export DVM_DIR="$HOME/.dvm"
+export DVM_BIN="$DVM_DIR/bin"
+export PATH="$PATH:$DVM_BIN"
+[ -f "$DVM_DIR/dvm.sh" ] && alias dvm="$DVM_DIR/dvm.sh"
+```
 
 ## Contribution
 

@@ -8,7 +8,9 @@ DVM是一个类似于[NVM](https://github.com/nvm-sh/nvm)的[Deno](https://deno.
 
 ## 安装
 
-运行下列命令安装DVM：
+我们提供了以下两种方式以安装DVM：
+
+1. 运行下列命令从网络安装DVM：
 
 ```sh
 $ curl -o- https://raw.githubusercontent.com/ghosind/dvm/master/install.sh | bash
@@ -19,6 +21,18 @@ $ curl -o- https://raw.githubusercontent.com/ghosind/dvm/master/install.sh | bas
 ```sh
 $ curl -o- https://gitee.com/ghosind/dvm/raw/master/install.sh | bash -s --gitee
 ```
+
+2. Clone远程git仓库至本地，并运行`install.sh`脚本：
+
+```sh
+$ git clone "https://github.com/ghosind/dvm.git"
+# 同样，可以从我们的gitee项目上clone
+# $ git clone "https://gitee.com/ghosind/dvm.git"
+$ cd dvm
+$ ./install.sh
+```
+
+在完成DVM的安装后，请重启终端或运行`source <Shell_配置文件>`以应用更改，安装程序将会提醒具体的操作步骤。
 
 ## DVM入门
 
@@ -71,26 +85,6 @@ $ dvm ls-remote
 $ dvm run v1.0.0 app.ts
 ```
 
-## 如何卸载DVM
-
-DVM所有的文件都保存在`$DVM_DIR`变量指定的目录下，若需要卸载DVM，只需删除`$DVM_DIR`指定的目录即可。
-
-```sh
-rm -rf "$DVM_DIR"
-```
-
-### 移除环境配置信息（可选操作）
-
-除文件目录外，DVM将配置信息写入了Shell环境配置文件中（如`.bashrc`或`.zshrc`，根据具体使用的Shell种类决定），您可编辑对应的文件删除下列几行代码：
-
-```sh
-# Deno Version Manager
-export DVM_DIR="$HOME/.dvm"
-export DVM_BIN="$DVM_DIR/bin"
-export PATH="$PATH:$DVM_BIN"
-[ -f "$DVM_DIR/dvm.sh" ] && alias dvm="$DVM_DIR/dvm.sh"
-```
-
 ## DVM命令
 
 DVM支持的命令包括有：
@@ -114,6 +108,26 @@ DVM支持的命令包括有：
 | | `dvm which current` | 显示当前使用的版本Deno安装的目录 |
 | | `dvm which <version>` | 显示指定版本Deno安装的目录 |
 | `clean` | `dvm clean` | 清除下载缓存 |
+
+## 如何卸载DVM
+
+DVM所有的文件都保存在`$DVM_DIR`变量指定的目录下，若需要卸载DVM，只需删除`$DVM_DIR`指定的目录即可。
+
+```sh
+rm -rf "$DVM_DIR"
+```
+
+### 移除环境配置信息（可选操作）
+
+除文件目录外，DVM将配置信息写入了Shell环境配置文件中（如`.bashrc`或`.zshrc`，根据具体使用的Shell种类决定），您可编辑对应的文件删除下列几行代码：
+
+```sh
+# Deno Version Manager
+export DVM_DIR="$HOME/.dvm"
+export DVM_BIN="$DVM_DIR/bin"
+export PATH="$PATH:$DVM_BIN"
+[ -f "$DVM_DIR/dvm.sh" ] && alias dvm="$DVM_DIR/dvm.sh"
+```
 
 ## 参与项目
 
