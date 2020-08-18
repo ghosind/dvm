@@ -451,6 +451,15 @@ get_dvm_latest_version() {
   DVM_LATEST_VERSION=$(echo "$response" | grep tag_name | cut -d '"' -f $field)
 }
 
+update_dvm() {
+  cd "$DVM_DIR"
+
+  # reset changes if exists
+  git reset --hard HEAD
+  git fetch
+  git checkout "$DVM_LATEST_VERSION"
+}
+
 print_help() {
   printf "
 Deno Version Manager
@@ -635,13 +644,15 @@ dvm() {
 
     ;;
   upgrade)
-    # TODO: update dvm itself
     get_dvm_latest_version
 
     if [ "$DVM_LATEST_VERSION" = "$DVM_VERSION" ]
     then
       echo "dvm is update to date."
     fi
+
+    update_dvm
+
     ;;
   --version)
     # print dvm version

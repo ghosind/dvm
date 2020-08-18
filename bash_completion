@@ -12,7 +12,7 @@ _dvm_completion() {
   COMPREPLY=()
   cur="${COMP_WORDS[COMP_CWORD]}"
   prev="${COMP_WORDS[COMP_CWORD-1]}"
-  
+
   case "$prev" in
   use|uninstall|which)
     if [ -d "$DVM_DIR/versions" ]
@@ -33,7 +33,7 @@ _dvm_completion() {
       opts="--help --version -h"
     else
       opts="alias clean current help install list list-remote
-        ls ls-remote run unalias uninstall use which"
+        ls ls-remote run upgrade unalias uninstall use which"
     fi
     ;;
   *)
@@ -50,6 +50,6 @@ then
   autoload -U +X compinit && compinit
   autoload -U +X bashcompinit && bashcompinit
   complete -F _dvm_completion "$DVM_DIR/dvm.sh"
-else 
+else
   complete -F _dvm_completion dvm
 fi
