@@ -100,11 +100,12 @@ install_latest_version() {
 }
 
 set_dvm_dir() {
-  DVM_DIR="$HOME/.dvm"
-
   if [ ! -d "$DVM_DIR" ]
   then
     mkdir -p "$DVM_DIR"
+  else
+    echo "directory $DVM_DIR is existed."
+    exit 1
   fi
 }
 
@@ -127,11 +128,55 @@ install_dvm() {
   echo "DVM has been installed, please restart your terminal or run \`source $rc_file\` to apply changes."
 }
 
-if [ "$1" = "--gitee" ]
-then
-  DVM_SOURCE="gitee"
-else
+set_default() {
+  DVM_DIR="$HOME/.dvm"
   DVM_SOURCE="github"
-fi
+}
+
+print_help() {
+  printf "DVM install script
+
+Usage: install.sh [-r <github|gitee>] [-d <dvm_dir>]
+
+Options:
+  -r <github|gitee>   Set the repository server, default github.
+  -d dir              Set the dvm install directory, default ~/.dvm.
+  -h                  Print help.
+
+Example:
+  install.sh -r github -d ~/.dvm
+"
+}
+
+set_default
+
+while getopts "hr:d:" opt
+do
+  case "$opt" in
+  h)
+    print_help
+    exit 0
+    ;;
+  r)
+    if [ "$OPTARG" != "github" ] && [ "$OPTARG" != "gitee" ]
+    then
+      print_help
+      exit 1
+    fi
+    DVM_SOURCE="$OPTARG"
+    ;;
+  d)
+    if [ -z "$OPTARG" ]
+    then
+      print_help
+      exit 1
+    fi
+
+    DVM_DIR="$OPTARG"
+    ;;
+  *)
+    ;;
+  esac
+done
 
 install_dvm
