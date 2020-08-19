@@ -19,7 +19,7 @@ $ curl -o- https://raw.githubusercontent.com/ghosind/dvm/master/install.sh | bas
 对于国内的用户，可使用DVM的Gitee镜像以提高下载速度：
 
 ```sh
-$ curl -o- https://gitee.com/ghosind/dvm/raw/master/install.sh | bash -s --gitee
+$ curl -o- https://gitee.com/ghosind/dvm/raw/master/install.sh | bash -s -r gitee
 ```
 
 2. Clone远程git仓库至本地，并运行`install.sh`脚本：
@@ -33,6 +33,13 @@ $ ./install.sh
 ```
 
 在完成DVM的安装后，请重启终端或运行`source <Shell_配置文件>`以应用更改，安装程序将会提醒具体的操作步骤。
+
+默认情况下，DVM将安装在`~/.dvm`目录下，可使用`-d <dir>`参数指定一个不存在的目录作为DVM的安装目录。
+
+```sh
+$ curl -o- "https://raw.githubusercontent.com/ghosind/dvm/master/install.sh" | bash -s -d ~/deno/dvm
+$ ./install.sh ~/deno/dvm
+```
 
 ## DVM入门
 
@@ -85,6 +92,12 @@ $ dvm ls-remote
 $ dvm run v1.0.0 app.ts
 ```
 
+通过`dvm upgrade`命令更新DVM本身（需要v0.3.0及以上版本）：
+
+```sh
+$ dvm upgrade
+```
+
 ## DVM命令
 
 DVM支持的命令包括有：
@@ -108,6 +121,7 @@ DVM支持的命令包括有：
 | | `dvm which current` | 显示当前使用的版本Deno安装的目录 |
 | | `dvm which <version>` | 显示指定版本Deno安装的目录 |
 | `clean` | `dvm clean` | 清除下载缓存 |
+| `upgrade` | `dvm upgrade` | 更新DVM |
 
 ## 如何卸载DVM
 

@@ -19,7 +19,7 @@ $ curl -o- "https://raw.githubusercontent.com/ghosind/dvm/master/install.sh" | b
 For Chinese user, you can also install it from Gitee by the following command:
 
 ```sh
-$ curl -o- "https://gitee.com/ghosind/dvm/raw/master/install.sh" | bash -s --gitee
+$ curl -o- "https://gitee.com/ghosind/dvm/raw/master/install.sh" | bash -s -r gitee
 ```
 
 2. Clone this project and execute `install.sh` script:
@@ -33,6 +33,13 @@ $ ./install.sh
 ```
 
 After installed dvm, please restart your terminal or use `source <your_rc_file>` to apply changes.
+
+The default install location is `~/.dvm`, you can specify an inexistent directory as the install location.
+
+```sh
+$ curl -o- "https://raw.githubusercontent.com/ghosind/dvm/master/install.sh" | bash -s -d ~/deno/dvm
+$ ./install.sh ~/deno/dvm
+```
 
 ## Getting Start
 
