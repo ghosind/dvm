@@ -84,6 +84,8 @@ download_file() {
 }
 
 extract_file() {
+  local target_dir
+
   target_dir="$DVM_DIR/versions/$1"
 
   if [ ! -d "$target_dir" ]
@@ -196,7 +198,7 @@ list_local_versions() {
         continue
       fi
 
-      if [ "$dir" = "$DVM_CURRENT_VERSION" ]
+      if [ "$dir" = "$DVM_DENO_VERSION" ]
       then
         echo "-> $dir"
       else
@@ -330,11 +332,12 @@ use_version() {
 
 get_current_version() {
   local current_version
+
   if [ -f "$DVM_BIN/deno" ]
   then
     if current_version=$("$DVM_BIN/deno" --version | grep deno | cut -d " " -f 2)
     then
-      DVM_CURRENT_VERSION="v$current_version"
+      DVM_DENO_VERSION="v$current_version"
     fi
   fi
 }
@@ -398,7 +401,7 @@ locate_version() {
   if [ "$1" = "current" ]
   then
     get_current_version
-    which_version="$DVM_CURRENT_VERSION"
+    which_version="$DVM_DENO_VERSION"
   else
     which_version="$1"
   fi
@@ -452,7 +455,7 @@ get_dvm_latest_version() {
 }
 
 update_dvm() {
-  cd "$DVM_DIR"
+  cd "$DVM_DIR" 2>/dev/null || echo "Failed to update dvm." && exit 1
 
   # reset changes if exists
   git reset --hard HEAD
@@ -541,9 +544,9 @@ dvm() {
     # get the current version
     get_current_version
 
-    if [ -n "$DVM_CURRENT_VERSION" ]
+    if [ -n "$DVM_DENO_VERSION" ]
     then
-      echo "$DVM_CURRENT_VERSION"
+      echo "$DVM_DENO_VERSION"
     else
       echo "none"
     fi
@@ -649,6 +652,7 @@ dvm() {
     if [ "$DVM_LATEST_VERSION" = "$DVM_VERSION" ]
     then
       echo "dvm is update to date."
+      exit 0
     fi
 
     update_dvm
