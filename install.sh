@@ -1,23 +1,27 @@
 #!/usr/bin/env bash
 
 get_rc_file() {
+  local shell
+
   shell=${SHELL##*/}
 
   if [ "$shell" == "bash" ]
   then
-    rc_file="$HOME/.bashrc"
+    DVM_RC_FILE="$HOME/.bashrc"
   elif [ "$shell" == "zsh" ]
   then
-    rc_file="$HOME/.zshrc"
+    DVM_RC_FILE="$HOME/.zshrc"
   else
-    rc_file="$HOME/.profile"
+    DVM_RC_FILE="$HOME/.profile"
   fi
 }
 
 add_nvm_into_rc_file() {
+  local defined
+
   get_rc_file
 
-  defined=$(grep DVM_DIR < "$rc_file")
+  defined=$(grep DVM_DIR < "$DVM_RC_FILE")
 
   if [ -n "$defined" ]
   then
@@ -31,7 +35,7 @@ export DVM_BIN=\"\$DVM_DIR/bin\"
 export PATH=\"\$PATH:\$DVM_BIN\"
 [ -f \"\$DVM_DIR/dvm.sh\" ] && alias dvm=\"\$DVM_DIR/dvm.sh\"
 [ -f \"\$DVM_DIR/bash_completion\" ] && . \"\$DVM_DIR/bash_completion\"
-" >> "$rc_file"
+" >> "$DVM_RC_FILE"
 }
 
 get_latest_version() {
@@ -112,12 +116,12 @@ set_dvm_dir() {
 install_dvm() {
   set_dvm_dir
 
-  script_dir=${0%/*}
+  DVM_SCRIPT_DIR=${0%/*}
 
-  if [ -f "$script_dir/dvm.sh" ]
+  if [ -f "$DVM_SCRIPT_DIR/dvm.sh" ] && [ -d "$DVM_SCRIPT_DIR/.git" ]
   then
     # Copy all files to DVM_DIR
-    cp -R "$script_dir/". "$DVM_DIR"
+    cp -R "$DVM_SCRIPT_DIR/". "$DVM_DIR"
   else
     get_latest_version
     download_latest_version
