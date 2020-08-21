@@ -40,6 +40,7 @@ export PATH=\"\$PATH:\$DVM_BIN\"
 
 get_latest_version() {
   local request_url
+  local request
   local response
   local field
 
@@ -56,17 +57,16 @@ get_latest_version() {
 
   if [ -x "$(command -v wget)" ]
   then
-    response=$(wget -O- "$request_url" -nv)
+    request="wget -O- $request_url -nv"
   elif [ -x "$(command -v curl)" ]
   then
-    response=$(curl -s "$request_url")
+    request="curl -s $request_url"
   else
     echo "wget or curl is required."
     exit 1
   fi
 
-  # shellcheck disable=SC2181
-  if [ "$?" != "0" ]
+  if ! response=$($request)
   then
     echo "failed to get the latest DVM version."
     exit 1
