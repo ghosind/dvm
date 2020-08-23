@@ -1,29 +1,27 @@
 #!/usr/bin/env bash
 
 get_rc_file() {
-  local shell
-
-  shell=${SHELL##*/}
-
-  if [ "$shell" == "bash" ]
-  then
+  case ${SHELL##*/} in
+  bash)
     DVM_RC_FILE="$HOME/.bashrc"
-  elif [ "$shell" == "zsh" ]
-  then
+    ;;
+  zsh)
     DVM_RC_FILE="$HOME/.zshrc"
-  else
+    ;;
+  *)
     DVM_RC_FILE="$HOME/.profile"
-  fi
+    ;;
+  esac
 }
 
 add_nvm_into_rc_file() {
-  local defined
+  local is_dvm_defined
 
   get_rc_file
 
-  defined=$(grep DVM_DIR < "$DVM_RC_FILE")
+  is_dvm_defined=$(grep DVM_DIR < "$DVM_RC_FILE")
 
-  if [ -n "$defined" ]
+  if [ -n "$is_dvm_defined" ]
   then
     return
   fi
@@ -118,7 +116,9 @@ install_dvm() {
 
   DVM_SCRIPT_DIR=${0%/*}
 
-  if [ -f "$DVM_SCRIPT_DIR/dvm.sh" ] && [ -d "$DVM_SCRIPT_DIR/.git" ]
+  if [ -f "$DVM_SCRIPT_DIR/dvm.sh" ] &&
+    [ -d "$DVM_SCRIPT_DIR/.git" ] &&
+    [ -f "$DVM_SCRIPT_DIR/bash_completion" ]
   then
     # Copy all files to DVM_DIR
     cp -R "$DVM_SCRIPT_DIR/". "$DVM_DIR"
