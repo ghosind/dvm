@@ -6,6 +6,14 @@
 
 DVM是一个类似于[NVM](https://github.com/nvm-sh/nvm)的[Deno](https://deno.land/)版本管理工具。
 
+- [安装](#安装)
+- [DVM入门](#DVM入门)
+- [DVM命令](#DVM命令)
+- [如何卸载DVM](#如何卸载DVM)
+    - [移除环境配置信息（可选操作）](#移除环境配置信息（可选操作）)
+- [参与项目](#参与项目)
+- [许可](#许可)
+
 ## 安装
 
 我们提供了以下两种方式以安装DVM：
@@ -141,6 +149,7 @@ export DVM_DIR="$HOME/.dvm"
 export DVM_BIN="$DVM_DIR/bin"
 export PATH="$PATH:$DVM_BIN"
 [ -f "$DVM_DIR/dvm.sh" ] && alias dvm="$DVM_DIR/dvm.sh"
+[ -f "$DVM_DIR/bash_completion" ] && . "$DVM_DIR/bash_completion"
 ```
 
 ## 参与项目
@@ -150,6 +159,8 @@ export PATH="$PATH:$DVM_BIN"
 3. 上传对应的修改。 (`git commit -m 'Add some features'`)
 4. 上传至远程仓库。 (`git push origin features/someFeatures`)
 5. 创建Pull Request。
+
+请在提交PR前确保你的修改能通过Shellcheck的检查。
 
 ## 许可
 

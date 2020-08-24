@@ -6,6 +6,13 @@ English | [简体中文](./README-CN.md)
 
 Dvm is an nvm-like version manager for [Deno](https://deno.land/).
 
+- [Installation](#installation)
+- [Getting Start](#getting-start)
+- [Commands](#commands)
+- [Uninstalling DVM](#uninstalling-dvm)
+- [Contribution](#contribution)
+- [License](#license)
+
 ## Installation
 
 There are two ways to install DVM.
@@ -130,7 +137,7 @@ DVM supported the following commands:
 | `clean` | `dvm clean` | Remove all downloaded packages. |
 | `upgrade` | `dvm upgrade` | Update dvm itself. |
 
-## Uninstalling dvm
+## Uninstalling DVM
 
 You can execute following command to uninstall dvm:
 
@@ -146,15 +153,19 @@ export DVM_DIR="$HOME/.dvm"
 export DVM_BIN="$DVM_DIR/bin"
 export PATH="$PATH:$DVM_BIN"
 [ -f "$DVM_DIR/dvm.sh" ] && alias dvm="$DVM_DIR/dvm.sh"
+[ -f "$DVM_DIR/bash_completion" ] && . "$DVM_DIR/bash_completion"
 ```
 
 ## Contribution
 
 1. Fork dvm project. ([https://github.com/ghosind/dvm](https://github.com/ghosind/dvm))
-2. Create your Branch. (`git checkout -b features/someFeatures`)
-3. Commit your Changes. (`git commit -m 'Add some features'`)
-4. Push to the Branch. (`git push origin features/someFeatures`)
+2. Create your branch. (`git checkout -b features/someFeatures`)
+3. Make your changes.
+4. Commit your changes. (`git commit -m 'Add some features'`)
+4. Push to the branch. (`git push origin features/someFeatures`)
 5. Create a new Pull Request.
+
+Please make sure your commits could pass the shellcheck before creating pull request.
 
 ## License
 
