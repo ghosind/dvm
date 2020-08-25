@@ -222,6 +222,7 @@ list_remote_versions() {
   local num
   local tmp_versions
   local response
+  local cmd
 
   page=1
   size=100
@@ -232,17 +233,16 @@ list_remote_versions() {
   do
     if [ -x "$(command -v wget)" ]
     then
-      response=$(wget -O- "$releases_url&page=$page" -nv)
+      cmd="wget -O- $releases_url&page=$page -nv"
     elif [ -x "$(command -v curl)" ]
     then
-      response=$(curl -s "$releases_url&page=$page")
+      cmd="curl -s $releases_url&page=$page"
     else
       echo "wget or curl is required."
       exit 1
     fi
 
-    # shellcheck disable=SC2181
-    if [ "$?" != "0" ]
+    if ! response=$($cmd)
     then
       echo "failed to list remote versions"
       exit 1
@@ -277,22 +277,17 @@ check_dvm_dir() {
 }
 
 clean_download_cache() {
-  # shellcheck disable=SC2012
-  ls "$DVM_DIR/download" | while read -r dir
+  for path in "$DVM_DIR/download"/*
   do
-    [ -f "$DVM_DIR/download/$dir/deno-downloading.zip" ] && \
-      rm "$DVM_DIR/download/$dir/deno-downloading.zip"
+    [ -f "$path/deno-downloading.zip" ] && rm "$path/deno-downloading.zip"
 
-    [ -f "$DVM_DIR/download/$dir/deno-downloading.gz" ] && \
-      rm "$DVM_DIR/download/$dir/deno-downloading.gz"
+    [ -f "$path/deno-downloading.gz" ] && rm "$path/deno-downloading.gz"
 
-    [ -f "$DVM_DIR/download/$dir/deno.zip" ] && \
-      rm "$DVM_DIR/download/$dir/deno.zip"
+    [ -f "$path/deno.zip" ] && rm "$path/deno.zip"
 
-    [ -f "$DVM_DIR/download/$dir/deno.gz" ] && \
-      rm "$DVM_DIR/download/$dir/deno.gz"
+    [ -f "$path/deno.gz" ] && rm "$path/deno.gz"
 
-    rmdir "$DVM_DIR/download/$dir"
+    rmdir "$path"
   done
 }
 
@@ -454,7 +449,6 @@ get_dvm_latest_version() {
     exit 1
   fi
 
-  # shellcheck disable=SC2034
   DVM_LATEST_VERSION=$(echo "$response" | grep tag_name | cut -d '"' -f $field)
 }
 
