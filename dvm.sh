@@ -171,38 +171,42 @@ list_aliases() {
     return
   fi
 
-  # shellcheck disable=SC2012
-  ls "$DVM_DIR/aliases" | while read -r name
+  for path in "$DVM_DIR/aliases"/*
   do
-    aliased_version=$(cat "$DVM_DIR/aliases/$name")
+    alias_name=${path##*/}
+    aliased_version=$(cat "$path")
 
-    if [ -z "$aliased_version" ] || [ ! -f "$DVM_DIR/versions/$aliased_version/deno" ]
+    if [ -z "$aliased_version" ] ||
+      [ ! -f "$DVM_DIR/versions/$aliased_version/deno" ]
     then
-      echo "$name -> N/A"
+      echo "$alias_name -> N/A"
     else
-      echo "$name -> $aliased_version"
+      echo "$alias_name -> $aliased_version"
     fi
   done
 }
 
 list_local_versions() {
+  local version
+
   get_current_version
 
   if [ -d "$DVM_DIR/versions" ]
   then
-    # shellcheck disable=SC2012
-    ls "$DVM_DIR/versions" | while read -r dir
+    for dir in "$DVM_DIR/versions"/*
     do
-      if [ ! -f "$DVM_DIR/versions/$dir/deno" ]
+      if [ ! -f "$dir/deno" ]
       then
         continue
       fi
 
-      if [ "$dir" = "$DVM_DENO_VERSION" ]
+      version=${dir##*/}
+
+      if [ "$version" = "$DVM_DENO_VERSION" ]
       then
-        echo "-> $dir"
+        echo "-> $version"
       else
-        echo "   $dir"
+        echo "   $version"
       fi
     done
   fi
