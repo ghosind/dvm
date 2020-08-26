@@ -14,11 +14,14 @@ get_package_data() {
   fi
 
   local min_version
+  local target_version
+
+  target_version="$1"
 
   DVM_TARGET_OS=$(uname -s)
   min_version="v0.36.0"
 
-  if compare_version "$1" "$min_version"
+  if compare_version "$target_version" "$min_version"
   then
     DVM_TARGET_TYPE="gz"
     DVM_FILE_TYPE="gzip compressed data"
@@ -47,38 +50,43 @@ get_package_data() {
 }
 
 download_file() {
-  if [ ! -d "$DVM_DIR/download/$1" ]
+  local cmd
+  local version
+
+  version="$1"
+
+  if [ ! -d "$DVM_DIR/download/$version" ]
   then
-    mkdir -p "$DVM_DIR/download/$1"
+    mkdir -p "$DVM_DIR/download/$version"
   fi
 
   if [ -x "$(command -v wget)" ]
   then
-    wget "https://github.com/denoland/deno/releases/download/$1/$DVM_TARGET_NAME" \
-        -O "$DVM_DIR/download/$1/deno-downloading.$DVM_TARGET_TYPE"
+    cmd="wget https://github.com/denoland/deno/releases/download/$version/$DVM_TARGET_NAME \
+        -O $DVM_DIR/download/$version/deno-downloading.$DVM_TARGET_TYPE"
   elif [ -x "$(command -v curl)" ]
   then
-    curl -LJ "https://github.com/denoland/deno/releases/download/$1/$DVM_TARGET_NAME" \
-        -o "$DVM_DIR/download/$1/deno-downloading.$DVM_TARGET_TYPE"
+    cmd="curl -LJ https://github.com/denoland/deno/releases/download/$version/$DVM_TARGET_NAME \
+        -o $DVM_DIR/download/$version/deno-downloading.$DVM_TARGET_TYPE"
   else
     echo "wget or curl is required."
     exit 1
   fi
 
-  if [ ! -x "$?" ]
+  if ! ${cmd}
   then
     local file_type
-    file_type=$(file "$DVM_DIR/download/$1/deno-downloading.$DVM_TARGET_TYPE")
+    file_type=$(file "$DVM_DIR/download/$version/deno-downloading.$DVM_TARGET_TYPE")
 
     if [[ $file_type == *"$DVM_FILE_TYPE"* ]]
     then
-      mv "$DVM_DIR/download/$1/deno-downloading.$DVM_TARGET_TYPE" \
-        "$DVM_DIR/download/$1/deno.$DVM_TARGET_TYPE"
+      mv "$DVM_DIR/download/$version/deno-downloading.$DVM_TARGET_TYPE" \
+        "$DVM_DIR/download/$version/deno.$DVM_TARGET_TYPE"
       return
     fi
   fi
 
-  rm "$DVM_DIR/download/$1/deno-downloading.$DVM_TARGET_TYPE"
+  rm "$DVM_DIR/download/$version/deno-downloading.$DVM_TARGET_TYPE"
   echo "Failed to download."
   exit 1
 }
@@ -123,22 +131,26 @@ extract_file() {
 }
 
 install_version() {
-  if [ -f "$DVM_DIR/versions/$1/deno" ]
+  local version
+
+  version="$1"
+
+  if [ -f "$DVM_DIR/versions/$version/deno" ]
   then
-    echo "deno $1 has been installed."
+    echo "deno $version has been installed."
     exit 1
   fi
 
-  get_package_data "$1"
+  get_package_data "$version"
 
-  if [ ! -f "$DVM_DIR/download/$1/deno.$DVM_TARGET_TYPE" ]
+  if [ ! -f "$DVM_DIR/download/$version/deno.$DVM_TARGET_TYPE" ]
   then
-    download_file "$1"
+    download_file "$version"
   fi
 
-  extract_file "$1"
+  extract_file "$version"
 
-  echo "deno $1 has installed."
+  echo "deno $version has installed."
 }
 
 uninstall_version() {
@@ -349,36 +361,45 @@ check_alias_dir() {
 }
 
 set_alias() {
+  local alias_name
+  local version
+
   check_alias_dir
 
-  if [ ! -f "$DVM_DIR/versions/$2/deno" ]
+  alias_name="$1"
+  version="$2"
+
+  if [ ! -f "$DVM_DIR/versions/$version/deno" ]
   then
-    echo "deno $2 is not installed."
+    echo "deno $version is not installed."
     exit 1
   fi
 
-  echo "$2" >> "$DVM_DIR/aliases/$1"
+  echo "$version" >> "$DVM_DIR/aliases/$alias_name"
 
-  echo "$1 -> $2"
+  echo "$alias_name -> $version"
 }
 
 rm_alias() {
+  local alias_name
   local aliased_version
 
   check_alias_dir
 
-  if [ ! -f "$DVM_DIR/aliases/$1" ]
+  alias_name="$1"
+
+  if [ ! -f "$DVM_DIR/aliases/$alias_name" ]
   then
-    echo "Alias $1 does not exist."
+    echo "Alias $alias_name does not exist."
     exit 1
   fi
 
-  aliased_version=$(cat "$DVM_DIR/aliases/$1")
+  aliased_version=$(cat "$DVM_DIR/aliases/$alias_name")
 
-  rm "$DVM_DIR/aliases/$1"
+  rm "$DVM_DIR/aliases/$alias_name"
 
-  echo "Deleted alias $1."
-  echo "Restore it with 'dvm alias $1 $aliased_version'"
+  echo "Deleted alias $alias_name."
+  echo "Restore it with 'dvm alias $alias_name $aliased_version'"
 }
 
 run_with_version() {
@@ -396,20 +417,24 @@ run_with_version() {
 }
 
 locate_version() {
-  local which_version
-  if [ "$1" = "current" ]
+  local target_version
+  local version_or_name
+
+  version_or_name="$1"
+
+  if [ "$version_or_name" = "current" ]
   then
     get_current_version
-    which_version="$DVM_DENO_VERSION"
+    target_version="$DVM_DENO_VERSION"
   else
-    which_version="$1"
+    target_version="$version_or_name"
   fi
 
-  if [ -f "$DVM_DIR/versions/$which_version/deno" ]
+  if [ -f "$DVM_DIR/versions/$target_version/deno" ]
   then
-    echo "$DVM_DIR/versions/$which_version/deno"
+    echo "$DVM_DIR/versions/$target_version/deno"
   else
-    echo "deno $which_version is not installed."
+    echo "deno $target_version is not installed."
   fi
 }
 
