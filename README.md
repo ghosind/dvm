@@ -1,6 +1,7 @@
 # DVM - Deno Version Manager
 
 ![shellcheck](https://github.com/ghosind/dvm/workflows/shellcheck/badge.svg)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/e11bedd87a194dd6a67140ec447ab51f)](https://www.codacy.com/manual/ghosind/dvm?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=ghosind/dvm&amp;utm_campaign=Badge_Grade)
 
 English | [简体中文](./README-CN.md)
 
@@ -162,8 +163,8 @@ export PATH="$PATH:$DVM_BIN"
 2. Create your branch. (`git checkout -b features/someFeatures`)
 3. Make your changes.
 4. Commit your changes. (`git commit -m 'Add some features'`)
-4. Push to the branch. (`git push origin features/someFeatures`)
-5. Create a new Pull Request.
+5. Push to the branch. (`git push origin features/someFeatures`)
+6. Create a new Pull Request.
 
 Please make sure your commits could pass the shellcheck before creating pull request.
 

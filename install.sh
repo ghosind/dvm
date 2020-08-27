@@ -129,7 +129,7 @@ install_dvm() {
 
   add_nvm_into_rc_file
 
-  echo "DVM has been installed, please restart your terminal or run \`source $rc_file\` to apply changes."
+  echo "DVM has been installed, please restart your terminal or run \`source $DVM_RC_FILE\` to apply changes."
 }
 
 set_default() {
