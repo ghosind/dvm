@@ -1,6 +1,7 @@
 # DVM - Deno Version Manager
 
 ![shellcheck](https://github.com/ghosind/dvm/workflows/shellcheck/badge.svg)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/3842faca6f2343069d8bf7c558b364fb)](https://app.codacy.com/manual/ghosind/dvm?utm_source=github.com&utm_medium=referral&utm_content=ghosind/dvm&utm_campaign=Badge_Grade_Settings)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/e11bedd87a194dd6a67140ec447ab51f)](https://www.codacy.com/manual/ghosind/dvm?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=ghosind/dvm&amp;utm_campaign=Badge_Grade)
 
 English | [简体中文](./README-CN.md)
