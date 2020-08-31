@@ -73,7 +73,7 @@ download_file() {
     exit 1
   fi
 
-  if ! ${cmd}
+  if $cmd
   then
     local file_type
     file_type=$(file "$DVM_DIR/download/$version/deno-downloading.$DVM_TARGET_TYPE")
@@ -86,8 +86,12 @@ download_file() {
     fi
   fi
 
-  rm "$DVM_DIR/download/$version/deno-downloading.$DVM_TARGET_TYPE"
-  echo "Failed to download."
+  if [ -f "$DVM_DIR/download/$version/deno-downloading.$DVM_TARGET_TYPE" ]
+  then
+    rm "$DVM_DIR/download/$version/deno-downloading.$DVM_TARGET_TYPE"
+  fi
+
+  echo "Failed to download deno $version."
   exit 1
 }
 
