@@ -185,6 +185,11 @@ list_aliases() {
 
   for path in "$DVM_DIR/aliases"/*
   do
+    if [ ! -f "$path" ]
+    then
+      continue;
+    fi
+
     alias_name=${path##*/}
     aliased_version=$(cat "$path")
 
@@ -375,7 +380,7 @@ set_alias() {
     exit 1
   fi
 
-  echo "$version" >> "$DVM_DIR/aliases/$alias_name"
+  echo "$version" > "$DVM_DIR/aliases/$alias_name"
 
   echo "$alias_name -> $version"
 }
@@ -588,7 +593,7 @@ dvm() {
     then
       version=$(cat .dvmrc)
     else
-      echo "Must specify target version or alias name."
+      echo "no .dvmrc file found"
       print_help
       exit 1
     fi
