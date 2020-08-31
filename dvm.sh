@@ -296,6 +296,11 @@ check_dvm_dir() {
 clean_download_cache() {
   for path in "$DVM_DIR/download"/*
   do
+    if [ ! -d "$path" ]
+    then
+      continue
+    fi
+
     [ -f "$path/deno-downloading.zip" ] && rm "$path/deno-downloading.zip"
 
     [ -f "$path/deno-downloading.gz" ] && rm "$path/deno-downloading.gz"
@@ -423,16 +428,16 @@ run_with_version() {
 
 locate_version() {
   local target_version
-  local version_or_name
 
-  version_or_name="$1"
+  target_version="$1"
 
-  if [ "$version_or_name" = "current" ]
+  if [ "$target_version" = "current" ]
   then
     get_current_version
-    target_version="$DVM_DENO_VERSION"
-  else
-    target_version="$version_or_name"
+    if [ -n "$DVM_DENO_VERSION" ]
+    then
+      target_version="$DVM_DENO_VERSION"
+    fi
   fi
 
   if [ -f "$DVM_DIR/versions/$target_version/deno" ]
