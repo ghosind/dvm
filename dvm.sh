@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-DVM_VERSION="v0.2.1"
+DVM_VERSION="v0.3.0"
 
 compare_version() {
   test "$(printf '%s\n' "$@" | sort -V | head -n 1)" != "$2"
