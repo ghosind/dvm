@@ -492,7 +492,11 @@ get_dvm_latest_version() {
 }
 
 update_dvm() {
-  cd "$DVM_DIR" 2>/dev/null || echo "Failed to update dvm." && exit 1
+  if ! cd "$DVM_DIR" 2>/dev/null
+  then
+    echo "Failed to update dvm."
+    exit 1
+  fi
 
   # reset changes if exists
   git reset --hard HEAD
