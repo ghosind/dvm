@@ -356,15 +356,16 @@ use_version() {
 }
 
 get_current_version() {
-  local current_version
+  local deno_path
 
-  if [ -f "$DVM_BIN/deno" ]
+  if [ ! -f "$DVM_BIN/deno" ]
   then
-    if current_version=$("$DVM_BIN/deno" --version | grep deno | cut -d " " -f 2)
-    then
-      DVM_DENO_VERSION="v$current_version"
-    fi
+    return
   fi
+
+  deno_path=$(readlink "$DVM_BIN/deno")
+
+  DVM_DENO_VERSION=${${deno_path%/*}##*/}
 }
 
 check_alias_dir() {
