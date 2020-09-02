@@ -9,6 +9,8 @@ English | [简体中文](./README-CN.md)
 
 Dvm is an nvm-like version manager for [Deno](https://deno.land/).
 
+***Please avoid use `deno upgrade` command to upgrade Deno when you're using DVM to manage your multiple version environment.***
+
 - [Installation](#installation)
 - [Getting Start](#getting-start)
 - [Commands](#commands)
@@ -162,13 +164,14 @@ export PATH="$PATH:$DVM_BIN"
 ## Contribution
 
 1. Fork dvm project. ([https://github.com/ghosind/dvm](https://github.com/ghosind/dvm))
-2. Create your branch. (`git checkout -b features/someFeatures`)
-3. Make your changes.
-4. Commit your changes. (`git commit -m 'Add some features'`)
-5. Push to the branch. (`git push origin features/someFeatures`)
-6. Create a new Pull Request.
+2. Clone your fork to local. (`git clone <your_forked_repo>`)
+3. Create your branch. (`git checkout -b features/someFeatures`)
+4. Make your changes.
+5. Commit your changes. (`git commit -m 'Add some features'`)
+6. Push to the branch. (`git push origin features/someFeatures`)
+7. Create a new Pull Request.
 
-Please make sure your commits could pass the shellcheck before creating pull request.
+Please make sure your commits could pass the ShellCheck before creating pull request.
 
 ## License
 

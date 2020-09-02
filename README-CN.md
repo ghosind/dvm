@@ -9,6 +9,8 @@
 
 DVM是一个类似于[NVM](https://github.com/nvm-sh/nvm)的[Deno](https://deno.land/)版本管理工具。
 
+***在使用DVM管理你的多版本环境时，请避免使用`deno upgrade`命令进行升级deno版本。***
+
 - [安装](#安装)
 - [DVM入门](#DVM入门)
 - [DVM命令](#DVM命令)
@@ -158,12 +160,14 @@ export PATH="$PATH:$DVM_BIN"
 ## 参与项目
 
 1. Fork dvm项目。 ([https://github.com/ghosind/dvm](https://github.com/ghosind/dvm))
-2. 创建新的分支。 (`git checkout -b features/someFeatures`)
-3. 上传对应的修改。 (`git commit -m 'Add some features'`)
-4. 上传至远程仓库。 (`git push origin features/someFeatures`)
-5. 创建Pull Request。
+2. 下载项目代码至本地。(`git clone <your_forked_repo>`)
+3. 创建新的分支。 (`git checkout -b features/someFeatures`)
+4. 修改代码。
+5. 上传对应的修改。 (`git commit -m 'Add some features'`)
+6. 上传至远程仓库。 (`git push origin features/someFeatures`)
+7. 创建Pull Request。
 
-请在提交PR前确保你的修改能通过Shellcheck的检查。
+请在提交PR前确保你的修改能通过ShellCheck的检查。
 
 ## 许可
 
