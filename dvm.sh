@@ -164,18 +164,18 @@ uninstall_version() {
 
   current_bin_path=$(file -h "$DVM_BIN/deno" | grep link | cut -d " " -f 5)
 
-  if [ "$current_bin_path" = "$DVM_DIR/versions/$version/deno" ]
+  if [ "$current_bin_path" = "$DVM_DIR/versions/$DVM_TARGET_VERSION/deno" ]
   then
     rm "$DVM_BIN/deno"
   fi
 
-  if [ -f "$DVM_DIR/versions/$version/deno" ]
+  if [ -f "$DVM_DIR/versions/$DVM_TARGET_VERSION/deno" ]
   then
-    rm -rf "$DVM_DIR/versions/$version"
+    rm -rf "$DVM_DIR/versions/$DVM_TARGET_VERSION"
 
-    echo "uninstalled deno $version."
+    echo "uninstalled deno $DVM_TARGET_VERSION."
   else
-    echo "deno $version is not installed."
+    echo "deno $DVM_TARGET_VERSION is not installed."
   fi
 }
 
@@ -318,16 +318,21 @@ clean_download_cache() {
 }
 
 get_version() {
+  if [ "$#" = "0" ]
+  then
+    return
+  fi
+
   if [ -f "$DVM_DIR/aliases/$1" ]
   then
-    version=$(cat "$DVM_DIR/aliases/$1")
+    DVM_TARGET_VERSION=$(cat "$DVM_DIR/aliases/$1")
 
-    if [ ! -f "$DVM_DIR/versions/$version/deno" ]
+    if [ ! -f "$DVM_DIR/versions/$DVM_TARGET_VERSION/deno" ]
     then
-      version="$1"
+      DVM_TARGET_VERSION="$1"
     fi
   else
-    version="$1"
+    DVM_TARGET_VERSION="$1"
   fi
 }
 
@@ -339,18 +344,18 @@ use_version() {
 
   get_version "$1"
 
-  if [ -f "$DVM_DIR/versions/$version/deno" ]
+  if [ -f "$DVM_DIR/versions/$DVM_TARGET_VERSION/deno" ]
   then
     if [ -f "$DVM_BIN/deno" ]
     then
       rm "$DVM_BIN/deno"
     fi
 
-    ln -s "$DVM_DIR/versions/$version/deno" "$DVM_BIN/deno"
+    ln -s "$DVM_DIR/versions/$DVM_TARGET_VERSION/deno" "$DVM_BIN/deno"
 
-    echo "using deno $version now."
+    echo "using deno $DVM_TARGET_VERSION now."
   else
-    echo "deno $version is not installed."
+    echo "deno $DVM_TARGET_VERSION is not installed."
     exit 1
   fi
 }
@@ -420,15 +425,15 @@ rm_alias() {
 run_with_version() {
   get_version "$1"
 
-  if [ ! -f "$DVM_DIR/versions/$version/deno" ]
+  if [ ! -f "$DVM_DIR/versions/$DVM_TARGET_VERSION/deno" ]
   then
-    echo "deno $version is not installed."
+    echo "deno $DVM_TARGET_VERSION is not installed."
     exit 1
   fi
 
   shift
 
-  "$DVM_DIR/versions/$version/deno" "$@"
+  "$DVM_DIR/versions/$DVM_TARGET_VERSION/deno" "$@"
 }
 
 locate_version() {
