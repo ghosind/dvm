@@ -362,6 +362,7 @@ use_version() {
 
 get_current_version() {
   local deno_path
+  local deno_dir
 
   if [ ! -f "$DVM_BIN/deno" ]
   then
@@ -369,8 +370,9 @@ get_current_version() {
   fi
 
   deno_path=$(readlink "$DVM_BIN/deno")
+  deno_dir=${deno_path%/deno}
 
-  DVM_DENO_VERSION=${${deno_path%/*}##*/}
+  DVM_DENO_VERSION=${deno_dir##*/}
 }
 
 check_alias_dir() {
