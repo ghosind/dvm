@@ -441,9 +441,10 @@ run_with_version() {
 locate_version() {
   local target_version
 
-  target_version="$1"
+  get_version "$1"
+  target_version="$DVM_TARGET_VERSION"
 
-  if [ "$target_version" = "current" ]
+  if [ "$1" = "current" ]
   then
     get_current_version
     if [ -n "$DVM_DENO_VERSION" ]
