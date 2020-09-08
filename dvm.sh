@@ -513,6 +513,41 @@ update_dvm() {
   git checkout "$DVM_LATEST_VERSION"
 }
 
+scan_corrupted_versions() {
+  local message
+  local version
+  local deno_version
+
+  for version_path in "$DVM_DIR/versions/"*
+  do
+    if [ ! -f "$version_path/deno" ]
+    then
+      continue
+    fi
+
+    version=${version_path##*/}
+    deno_version=$("$version_path/deno" --version | grep deno | cut -d " " -f 2)
+
+    if [ "$version" != "v$deno_version" ]
+    then
+      if [ -n "$message" ]
+      then
+        message="$message\n"
+      fi
+
+      message="$message$version -> v$deno_version"
+    fi
+  done
+
+  if [ "$message" = "" ]
+  then
+    echo "everything is ok."
+  else
+    echo "found some corrupted versions:"
+    echo -e "$message"
+  fi
+}
+
 print_help() {
   printf "
 Deno Version Manager
@@ -713,6 +748,10 @@ dvm() {
     # print dvm version
 
     echo "$DVM_VERSION"
+
+    ;;
+  doctor)
+    scan_corrupted_versions
 
     ;;
   *)

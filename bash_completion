@@ -32,7 +32,7 @@ _dvm_completion() {
     then
       opts="--help --version -h"
     else
-      opts="alias clean current help install list list-remote
+      opts="alias clean current doctor help install list list-remote
         ls ls-remote run upgrade unalias uninstall use which"
     fi
     ;;
