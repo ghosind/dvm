@@ -566,6 +566,7 @@ Usage:
   dvm ls-remote                     List all remote versions.
   dvm which [current | version]     Display the path of installed version.
   dvm clean                         Remove all downloaded packages.
+  dvm doctor                        Scan installed versions and find corrupted version.
   dvm upgrade                       Upgrade dvm itself.
 
 Examples:
