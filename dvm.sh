@@ -548,6 +548,23 @@ scan_corrupted_versions() {
   fi
 }
 
+purge_dvm() {
+  echo -n "Do you want to remove DVM from your computer? (y/n) "
+  read -r confirm
+
+  case "$confirm" in
+  y)
+    rm -rf "$DVM_DIR"
+
+    echo "DVM has been removed from your computer."
+
+    exit 0
+    ;;
+  n|*)
+    ;;
+  esac
+}
+
 print_help() {
   printf "
 Deno Version Manager
@@ -568,6 +585,7 @@ Usage:
   dvm clean                         Remove all downloaded packages.
   dvm doctor                        Scan installed versions and find corrupted version.
   dvm upgrade                       Upgrade dvm itself.
+  dvm purge                         Remove dvm from your computer.
 
 Examples:
   dvm install v1.0.0
@@ -753,6 +771,10 @@ dvm() {
     ;;
   doctor)
     scan_corrupted_versions
+
+    ;;
+  purge)
+    purge_dvm
 
     ;;
   *)

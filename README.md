@@ -143,6 +143,7 @@ DVM supported the following commands:
 | `clean` | `dvm clean` | Remove all downloaded packages. |
 | `doctor` | `dvm doctor` | Find corrupted versions. |
 | `upgrade` | `dvm upgrade` | Update dvm itself. |
+| `purge` | `dvm purge` | Remove dvm from your computer. |
 
 ## Uninstalling DVM
 

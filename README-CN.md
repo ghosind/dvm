@@ -137,6 +137,7 @@ DVM支持的命令包括有：
 | `clean` | `dvm clean` | 清除下载缓存 |
 | `doctor` | `dvm doctor` | 列出存在问题的版本 |
 | `upgrade` | `dvm upgrade` | 更新DVM |
+| `purge` | `dvm purge` | 卸载DVM |
 
 ## 如何卸载DVM
 
