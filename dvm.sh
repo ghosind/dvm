@@ -548,21 +548,31 @@ scan_corrupted_versions() {
   fi
 }
 
-purge_dvm() {
-  echo -n "Do you want to remove DVM from your computer? (y/n) "
-  read -r confirm
-
-  case "$confirm" in
-  y)
-    rm -rf "$DVM_DIR"
-
-    echo "DVM has been removed from your computer."
-
-    exit 0
+get_rc_file() {
+  case ${SHELL##*/} in
+  bash)
+    DVM_RC_FILE="$HOME/.bashrc"
     ;;
-  n|*)
+  zsh)
+    DVM_RC_FILE="$HOME/.zshrc"
+    ;;
+  *)
+    DVM_RC_FILE="$HOME/.profile"
     ;;
   esac
+}
+
+purge_dvm() {
+  local content
+
+  rm -rf "$DVM_DIR"
+
+  get_rc_file
+
+  content=$(sed "/Deno Version Manager/d;/DVM_DIR/d;/DVM_BIN/d" "$DVM_RC_FILE")
+  echo "$content" > "$DVM_RC_FILE"
+
+  echo "DVM has been removed from your computer."
 }
 
 print_help() {
@@ -774,7 +784,18 @@ dvm() {
 
     ;;
   purge)
-    purge_dvm
+    echo -n "Do you want to remove DVM from your computer? (y/n) "
+    read -r confirm
+
+    case "$confirm" in
+    y)
+      purge_dvm
+
+      exit 0
+      ;;
+    n|*)
+      ;;
+    esac
 
     ;;
   *)
