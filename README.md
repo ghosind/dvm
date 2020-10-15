@@ -147,7 +147,15 @@ DVM supported the following commands:
 
 ## Uninstalling DVM
 
-You can execute following command to uninstall dvm:
+There are two ways to remove DVM from your computer.
+
+### Command `purge`
+
+You can execute `dvm purge` to remove dvm from your computer, it will remove the `$DVM_DIR` and dvm configurations in shell config file.
+
+### Manual uninstall
+
+You can also execute following command to uninstall dvm:
 
 ```sh
 rm -rf "$DVM_DIR"
