@@ -5,6 +5,41 @@ then
   return
 fi
 
+add_versions_to_opts() {
+  if [ ! -d "$DVM_DIR/versions" ]
+  then
+    return
+  fi
+
+  for path in "$DVM_DIR/versions"/*
+  do
+    if [ -f "$path/deno" ]
+    then
+      version=${path##*/}
+
+      opts="$opts $version"
+    fi
+  done
+}
+
+add_aliases_to_opts() {
+  if [ ! -d "$DVM_DIR/aliases" ]
+  then
+    return
+  fi
+
+  for path in "$DVM_DIR/aliases"/*
+  do
+    alias_name=${path##*/}
+    version=$(cat "$path")
+
+    if [ -f "$DVM_DIR/versions/$version/deno" ]
+    then
+      opts="$opts $alias_name"
+    fi
+  done
+}
+
 _dvm_completion() {
   local cur
   local prev
@@ -15,17 +50,11 @@ _dvm_completion() {
 
   case "$prev" in
   use|uninstall|which|run)
-    if [ -d "$DVM_DIR/versions" ]
-    then
-      opts=$([ -d "$DVM_DIR/versions" ] && ls "$DVM_DIR/versions")
-      opts="$opts $([ -d "$DVM_DIR/aliases" ] && ls "$DVM_DIR/aliases")"
-    fi
+    add_versions_to_opts
+    add_aliases_to_opts
     ;;
   unalias)
-    if [ -d "$DVM_DIR/aliases" ]
-    then
-      opts=$(ls "$DVM_DIR/aliases")
-    fi
+    add_aliases_to_opts
     ;;
   dvm|"$DVM_DIR/dvm.sh")
     if [[ ${cur} == -* ]]
