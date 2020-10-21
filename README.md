@@ -14,6 +14,15 @@ Dvm is an nvm-like version manager for [Deno](https://deno.land/).
 
 - [Installation](#installation)
 - [Getting Start](#getting-start)
+  - [List available versions](#list-available-versions)
+  - [List installed versions](#list-installed-versions)
+  - [Install Deno](#install-deno)
+  - [Uninstall Deno](#uninstall-deno)
+  - [Set active version](#set-active-version)
+  - [Get current version](#get-current-version)
+  - [Set an alias](#set-an-alias)
+  - [Run with a version](#run-with-a-version)
+  - [Upgrade DVM](#upgrade-dvm)
 - [Commands](#commands)
 - [Uninstalling DVM](#uninstalling-dvm)
 - [Contribution](#contribution)
@@ -58,59 +67,106 @@ $ ./install.sh ~/deno/dvm
 
 After installed dvm, you can use it to manage multiple version Deno environments.
 
+### List available versions
+
+Use `dvm list-remote` or `dvm ls-remote` to list all available versions from remote.
+
+```sh
+# list all available versions
+$ dvm list-remote
+# ls-remote is an alias for list-remote command
+$ dvm ls-remote
+```
+
+### List installed versions
+
+Use `dvm list` or `dvm ls` to list all installed versions.
+
+```sh
+# list all installed versions
+$ dvm list
+# ls command is an alias for list command
+$ dvm ls
+```
+
+### Install Deno
+
 Use `dvm install <version>` command to download and install a specified version from the source.
 
 ```sh
 $ dvm install v1.0.0
+deno v1.0.0 has installed.
 $ dvn install v0.42.0
+deno v0.42.0 has installed.
 ```
 
-Use `dvm uninstall <version>` command to uninstall a specified version.
+### Uninstall Deno
 
-```
+Use `dvm uninstall <version|alias-name>` command to uninstall a specified version.
+
+```sh
 $ dvm uninstall v0.39.0
-$ dvm uninstall v1.0.0-rc
+uninstalled deno v0.39.0.
+# default is an alias name
+$ dvm uninstall default
+uninstalled deno default.
 ```
 
-Use `dvm use [version]` command to link `deno` to the specified version by parameter or `.dvmrc` file.
+### Set active version
+
+Use `dvm use [version]` command to link `deno` to the specified installed version by parameter or `.dvmrc` file.
 
 ```sh
 # use v1.0.0
 $ dvm use v1.0.0
+using deno v1.0.0 now.
 
 # get version from .dvmrc file
 # $ cat .dvmrc
-# # v1.0.0
+# # v1.4.0
 $ dvm use
+using deno v1.4.0 now.
 ```
 
-Use `dvm current` command to display the current version of deno.
+### Get current version
+
+Use `dvm current` command to display the current version of Deno.
 
 ```sh
 $ dvm current
-# v1.0.0
+v1.0.0
 ```
 
-Use `dvm ls` command to list all installed versions, and use `dvm ls-remote` to list all available versions from remote.
+### Set an alias
+
+Use `dvm alias` command to set alias name for a installed version of Deno.
 
 ```sh
-# list all installed versions
 $ dvm ls
-# list is an alias for ls command
-$ dvm list
-
-# list all available versions
-$ dvm ls-remote
-# list-remote is an alias for ls-remote command
-$ dvm list-remote
+   v1.0.0
+# Set an alias
+$ dvm alias default v1.0.0
+default -> v1.0.0
+$ dvm ls
+   v1.0.0
+default -> v1.0.0
 ```
+
+### Run with a version
 
 Use `dvm run` command to run Deno on the specified version with arguments.
 
 ```sh
+$ dvm run v1.0.0
+Running with deno v1.0.0
+Deno 1.0.0
+exit using ctrl+d or close()
+>
 # Run app.ts with Deno v1.0.0
 $ dvm run v1.0.0 app.ts
 ```
+
+### Upgrade DVM
 
 Use `dvm upgrade` command to update dvm itself (Since v0.3.0).
 
