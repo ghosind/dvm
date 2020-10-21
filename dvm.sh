@@ -786,18 +786,40 @@ dvm() {
 
     ;;
   purge)
+    local confirm
+
     echo -n "Do you want to remove DVM from your computer? (y/n) "
     read -r confirm
 
     case "$confirm" in
-    y)
-      purge_dvm
-
+    y|Y)
+      ;;
+    n|N)
       exit 0
       ;;
-    n|*)
+    *)
+      exit 1
       ;;
     esac
+
+    if [[ -n $(ls "$DVM_DIR"/versions) ]]
+    then
+      echo -n "Remove dvm will also remove installed deno(s), do you want to continue? (y/n) "
+      read -r confirm
+
+      case "$confirm" in
+      y|Y)
+        ;;
+      n|N)
+        exit 0
+        ;;
+      *)
+        exit 1
+        ;;
+      esac
+    fi
+
+    purge_dvm
 
     ;;
   *)
