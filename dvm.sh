@@ -433,6 +433,8 @@ run_with_version() {
     exit 1
   fi
 
+  echo "Running with deno $DVM_TARGET_VERSION"
+
   shift
 
   "$DVM_DIR/versions/$DVM_TARGET_VERSION/deno" "$@"
