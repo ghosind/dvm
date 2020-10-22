@@ -564,6 +564,32 @@ get_rc_file() {
   esac
 }
 
+confirm_with_prompt() {
+  local confirm
+  local prompt
+
+  if [ "$#" = 0 ]
+  then
+    return
+  fi
+
+  prompt="$1"
+
+  echo -n "$prompt (y/n) "
+  read -r confirm
+
+  case "$confirm" in
+  y|Y)
+    ;;
+  n|N)
+    exit 0
+    ;;
+  *)
+    exit 1
+    ;;
+  esac
+}
+
 purge_dvm() {
   local content
 
@@ -786,38 +812,9 @@ dvm() {
 
     ;;
   purge)
-    local confirm
+    confirm_with_prompt "Do you want to remove DVM from your computer?"
 
-    echo -n "Do you want to remove DVM from your computer? (y/n) "
-    read -r confirm
-
-    case "$confirm" in
-    y|Y)
-      ;;
-    n|N)
-      exit 0
-      ;;
-    *)
-      exit 1
-      ;;
-    esac
-
-    if [[ -n $(ls "$DVM_DIR"/versions) ]]
-    then
-      echo -n "Remove dvm will also remove installed deno(s), do you want to continue? (y/n) "
-      read -r confirm
-
-      case "$confirm" in
-      y|Y)
-        ;;
-      n|N)
-        exit 0
-        ;;
-      *)
-        exit 1
-        ;;
-      esac
-    fi
+    confirm_with_prompt "Remove dvm will also remove installed deno(s), do you want to continue?"
 
     purge_dvm
 
