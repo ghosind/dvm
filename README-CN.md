@@ -12,7 +12,9 @@ DVM是一个类似于[NVM](https://github.com/nvm-sh/nvm)的[Deno](https://deno.
 
 ***在使用DVM管理你的多版本环境时，请避免使用`deno upgrade`命令进行升级deno版本。***
 
-- [安装](#安装)
+- [安装与升级](#安装与升级)
+    - [安装DVM](#安装DVM)
+    - [升级DVM](#升级DVM)
 - [DVM入门](#DVM入门)
     - [列出可安装版本](#列出可安装版本)
     - [列出已安装的版本](#列出已安装的版本)
@@ -22,13 +24,16 @@ DVM是一个类似于[NVM](https://github.com/nvm-sh/nvm)的[Deno](https://deno.
     - [当前版本信息](#当前版本信息)
     - [设置别名](#设置别名)
     - [运行指定版本](#运行指定版本)
-    - [升级DVM](#升级DVM)
 - [DVM命令](#DVM命令)
 - [如何卸载DVM](#如何卸载DVM)
+    - [使用`purge`命令](#使用purge命令)
+    - [手工卸载](#手工卸载)
 - [参与项目](#参与项目)
 - [许可](#许可)
 
-## 安装
+## 安装与升级
+
+### 安装DVM
 
 我们提供了以下两种方式以安装DVM：
 
@@ -62,6 +67,16 @@ $ ./install.sh
 $ curl -o- "https://raw.githubusercontent.com/ghosind/dvm/master/install.sh" | bash -s -d ~/deno/dvm
 $ ./install.sh ~/deno/dvm
 ```
+
+### 升级DVM
+
+若您使用DVM `v0.3.0`及以上版本，可通过DVM本身提供的`upgrade`命令将本地DVM升级至最新的稳定版本。
+
+```sh
+$ dvm upgrade
+```
+
+若您使用DVM `v0.3.0`以下的版本时，需要卸载现有版本并重新安装的方法进行升级。您可通过[手工卸载](#手工卸载)章节提供的卸载方式卸载DVM，再重新进行安装。
 
 ## DVM入门
 
@@ -141,14 +156,6 @@ $ dvm alias default v1.0.0
 $ dvm run v1.0.0 app.ts
 ```
 
-### 升级DVM
-
-通过`dvm upgrade`命令更新DVM本身（需要v0.3.0及以上版本）：
-
-```sh
-$ dvm upgrade
-```
-
 ## DVM命令
 
 DVM支持的命令包括有：
@@ -180,7 +187,7 @@ DVM支持的命令包括有：
 
 ### 使用`purge`命令
 
-DVM提供了`purge`命令用于卸载DVM本身，它将移除DVM所在的目录以及Shell环境配置文件中的相关内容。
+DVM `v0.3.2`及以上版本提供了`purge`命令，该命令可被用于卸载DVM本身，它将移除DVM所在的目录以及Shell环境配置文件中的相关内容。若您的DVM版本低于`v0.3.2`，请通过下面手工卸载的方法卸载。
 
 ### 手工卸载
 

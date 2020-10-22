@@ -12,7 +12,9 @@ Dvm is an nvm-like version manager for [Deno](https://deno.land/).
 
 ***Please avoid use `deno upgrade` command to upgrade Deno when you're using DVM to manage your multiple version environment.***
 
-- [Installation](#installation)
+- [Installing and Updating](#installing-and-updating)
+   - [Installation](#installation)
+   - [Upgrade DVM](#upgrade-dvm)
 - [Getting Start](#getting-start)
   - [List available versions](#list-available-versions)
   - [List installed versions](#list-installed-versions)
@@ -22,13 +24,16 @@ Dvm is an nvm-like version manager for [Deno](https://deno.land/).
   - [Get current version](#get-current-version)
   - [Set an alias](#set-an-alias)
   - [Run with a version](#run-with-a-version)
-  - [Upgrade DVM](#upgrade-dvm)
 - [Commands](#commands)
 - [Uninstalling DVM](#uninstalling-dvm)
+   - [Use `purge` command](#use-purge-command)
+   - [Manual uninstall](#manual-uninstall)
 - [Contribution](#contribution)
 - [License](#license)
 
-## Installation
+## Installing and Updating
+
+### Installation
 
 There are two ways to install DVM.
 
@@ -62,6 +67,16 @@ The default install location is `~/.dvm`, you can specify an inexistent director
 $ curl -o- "https://raw.githubusercontent.com/ghosind/dvm/master/install.sh" | bash -s -d ~/deno/dvm
 $ ./install.sh ~/deno/dvm
 ```
+
+### Upgrade DVM
+
+Since DVM `v0.3.0`, we provided `upgrade` command to update your DVM to the latest version.
+
+```sh
+$ dvm upgrade
+```
+
+If you want to update the DVM that less than `v0.3.0`, you may need to uninstall the current version and re-install the latest version. You can get the uninstall steps from [Manual uninstall](#manual-uninstall) section.
 
 ## Getting Start
 
@@ -166,14 +181,6 @@ exit using ctrl+d or close()
 $ dvm run v1.0.0 app.ts
 ```
 
-### Upgrade DVM
-
-Use `dvm upgrade` command to update dvm itself (Since v0.3.0).
-
-```sh
-$ dvm upgrade
-```
-
 ## Commands
 
 DVM supported the following commands:
@@ -205,9 +212,11 @@ DVM supported the following commands:
 
 There are two ways to remove DVM from your computer.
 
-### Command `purge`
+### Use `purge` command
 
-You can execute `dvm purge` to remove dvm from your computer, it will remove the `$DVM_DIR` and dvm configurations in shell config file.
+You can execute `dvm purge` to remove dvm from your computer if your dvm version is `v0.3.2` and above. It will remove the `$DVM_DIR` and dvm configurations in shell config file.
+
+If your dvm is less than `v0.3.2`, please following the next section ([Manual uninstall](#manual-uninstall)) to remove DVM.
 
 ### Manual uninstall
 
