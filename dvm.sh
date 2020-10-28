@@ -160,7 +160,7 @@ install_version() {
 uninstall_version() {
   local current_bin_path
 
-  get_version "$1"
+  get_version_by_param "$1"
 
   current_bin_path=$(file -h "$DVM_BIN/deno" | grep link | cut -d " " -f 5)
 
@@ -317,7 +317,7 @@ clean_download_cache() {
   done
 }
 
-get_version() {
+get_version_by_param() {
   if [ "$#" = "0" ]
   then
     return
@@ -336,13 +336,35 @@ get_version() {
   fi
 }
 
+get_version() {
+  local version
+
+  get_version_by_param "$@"
+
+  if [ -n "$DVM_TARGET_VERSION" ]
+  then
+    return
+  fi
+
+  if [ ! -f "./.dvmrc" ]
+  then
+    return
+  fi
+
+  version=$(cat ./.dvmrc)
+  if [ -f "$DVM_DIR/versions/$version/deno" ]
+  then
+    DVM_TARGET_VERSION="$version"
+  fi
+}
+
 use_version() {
   if [ ! -d "$DVM_BIN" ]
   then
     mkdir -p "$DVM_BIN"
   fi
 
-  get_version "$1"
+  get_version_by_param "$1"
 
   if [ -f "$DVM_DIR/versions/$DVM_TARGET_VERSION/deno" ]
   then
@@ -425,7 +447,7 @@ rm_alias() {
 }
 
 run_with_version() {
-  get_version "$1"
+  get_version_by_param "$1"
 
   if [ ! -f "$DVM_DIR/versions/$DVM_TARGET_VERSION/deno" ]
   then
@@ -443,7 +465,7 @@ run_with_version() {
 locate_version() {
   local target_version
 
-  get_version "$1"
+  get_version_by_param "$1"
   target_version="$DVM_TARGET_VERSION"
 
   if [ "$1" = "current" ]
