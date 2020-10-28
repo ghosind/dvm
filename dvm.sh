@@ -318,6 +318,8 @@ clean_download_cache() {
 }
 
 get_version_by_param() {
+  DVM_TARGET_VERSION=""
+
   if [ "$#" = "0" ]
   then
     return
@@ -348,7 +350,8 @@ get_version() {
 
   if [ ! -f "./.dvmrc" ]
   then
-    return
+    echo "No .dvmrc file found"
+    exit 1
   fi
 
   version=$(cat ./.dvmrc)
@@ -726,7 +729,7 @@ dvm() {
     shift
 
     use_version "$@"
-    
+
     ;;
   clean)
     # remove all download packages.
