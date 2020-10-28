@@ -355,6 +355,9 @@ get_version() {
   if [ -f "$DVM_DIR/versions/$version/deno" ]
   then
     DVM_TARGET_VERSION="$version"
+  else
+    echo "No .dvmrc file found"
+    exit 1
   fi
 }
 
@@ -364,7 +367,7 @@ use_version() {
     mkdir -p "$DVM_BIN"
   fi
 
-  get_version_by_param "$1"
+  get_version "$1"
 
   if [ -f "$DVM_DIR/versions/$DVM_TARGET_VERSION/deno" ]
   then
@@ -465,7 +468,8 @@ run_with_version() {
 locate_version() {
   local target_version
 
-  get_version_by_param "$1"
+  get_version "$1"
+
   target_version="$DVM_TARGET_VERSION"
 
   if [ "$1" = "current" ]
@@ -721,21 +725,8 @@ dvm() {
     # change current version to specified version
     shift
 
-    local version
-
-    if [ -n "$1" ]
-    then
-      version="$1"
-    elif [ -f ".dvmrc" ]
-    then
-      version=$(cat .dvmrc)
-    else
-      echo "no .dvmrc file found"
-      print_help
-      exit 1
-    fi
-
-    use_version "$version"
+    use_version "$@"
+    
     ;;
   clean)
     # remove all download packages.
@@ -788,27 +779,7 @@ dvm() {
   which)
     shift
 
-    local version
-
-    if [ -n "$1" ]
-    then
-      version="$1"
-    elif [ -f ".dvmrc" ]
-    then
-      version=$(cat .dvmrc)
-
-      if [ -z "$version" ]
-      then
-        echo "Must specify target version in .dvmrc file."
-        exit 1
-      fi
-    else
-      echo "Must specify target version / name, or exists .dvmrc file."
-      print_help
-      exit 1
-    fi
-
-    locate_version "$version"
+    locate_version "$@"
 
     ;;
   upgrade)
