@@ -665,6 +665,7 @@ Examples:
 }
 
 dvm() {
+  local version
   check_dvm_dir
 
   if [ "$#" = "0" ]
@@ -678,23 +679,35 @@ dvm() {
     # install the specified version
     shift
 
-    if [ "$#" != "1" ]
+    version=""
+
+    if [ "$#" = "0" ]
     then
-      echo "Must specify target version"
+      if [ -f "./.dvmrc" ]
+      then
+        version=$(cat ./.dvmrc)
+      else
+        echo "No .dvmrc file found"
+      fi
+    else
+      version="$1"
+    fi
+
+    if [ "$version" = "" ]
+    then
       print_help
       exit 1
     fi
 
-    install_version "$1"
+    install_version "$version"
 
     ;;
   uninstall)
     # uninstall the specified version
     shift
 
-    if [ "$#" != "1" ]
+    if [ "$#" = "0" ]
     then
-      echo "Must specify target version"
       print_help
       exit 1
     fi
@@ -744,9 +757,8 @@ dvm() {
   alias)
     shift
 
-    if [ "$#" != "2" ]
+    if [ "$#" -lt "2" ]
     then
-      echo "Must specify alias name and target version."
       print_help
       exit 1
     fi
@@ -757,9 +769,8 @@ dvm() {
   unalias)
     shift
 
-    if [ "$#" != "1" ]
+    if [ "$#" -lt "1" ]
     then
-      echo "Must specify alias name."
       print_help
       exit 1
     fi
@@ -771,7 +782,6 @@ dvm() {
 
     if [ "$#" = "0" ]
     then
-      echo "Must specify target version"
       print_help
       exit 1
     fi
