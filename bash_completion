@@ -49,7 +49,12 @@ _dvm_completion() {
   prev="${COMP_WORDS[COMP_CWORD-1]}"
 
   case "$prev" in
-  use|uninstall|which|run)
+  use|uninstall|run|which)
+    if [ "$prev" = "which" ]
+    then
+      opts="current"
+    fi
+
     add_versions_to_opts
     add_aliases_to_opts
     ;;
