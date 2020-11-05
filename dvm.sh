@@ -160,8 +160,6 @@ install_version() {
 uninstall_version() {
   local current_bin_path
 
-  get_version_by_param "$1"
-
   current_bin_path=$(file -h "$DVM_BIN/deno" | grep link | cut -d " " -f 5)
 
   if [ "$current_bin_path" = "$DVM_DIR/versions/$DVM_TARGET_VERSION/deno" ]
@@ -706,13 +704,14 @@ dvm() {
     # uninstall the specified version
     shift
 
-    if [ "$#" = "0" ]
+    get_version "$@"
+    if [ "$DVM_TARGET_VERSION" = "" ]
     then
       print_help
       exit 1
     fi
 
-    uninstall_version "$1"
+    uninstall_version "$DVM_TARGET_VERSION"
 
     ;;
   list | ls)
