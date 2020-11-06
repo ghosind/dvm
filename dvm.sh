@@ -349,7 +349,7 @@ get_version() {
   if [ ! -f "./.dvmrc" ]
   then
     echo "No .dvmrc file found"
-    exit 1
+    return
   fi
 
   version=$(cat ./.dvmrc)
@@ -358,7 +358,6 @@ get_version() {
     DVM_TARGET_VERSION="$version"
   else
     echo "No .dvmrc file found"
-    exit 1
   fi
 }
 
