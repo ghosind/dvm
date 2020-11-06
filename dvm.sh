@@ -469,8 +469,6 @@ run_with_version() {
 locate_version() {
   local target_version
 
-  get_version "$1"
-
   target_version="$DVM_TARGET_VERSION"
 
   if [ "$1" = "current" ]
@@ -790,6 +788,14 @@ dvm() {
     ;;
   which)
     shift
+
+    get_version "$@"
+
+    if [ -z "$DVM_TARGET_VERSION" ]
+    then
+      print_help
+      exit 1
+    fi
 
     locate_version "$@"
 
