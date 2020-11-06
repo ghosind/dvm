@@ -50,7 +50,7 @@ _dvm_completion() {
 
   case "$prev" in
   use|uninstall|run|which)
-    if [ "$prev" = "which" ]
+    if [ "$prev" = "which" ] && [ -f "$DVM_BIN/deno" ]
     then
       opts="current"
     fi
