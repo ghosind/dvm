@@ -450,8 +450,6 @@ rm_alias() {
 }
 
 run_with_version() {
-  get_version_by_param "$1"
-
   if [ ! -f "$DVM_DIR/versions/$DVM_TARGET_VERSION/deno" ]
   then
     echo "deno $DVM_TARGET_VERSION is not installed."
@@ -459,8 +457,6 @@ run_with_version() {
   fi
 
   echo "Running with deno $DVM_TARGET_VERSION"
-
-  shift
 
   "$DVM_DIR/versions/$DVM_TARGET_VERSION/deno" "$@"
 }
@@ -776,10 +772,17 @@ dvm() {
   run)
     shift
 
-    if [ "$#" = "0" ]
+    get_version "$@"
+
+    if [ "$DVM_TARGET_VERSION" = "" ]
     then
       print_help
       exit 1
+    fi
+
+    if [ "$#" != "0" ]
+    then
+      shift
     fi
 
     run_with_version "$@"
