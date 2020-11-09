@@ -356,8 +356,6 @@ get_version() {
   if [ -f "$DVM_DIR/versions/$version/deno" ]
   then
     DVM_TARGET_VERSION="$version"
-  else
-    echo "No .dvmrc file found"
   fi
 }
 
