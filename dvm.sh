@@ -45,6 +45,7 @@ get_package_data() {
       ;;
     *)
       echo "Unsupported operating system $DVM_TARGET_OS"
+      exit 1
       ;;
   esac
 }
