@@ -53,6 +53,8 @@ get_package_data() {
 download_file() {
   local cmd
   local version
+  local url
+  local temp_file
 
   version="$1"
 
@@ -61,14 +63,20 @@ download_file() {
     mkdir -p "$DVM_DIR/download/$version"
   fi
 
+  if [ -z "$DVM_INSTALL_REGISTRY" ]
+  then
+    DVM_INSTALL_REGISTRY="https://github.com/denoland/deno/releases/download"
+  fi
+
+  url="$DVM_INSTALL_REGISTRY/$version/$DVM_TARGET_NAME"
+  temp_file="$DVM_DIR/download/$version/deno-downloading.$DVM_TARGET_TYPE"
+
   if [ -x "$(command -v wget)" ]
   then
-    cmd="wget https://github.com/denoland/deno/releases/download/$version/$DVM_TARGET_NAME \
-        -O $DVM_DIR/download/$version/deno-downloading.$DVM_TARGET_TYPE"
+    cmd="wget $url -O $temp_file"
   elif [ -x "$(command -v curl)" ]
   then
-    cmd="curl -LJ https://github.com/denoland/deno/releases/download/$version/$DVM_TARGET_NAME \
-        -o $DVM_DIR/download/$version/deno-downloading.$DVM_TARGET_TYPE"
+    cmd="curl -LJ $url -o $temp_file"
   else
     echo "wget or curl is required."
     exit 1
@@ -77,19 +85,18 @@ download_file() {
   if $cmd
   then
     local file_type
-    file_type=$(file "$DVM_DIR/download/$version/deno-downloading.$DVM_TARGET_TYPE")
+    file_type=$(file "$temp_file")
 
     if [[ $file_type == *"$DVM_FILE_TYPE"* ]]
     then
-      mv "$DVM_DIR/download/$version/deno-downloading.$DVM_TARGET_TYPE" \
-        "$DVM_DIR/download/$version/deno.$DVM_TARGET_TYPE"
+      mv "$temp_file" "$DVM_DIR/download/$version/deno.$DVM_TARGET_TYPE"
       return
     fi
   fi
 
-  if [ -f "$DVM_DIR/download/$version/deno-downloading.$DVM_TARGET_TYPE" ]
+  if [ -f "$temp_file" ]
   then
-    rm "$DVM_DIR/download/$version/deno-downloading.$DVM_TARGET_TYPE"
+    rm "$temp_file"
   fi
 
   echo "Failed to download deno $version."
@@ -669,7 +676,21 @@ dvm() {
 
     version=""
 
-    if [ "$#" = "0" ]
+    while [ "$#" -gt "0" ]
+    do
+      case "$1" in
+      "--registry="*)
+        DVM_INSTALL_REGISTRY=${1#--registry=}
+        ;;
+      *)
+        version="$1"
+        ;;
+      esac
+
+      shift
+    done
+
+    if [ -z "$version" ]
     then
       if [ -f "./.dvmrc" ]
       then
@@ -677,8 +698,6 @@ dvm() {
       else
         echo "No .dvmrc file found"
       fi
-    else
-      version="$1"
     fi
 
     if [ "$version" = "" ]
