@@ -367,22 +367,38 @@ get_version() {
   fi
 }
 
+# use_version
+# Create a symbolic link file to make the specified deno version as active
+# version, the symbolic link is linking to the specified deno executable file.
 use_version() {
+  # deno executable file version
+  local deno_version
+  # target deno executable file path
+  local target_path
+
   if [ ! -d "$DVM_BIN" ]
   then
+    # create path if it is not exist
     mkdir -p "$DVM_BIN"
   fi
 
   get_version "$1"
 
-  if [ -f "$DVM_DIR/versions/$DVM_TARGET_VERSION/deno" ]
+  target_path="$DVM_DIR/versions/$DVM_TARGET_VERSION/deno"
+
+  if [ -f "$target_path" ]
   then
-    if [ -f "$DVM_BIN/deno" ]
+    # get target deno executable file version
+    deno_version=$("$target_path" --version | grep deno | cut -d " " -f 2)
+
+    if [ "$DVM_TARGET_VERSION" != "v$deno_version" ]
     then
-      rm "$DVM_BIN/deno"
+      # print warnning message when deno version is different with parameter.
+      echo "[WARN] You may had upgraded this version, it is v$deno_version now."
     fi
 
-    ln -s "$DVM_DIR/versions/$DVM_TARGET_VERSION/deno" "$DVM_BIN/deno"
+    # create a new symbolic link, and link to specified deno executable file.
+    ln -sf "$target_path" "$DVM_BIN/deno"
 
     echo "using deno $DVM_TARGET_VERSION now."
   else
