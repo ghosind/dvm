@@ -187,7 +187,8 @@ DVM supported the following commands:
 
 | Command | Usage | Description |
 |:-------:|:-----:|:-----------:|
-| `install` | `dvm install <version>` | Download and install the specified version from source.|
+| `install` | `dvm install <version>` | Download and install the specified version from source. |
+| | `dvm install <version> --registry=<registry>` | Download and install deno with the specified registry. |
 | `uninstall` | `dvm uninstall <version>` | Uninstall the specified version. |
 | `use` | `dvm use` | Use the specified version read from .dvmrc. |
 | | `dvm use <version>` | Use the specified version that passed by argument. |
@@ -207,6 +208,8 @@ DVM supported the following commands:
 | `doctor` | `dvm doctor` | Find corrupted versions. |
 | `upgrade` | `dvm upgrade` | Update dvm itself. |
 | `purge` | `dvm purge` | Remove dvm from your computer. |
+| `--help` | `dvm --help` | Show dvm help message. |
+| `--version` | `dvm --version` | Print the version of dvm. |
 
 ## Uninstalling DVM
 

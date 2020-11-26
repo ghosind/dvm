@@ -650,7 +650,10 @@ print_help() {
 Deno Version Manager
 
 Usage:
+  dvm --help                        Show this message.
+  dvm --version                     Print the version of dvm.
   dvm install <version>             Download and install the specified version from source.
+    --registry=<registry>           Download and install deno with the specified registry.
   dvm uninstall [name|version]      Uninstall a specified version.
   dvm use [name|version]            Use the specified version that passed by argument or read from .dvmrc.
   dvm run <name|version> [args]     Run deno on the specified version with arguments.

@@ -163,6 +163,7 @@ DVM支持的命令包括有：
 | 命令 | 使用方法 | 描述 |
 |:-------:|:-----:|:-----------:|
 | `install` | `dvm install <version>` | 下载并安装指定的版本 |
+| | `dvm install <version> --registry=<registry>` | 通过指定的镜像下载deno |
 | `uninstall` | `dvm uninstall <version>` | 卸载指定的版本 |
 | `use` | `dvm use` | 将指定的版本设置为当前使用的版本，未指定版本将从当前目录下的`.dvmrc`文件中读取 |
 | | `dvm use <version>` | 将指定的版本设置为当前使用的版本 |
@@ -182,6 +183,8 @@ DVM支持的命令包括有：
 | `doctor` | `dvm doctor` | 列出存在问题的版本 |
 | `upgrade` | `dvm upgrade` | 更新DVM |
 | `purge` | `dvm purge` | 卸载DVM |
+| `--help` | `dvm --help` | 打印帮助信息 |
+| `--version` | `dvm --version` | 打印DVM版本 |
 
 ## 如何卸载DVM
 
