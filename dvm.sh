@@ -50,6 +50,50 @@ get_package_data() {
   esac
 }
 
+# get_latest_version
+# Calls GitHub api to getting deno latest release tag name.
+get_latest_version() {
+  # the command of request deno latest version
+  local cmd
+  # the url of github api
+  local latest_url
+  # the response of requesting deno latest version
+  local response
+  # the latest release tag name
+  local tag_name
+
+  echo -e "\ntry to getting deno latest version ..."
+
+  latest_url="https://api.github.com/repos/denoland/deno/releases/latest"
+
+  if [ -x "$(command -v wget)" ]
+  then
+    cmd="wget -O- $latest_url -nv"
+  elif [ -x "$(command -v curl)" ]
+  then
+    cmd="curl -s $latest_url"
+  else
+    echo "wget or curl is required."
+    exit 1
+  fi
+
+  if ! response=$($cmd)
+  then
+    echo "failed to getting deno latest version"
+    exit 1
+  fi
+
+  tag_name=$(echo "$response" | grep tag_name | cut -d '"' -f 4)
+
+  if [ -z "$tag_name" ]
+  then
+    echo "failed to getting deno latest version"
+    exit 1
+  fi
+
+  DVM_TARGET_VERSION="$tag_name"
+}
+
 download_file() {
   local cmd
   local version
@@ -147,10 +191,16 @@ install_version() {
 
   version="$1"
 
+  if [ -z "$version" ]
+  then
+    get_latest_version
+    version="$DVM_TARGET_VERSION"
+  fi
+
   if [ -f "$DVM_DIR/versions/$version/deno" ]
   then
     echo "deno $version has been installed."
-    exit 1
+    exit 0
   fi
 
   get_package_data "$version"
@@ -652,7 +702,8 @@ Deno Version Manager
 Usage:
   dvm --help                        Show this message.
   dvm --version                     Print the version of dvm.
-  dvm install <version>             Download and install the specified version from source.
+  dvm install                       Download and install the latest version or the version reading from .dvmrc file.
+    <version>                       Download and install the specified version from source.
     --registry=<registry>           Download and install deno with the specified registry.
   dvm uninstall [name|version]      Uninstall a specified version.
   dvm use [name|version]            Use the specified version that passed by argument or read from .dvmrc.
@@ -717,12 +768,6 @@ dvm() {
       else
         echo "No .dvmrc file found"
       fi
-    fi
-
-    if [ "$version" = "" ]
-    then
-      print_help
-      exit 1
     fi
 
     install_version "$version"
