@@ -207,7 +207,10 @@ install_version() {
 
   if [ ! -f "$DVM_DIR/download/$version/deno.$DVM_TARGET_TYPE" ]
   then
+    echo "Downloading and installing deno $version..."
     download_file "$version"
+  else
+    echo "Installing deno $version from cache..."
   fi
 
   extract_file "$version"
