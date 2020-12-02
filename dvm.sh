@@ -437,6 +437,12 @@ use_version() {
 
   get_version "$1"
 
+  if [ -z "$DVM_TARGET_VERSION" ]
+  then
+    print_help
+    exit 1
+  fi
+
   target_path="$DVM_DIR/versions/$DVM_TARGET_VERSION/deno"
 
   if [ -f "$target_path" ]
