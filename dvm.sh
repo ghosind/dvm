@@ -186,6 +186,43 @@ extract_file() {
   esac
 }
 
+# validate_remote_version
+# Get remote version data by GitHub api (Get a release by tag name)
+validate_remote_version() {
+  local version
+  # GitHub get release by tag name api url
+  local tag_url
+
+  version="$1"
+
+  tag_url="https://api.github.com/repos/denoland/deno/releases/tags/$version"
+
+  if [ -x "$(command -v wget)" ]
+  then
+    cmd="wget -O- $tag_url -nv"
+  elif [ -x "$(command -v curl)" ]
+  then
+    cmd="curl -s $tag_url"
+  else
+    echo "wget or curl is required."
+    exit 1
+  fi
+
+  if ! response=$($cmd)
+  then
+    echo "Failed to getting deno $version data"
+    exit 1
+  fi
+
+  tag_name=$(echo "$response" | grep tag_name | cut -d '"' -f 4)
+
+  if [ -z "$tag_name" ]
+  then
+    echo "Deno '$version' not found, use 'ls-remote' command to get available versions."
+    exit 1
+  fi
+}
+
 install_version() {
   local version
 
@@ -202,6 +239,8 @@ install_version() {
     echo "deno $version has been installed."
     exit 0
   fi
+
+  validate_remote_version "$version"
 
   get_package_data "$version"
 
