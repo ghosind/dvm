@@ -184,8 +184,9 @@ DVM支持的命令包括有：
 | `doctor` | `dvm doctor` | 列出存在问题的版本 |
 | `upgrade` | `dvm upgrade` | 更新DVM |
 | `purge` | `dvm purge` | 卸载DVM |
-| `--help` | `dvm --help` | 打印帮助信息 |
-| `--version` | `dvm --version` | 打印DVM版本 |
+| `help` | `dvm help` | 打印帮助信息 |
+
+更多信息请参考[dvm wiki](https://github.com/ghosind/dvm/wiki)。
 
 ## 如何卸载DVM
 

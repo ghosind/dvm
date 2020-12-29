@@ -209,8 +209,9 @@ DVM supported the following commands:
 | `doctor` | `dvm doctor` | Find corrupted versions. |
 | `upgrade` | `dvm upgrade` | Update dvm itself. |
 | `purge` | `dvm purge` | Remove dvm from your computer. |
-| `--help` | `dvm --help` | Show dvm help message. |
-| `--version` | `dvm --version` | Print the version of dvm. |
+| `help` | `dvm help` | Show dvm help message. |
+
+Please visit [dvm wiki](https://github.com/ghosind/dvm/wiki) for more details.
 
 ## Uninstalling DVM
 

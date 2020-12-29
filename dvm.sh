@@ -748,8 +748,6 @@ print_help() {
 Deno Version Manager
 
 Usage:
-  dvm --help                        Show this message.
-  dvm --version                     Print the version of dvm.
   dvm install                       Download and install the latest version or the version reading from .dvmrc file.
     <version>                       Download and install the specified version from source.
     --registry=<registry>           Download and install deno with the specified registry.
@@ -766,6 +764,7 @@ Usage:
   dvm doctor                        Scan installed versions and find corrupted version.
   dvm upgrade                       Upgrade dvm itself.
   dvm purge                         Remove dvm from your computer.
+  dvm help                          Show this message.
 
 Examples:
   dvm install v1.0.0
