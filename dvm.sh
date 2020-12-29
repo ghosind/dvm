@@ -655,8 +655,10 @@ update_dvm() {
   git checkout "$DVM_LATEST_VERSION"
 }
 
-scan_corrupted_versions() {
-  local message
+scan_versions() {
+  local raw_output
+  local invalid_message
+  local corrupted_message
   local version
   local deno_version
 
@@ -668,25 +670,39 @@ scan_corrupted_versions() {
     fi
 
     version=${version_path##*/}
-    deno_version=$("$version_path/deno" --version | grep deno | cut -d " " -f 2)
 
-    if [ "$version" != "v$deno_version" ]
+    raw_output=$("$version_path/deno" --version 2>/dev/null)
+    
+    if [ -z "$raw_output" ]
     then
-      if [ -n "$message" ]
-      then
-        message="$message\n"
-      fi
+      corrupted_message="$corrupted_message$version\n"
+    else
+      deno_version=$(echo "$raw_output" | grep deno | cut -d " " -f 2)
 
-      message="$message$version -> v$deno_version"
+      if [ "$version" != "v$deno_version" ]
+      then
+        invalid_message="$invalid_message$version -> v$deno_version\n"
+      fi
     fi
   done
 
-  if [ "$message" = "" ]
+  if [ -z "$invalid_message" ] && [ -z "$corrupted_message" ]
   then
-    echo "everything is ok."
+    echo "Everything is ok."
   else
-    echo "found some corrupted versions:"
-    echo -e "$message"
+    if [ -n "$invalid_message" ]
+    then
+      echo "Invalid versions:"
+      echo -e "$invalid_message"
+    fi
+    
+    if [ -n "$corrupted_message" ]
+    then
+      echo "Corrupted versions:"
+      echo -e "$corrupted_message"
+    fi
+
+    echo "You can run \"dvm doctor --fix\" to fix these errors."
   fi
 }
 
@@ -761,7 +777,7 @@ Usage:
   dvm ls-remote                     List all remote versions.
   dvm which [current|name|version]  Display the path of installed version.
   dvm clean                         Remove all downloaded packages.
-  dvm doctor                        Scan installed versions and find corrupted version.
+  dvm doctor                        Scan installed versions and find invalid / corrupted version.
   dvm upgrade                       Upgrade dvm itself.
   dvm purge                         Remove dvm from your computer.
   dvm help                          Show this message.
@@ -948,7 +964,7 @@ dvm() {
 
     ;;
   doctor)
-    scan_corrupted_versions
+    scan_versions
 
     ;;
   purge)
