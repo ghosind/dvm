@@ -655,12 +655,15 @@ update_dvm() {
   git checkout "$DVM_LATEST_VERSION"
 }
 
-scan_versions() {
+scan_and_fix_versions() {
+  local mode
   local raw_output
   local invalid_message
   local corrupted_message
   local version
   local deno_version
+
+  mode="$1"
 
   for version_path in "$DVM_DIR/versions/"*
   do
@@ -676,6 +679,11 @@ scan_versions() {
     if [ -z "$raw_output" ]
     then
       corrupted_message="$corrupted_message$version\n"
+
+      if [ "$mode" = "fix" ]
+      then
+        rm -rf "$version_path"
+      fi
     else
       deno_version=$(echo "$raw_output" | grep deno | cut -d " " -f 2)
 
@@ -685,6 +693,12 @@ scan_versions() {
       fi
     fi
   done
+
+  if [ "$mode" = "fix" ]
+  then
+    # todo: fix invalid versions
+    return
+  fi
 
   if [ -z "$invalid_message" ] && [ -z "$corrupted_message" ]
   then
@@ -777,7 +791,8 @@ Usage:
   dvm ls-remote                     List all remote versions.
   dvm which [current|name|version]  Display the path of installed version.
   dvm clean                         Remove all downloaded packages.
-  dvm doctor                        Scan installed versions and find invalid / corrupted version.
+  dvm doctor                        Scan installed versions and find invalid / corrupted versions.
+    --fix                           Scan and fix all invalid / corrupted versions.
   dvm upgrade                       Upgrade dvm itself.
   dvm purge                         Remove dvm from your computer.
   dvm help                          Show this message.
@@ -884,11 +899,6 @@ dvm() {
     clean_download_cache
 
     ;;
-  help|--help|-h)
-    # print help
-    print_help
-
-    ;;
   alias)
     shift
 
@@ -957,14 +967,32 @@ dvm() {
     update_dvm
 
     ;;
-  --version)
-    # print dvm version
-
-    echo "$DVM_VERSION"
-
-    ;;
   doctor)
-    scan_versions
+    local mode
+
+    shift
+
+    while [ "$#" -gt "0" ]
+    do
+      case "$1" in
+      "--fix")
+        mode="fix"
+        ;;
+      *)
+        echo "Unsupprot option \"$1\""
+        exit 1
+        ;;
+      esac
+
+      shift
+    done
+
+    if [ "$mode" == "fix" ]
+    then
+      confirm_with_prompt "Doctor fix command will remove all duplicated / corrupted versions, do you want to continue?"
+    fi
+
+    scan_and_fix_versions "$mode"
 
     ;;
   purge)
@@ -973,6 +1001,17 @@ dvm() {
     confirm_with_prompt "Remove dvm will also remove installed deno(s), do you want to continue?"
 
     purge_dvm
+
+    ;;
+  help|--help|-h)
+    # print help
+    print_help
+
+    ;;
+  --version)
+    # print dvm version
+
+    echo "$DVM_VERSION"
 
     ;;
   *)
