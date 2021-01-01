@@ -655,6 +655,57 @@ update_dvm() {
   git checkout "$DVM_LATEST_VERSION"
 }
 
+fix_invalid_versions() {
+  local version
+
+  if [ ! -d "$DVM_DIR/doctor_temp" ]
+  then
+    return
+  fi
+
+  for version_path in "$DVM_DIR/doctor_temp/"*
+  do  
+    version=${version_path##*/}
+
+    if [ -d "$DVM_DIR/versions/$version" ]
+    then
+      rm -rf "$version_path"
+    else
+      mv "$version_path" "$DVM_DIR/versions/$version"
+    fi
+  done
+
+  rmdir "$DVM_DIR/doctor_temp"
+}
+
+print_doctor_message() {
+  local invalid_message
+  local corrupted_message
+
+  invalid_message="$1"
+  corrupted_message="$2"
+
+  if [ -z "$invalid_message" ] && [ -z "$corrupted_message" ]
+  then
+    echo "Everything is ok."
+    return
+  fi
+
+  if [ -n "$invalid_message" ]
+  then
+    echo "Invalid versions:"
+    echo -e "$invalid_message"
+  fi
+  
+  if [ -n "$corrupted_message" ]
+  then
+    echo "Corrupted versions:"
+    echo -e "$corrupted_message"
+  fi
+
+  echo "You can run \"dvm doctor --fix\" to fix these errors."
+}
+
 scan_and_fix_versions() {
   local mode
   local raw_output
@@ -690,33 +741,21 @@ scan_and_fix_versions() {
       if [ "$version" != "v$deno_version" ]
       then
         invalid_message="$invalid_message$version -> v$deno_version\n"
+
+        if [ "$mode" = "fix" ]
+        then
+          mkdir -p "$DVM_DIR/doctor_temp"
+          mv -f "$version_path" "$DVM_DIR/doctor_temp/v$deno_version"
+        fi
       fi
     fi
   done
 
   if [ "$mode" = "fix" ]
   then
-    # todo: fix invalid versions
-    return
-  fi
-
-  if [ -z "$invalid_message" ] && [ -z "$corrupted_message" ]
-  then
-    echo "Everything is ok."
+    fix_invalid_versions
   else
-    if [ -n "$invalid_message" ]
-    then
-      echo "Invalid versions:"
-      echo -e "$invalid_message"
-    fi
-    
-    if [ -n "$corrupted_message" ]
-    then
-      echo "Corrupted versions:"
-      echo -e "$corrupted_message"
-    fi
-
-    echo "You can run \"dvm doctor --fix\" to fix these errors."
+    print_doctor_message "$invalid_message" "$corrupted_message"
   fi
 }
 
