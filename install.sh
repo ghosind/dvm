@@ -38,7 +38,6 @@ export PATH=\"\$PATH:\$DVM_BIN\"
 
 get_latest_version() {
   local request_url
-  local request
   local response
   local field
 
@@ -53,20 +52,15 @@ get_latest_version() {
     ;;
   esac
 
-  if [ -x "$(command -v wget)" ]
+  if [ ! -x "$(command -v curl)" ]
   then
-    request="wget -O- $request_url -nv"
-  elif [ -x "$(command -v curl)" ]
-  then
-    request="curl -s $request_url"
-  else
-    echo "wget or curl is required."
+    echo "Curl is required."
     exit 1
   fi
 
-  if ! response=$($request)
+  if ! response=$(curl -s "$request_url")
   then
-    echo "failed to get the latest DVM version."
+    echo "Failed to get the latest DVM version."
     exit 1
   fi
 
@@ -124,7 +118,7 @@ install_dvm() {
     cp -R "$DVM_SCRIPT_DIR/". "$DVM_DIR"
   else
     get_latest_version
-    download_latest_version
+    install_latest_version
   fi
 
   add_nvm_into_rc_file
