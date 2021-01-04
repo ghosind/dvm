@@ -53,8 +53,6 @@ get_package_data() {
 # get_latest_version
 # Calls GitHub api to getting deno latest release tag name.
 get_latest_version() {
-  # the command of request deno latest version
-  local cmd
   # the url of github api
   local latest_url
   # the response of requesting deno latest version
@@ -66,18 +64,13 @@ get_latest_version() {
 
   latest_url="https://api.github.com/repos/denoland/deno/releases/latest"
 
-  if [ -x "$(command -v wget)" ]
+  if [ ! -x "$(command -v curl)" ]
   then
-    cmd="wget -O- $latest_url -nv"
-  elif [ -x "$(command -v curl)" ]
-  then
-    cmd="curl -s $latest_url"
-  else
-    echo "wget or curl is required."
+    echo "Curl is required."
     exit 1
   fi
 
-  if ! response=$($cmd)
+  if ! response=$(curl -s "$latest_url")
   then
     echo "failed to getting deno latest version"
     exit 1
@@ -197,18 +190,13 @@ validate_remote_version() {
 
   tag_url="https://api.github.com/repos/denoland/deno/releases/tags/$version"
 
-  if [ -x "$(command -v wget)" ]
+  if [ ! -x "$(command -v curl)" ]
   then
-    cmd="wget -O- $tag_url -nv"
-  elif [ -x "$(command -v curl)" ]
-  then
-    cmd="curl -s $tag_url"
-  else
-    echo "wget or curl is required."
+    echo "curl is required."
     exit 1
   fi
 
-  if ! response=$($cmd)
+  if ! response=$(curl -s "$tag_url")
   then
     echo "Failed to getting deno $version data"
     exit 1
@@ -341,7 +329,6 @@ list_remote_versions() {
   local num
   local tmp_versions
   local response
-  local cmd
 
   page=1
   size=100
@@ -350,18 +337,13 @@ list_remote_versions() {
 
   while [ "$num" -eq "$size" ]
   do
-    if [ -x "$(command -v wget)" ]
+    if [ ! -x "$(command -v curl)" ]
     then
-      cmd="wget -O- $releases_url&page=$page -nv"
-    elif [ -x "$(command -v curl)" ]
-    then
-      cmd="curl -s $releases_url&page=$page"
-    else
-      echo "wget or curl is required."
+      echo "Curl is required."
       exit 1
     fi
 
-    if ! response=$($cmd)
+    if ! response=$(curl -s "$releases_url&page=$page")
     then
       echo "failed to list remote versions"
       exit 1
@@ -606,7 +588,6 @@ locate_version() {
 get_dvm_latest_version() {
   local request_url
   local field
-  local request
   local response
 
   DVM_SOURCE="gitee"
@@ -622,18 +603,13 @@ get_dvm_latest_version() {
     ;;
   esac
 
-  if [ -x "$(command -v wget)" ]
+  if [ ! -x "$(command -v curl)" ]
   then
-    request="wget -O- $request_url -nv"
-  elif [ -x "$(command -v curl)" ]
-  then
-    request="curl -s $request_url"
-  else
-    echo "wget or curl is required."
+    echo "Curl is required."
     exit 1
   fi
 
-  if ! response=$($request)
+  if ! response=$(curl -s "$request_url")
   then
     echo "failed to get the latest DVM version."
     exit 1
