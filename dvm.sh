@@ -9,7 +9,7 @@ compare_version() {
 get_package_data() {
   if [ "$(uname -m)" != 'x86_64' ]
   then
-    echo 'Only x64 binaries are supported.'
+    echo '[ERR] only x64 binaries are supported.'
     exit 1
   fi
 
@@ -44,7 +44,7 @@ get_package_data() {
       DVM_TARGET_NAME='deno-x86_64-unknown-linux-gnu.zip'
       ;;
     *)
-      echo "Unsupported operating system $DVM_TARGET_OS"
+      echo "[ERR] unsupported operating system $DVM_TARGET_OS."
       exit 1
       ;;
   esac
@@ -66,13 +66,13 @@ get_latest_version() {
 
   if [ ! -x "$(command -v curl)" ]
   then
-    echo "Curl is required."
+    echo "[ERR] curl is required."
     exit 1
   fi
 
   if ! response=$(curl -s "$latest_url")
   then
-    echo "failed to getting deno latest version"
+    echo "[ERR] failed to getting deno latest version."
     exit 1
   fi
 
@@ -80,7 +80,7 @@ get_latest_version() {
 
   if [ -z "$tag_name" ]
   then
-    echo "failed to getting deno latest version"
+    echo "[ERR] failed to getting deno latest version."
     exit 1
   fi
 
@@ -115,7 +115,7 @@ download_file() {
   then
     cmd="curl -LJ $url -o $temp_file"
   else
-    echo "wget or curl is required."
+    echo "[ERR] wget or curl is required."
     exit 1
   fi
 
@@ -136,7 +136,7 @@ download_file() {
     rm "$temp_file"
   fi
 
-  echo "Failed to download deno $version."
+  echo "[ERR] failed to download deno $version."
   exit 1
 }
 
@@ -160,7 +160,7 @@ extract_file() {
       gunzip -c "$DVM_DIR/download/$1/deno.zip" > "$target_dir/deno"
       chmod +x "$target_dir/deno"
     else
-      echo "unzip is required."
+      echo "[ERR] unzip is required."
       exit 1
     fi
     ;;
@@ -170,7 +170,7 @@ extract_file() {
       gunzip -c "$DVM_DIR/download/$1/deno.gz" > "$target_dir/deno"
       chmod +x "$target_dir/deno"
     else
-      echo "gunzip is required."
+      echo "[ERR] gunzip is required."
       exit 1
     fi
     ;;
@@ -192,13 +192,13 @@ validate_remote_version() {
 
   if [ ! -x "$(command -v curl)" ]
   then
-    echo "curl is required."
+    echo "[ERR] curl is required."
     exit 1
   fi
 
   if ! response=$(curl -s "$tag_url")
   then
-    echo "Failed to getting deno $version data"
+    echo "[ERR] failed to getting deno $version data."
     exit 1
   fi
 
@@ -206,7 +206,7 @@ validate_remote_version() {
 
   if [ -z "$tag_name" ]
   then
-    echo "Deno '$version' not found, use 'ls-remote' command to get available versions."
+    echo "[ERR] deno '$version' not found, use 'ls-remote' command to get available versions."
     exit 1
   fi
 }
@@ -224,7 +224,7 @@ install_version() {
 
   if [ -f "$DVM_DIR/versions/$version/deno" ]
   then
-    echo "deno $version has been installed."
+    echo "Deno $version has been installed."
     exit 0
   fi
 
@@ -242,7 +242,7 @@ install_version() {
 
   extract_file "$version"
 
-  echo "deno $version has installed."
+  echo "Deno $version has installed."
 }
 
 uninstall_version() {
@@ -259,9 +259,9 @@ uninstall_version() {
   then
     rm -rf "$DVM_DIR/versions/$DVM_TARGET_VERSION"
 
-    echo "uninstalled deno $DVM_TARGET_VERSION."
+    echo "Uninstalled deno $DVM_TARGET_VERSION."
   else
-    echo "deno $DVM_TARGET_VERSION is not installed."
+    echo "Deno $DVM_TARGET_VERSION is not installed."
   fi
 }
 
@@ -339,13 +339,13 @@ list_remote_versions() {
   do
     if [ ! -x "$(command -v curl)" ]
     then
-      echo "Curl is required."
+      echo "[ERR] curl is required."
       exit 1
     fi
 
     if ! response=$(curl -s "$releases_url&page=$page")
     then
-      echo "failed to list remote versions"
+      echo "[ERR] failed to list remote versions."
       exit 1
     fi
 
@@ -430,7 +430,7 @@ get_version() {
 
   if [ ! -f "./.dvmrc" ]
   then
-    echo "No .dvmrc file found"
+    echo "No .dvmrc file found."
     return
   fi
 
@@ -480,9 +480,9 @@ use_version() {
     # create a new symbolic link, and link to specified deno executable file.
     ln -sf "$target_path" "$DVM_BIN/deno"
 
-    echo "using deno $DVM_TARGET_VERSION now."
+    echo "Using deno $DVM_TARGET_VERSION now."
   else
-    echo "deno $DVM_TARGET_VERSION is not installed."
+    echo "Deno $DVM_TARGET_VERSION is not installed, please run 'dvm install $DVM_TARGET_VERSION' to install."
     exit 1
   fi
 }
@@ -520,7 +520,7 @@ set_alias() {
 
   if [ ! -f "$DVM_DIR/versions/$version/deno" ]
   then
-    echo "deno $version is not installed."
+    echo "[ERR] deno $version is not installed."
     exit 1
   fi
 
@@ -539,7 +539,7 @@ rm_alias() {
 
   if [ ! -f "$DVM_DIR/aliases/$alias_name" ]
   then
-    echo "Alias $alias_name does not exist."
+    echo "[ERR] alias $alias_name does not exist."
     exit 1
   fi
 
@@ -548,17 +548,17 @@ rm_alias() {
   rm "$DVM_DIR/aliases/$alias_name"
 
   echo "Deleted alias $alias_name."
-  echo "Restore it with 'dvm alias $alias_name $aliased_version'"
+  echo "Restore it with 'dvm alias $alias_name $aliased_version'."
 }
 
 run_with_version() {
   if [ ! -f "$DVM_DIR/versions/$DVM_TARGET_VERSION/deno" ]
   then
-    echo "deno $DVM_TARGET_VERSION is not installed."
+    echo "[ERR] deno $DVM_TARGET_VERSION is not installed."
     exit 1
   fi
 
-  echo "Running with deno $DVM_TARGET_VERSION"
+  echo "Running with deno $DVM_TARGET_VERSION."
 
   "$DVM_DIR/versions/$DVM_TARGET_VERSION/deno" "$@"
 }
@@ -581,7 +581,7 @@ locate_version() {
   then
     echo "$DVM_DIR/versions/$target_version/deno"
   else
-    echo "deno $target_version is not installed."
+    echo "Deno $target_version is not installed."
   fi
 }
 
@@ -605,13 +605,13 @@ get_dvm_latest_version() {
 
   if [ ! -x "$(command -v curl)" ]
   then
-    echo "Curl is required."
+    echo "[ERR] curl is required."
     exit 1
   fi
 
   if ! response=$(curl -s "$request_url")
   then
-    echo "failed to get the latest DVM version."
+    echo "[ERR] failed to get the latest DVM version."
     exit 1
   fi
 
@@ -621,7 +621,7 @@ get_dvm_latest_version() {
 update_dvm() {
   if ! cd "$DVM_DIR" 2>/dev/null
   then
-    echo "Failed to update dvm."
+    echo "[ERR] failed to update dvm."
     exit 1
   fi
 
@@ -994,7 +994,7 @@ dvm() {
         mode="fix"
         ;;
       *)
-        echo "Unsupprot option \"$1\""
+        echo "[ERR] unsupprot option \"$1\"."
         exit 1
         ;;
       esac
@@ -1030,7 +1030,7 @@ dvm() {
 
     ;;
   *)
-    echo "Unknown command $1"
+    echo "[ERR] unknown command $1."
     print_help
 
     exit 1
