@@ -586,8 +586,6 @@ get_dvm_latest_version() {
   local field
   local response
 
-  DVM_SOURCE="gitee"
-
   case "$DVM_SOURCE" in
   gitee)
     request_url="https://gitee.com/api/v5/repos/ghosind/dvm/releases/latest"
