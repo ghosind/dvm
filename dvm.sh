@@ -434,11 +434,7 @@ get_version() {
     return
   fi
 
-  version=$(cat ./.dvmrc)
-  if [ -f "$DVM_DIR/versions/$version/deno" ]
-  then
-    DVM_TARGET_VERSION="$version"
-  fi
+  DVM_TARGET_VERSION=$(cat ./.dvmrc)
 }
 
 # use_version
@@ -482,7 +478,7 @@ use_version() {
 
     echo "Using deno $DVM_TARGET_VERSION now."
   else
-    echo "Deno $DVM_TARGET_VERSION is not installed, please run 'dvm install $DVM_TARGET_VERSION' to install."
+    echo "Deno $DVM_TARGET_VERSION is not installed, you can run 'dvm install $DVM_TARGET_VERSION' to install it."
     exit 1
   fi
 }
@@ -640,7 +636,7 @@ fix_invalid_versions() {
   fi
 
   for version_path in "$DVM_DIR/doctor_temp/"*
-  do  
+  do
     version=${version_path##*/}
 
     if [ -d "$DVM_DIR/versions/$version" ]
@@ -672,7 +668,7 @@ print_doctor_message() {
     echo "Invalid versions:"
     echo -e "$invalid_message"
   fi
-  
+
   if [ -n "$corrupted_message" ]
   then
     echo "Corrupted versions:"
@@ -702,7 +698,7 @@ scan_and_fix_versions() {
     version=${version_path##*/}
 
     raw_output=$("$version_path/deno" --version 2>/dev/null)
-    
+
     if [ -z "$raw_output" ]
     then
       corrupted_message="$corrupted_message$version\n"
