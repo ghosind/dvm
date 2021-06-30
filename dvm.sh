@@ -489,8 +489,7 @@ dvm_use_version() {
     PATH_NO_DVMS=$(echo ${PATH} | tr ":" "\n" | grep -v $DVM_DIR | tr "\n" ":")
     export PATH="$target_dir":${PATH_NO_DVMS}
 
-    echo "xx Using deno $DVM_TARGET_VERSION now."
-    echo "path is ${PATH}"
+    echo "Using deno $DVM_TARGET_VERSION now."
   else
     echo "Deno $DVM_TARGET_VERSION is not installed, you can run 'dvm install $DVM_TARGET_VERSION' to install it."
     dvm_failure
