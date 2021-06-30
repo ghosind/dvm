@@ -18,21 +18,21 @@ dvm_compare_version() {
 }
 
 dvm_get_package_data() {
-  if [ "$(uname -m)" != 'x86_64' ]
+  local target_version
+
+  DVM_TARGET_OS=$(uname -s)
+  DVM_TARGET_ARCH=$(uname -m)
+  target_version="$1"
+
+  if [ "$DVM_TARGET_OS" = "Darwin" ] &&
+    [ "$DVM_TARGET_ARCH" = 'arm64' ] &&
+    dvm_compare_version "$target_version" "v1.6.0"
   then
-    echo '[ERR] only x64 binaries are supported.'
+    echo '[ERR] aarch64-darwin support deno v1.6.0 and above versions only.'
     dvm_failure
   fi
 
-  local min_version
-  local target_version
-
-  target_version="$1"
-
-  DVM_TARGET_OS=$(uname -s)
-  min_version="v0.36.0"
-
-  if dvm_compare_version "$target_version" "$min_version"
+  if dvm_compare_version "$target_version" "v0.36.0"
   then
     DVM_TARGET_TYPE="gz"
     DVM_FILE_TYPE="gzip compressed data"
@@ -41,21 +41,24 @@ dvm_get_package_data() {
     DVM_FILE_TYPE="Zip archive data"
   fi
 
-  case "$DVM_TARGET_OS:$DVM_TARGET_TYPE" in
-    "Darwin:gz")
+  case "$DVM_TARGET_OS:$DVM_TARGET_ARCH:$DVM_TARGET_TYPE" in
+    "Darwin:x86_64:gz")
       DVM_TARGET_NAME='deno_osx_x64.gz'
       ;;
-    "Linux:gz")
+    "Linux:x86_64:gz")
       DVM_TARGET_NAME='deno_linux_x64.gz'
       ;;
-    "Darwin:zip")
+    "Darwin:x86_64:zip")
       DVM_TARGET_NAME='deno-x86_64-apple-darwin.zip'
       ;;
-    "Linux:zip")
+    "Darwin:arm64:zip")
+      DVM_TARGET_NAME='deno-aarch64-apple-darwin.zip'
+      ;;
+    "Linux:x86_64:zip")
       DVM_TARGET_NAME='deno-x86_64-unknown-linux-gnu.zip'
       ;;
     *)
-      echo "[ERR] unsupported operating system $DVM_TARGET_OS."
+      echo "[ERR] unsupported operating system $DVM_TARGET_OS ($DVM_TARGET_ARCH)."
       dvm_failure
       ;;
   esac
