@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+compare_version() {
+  test "$(printf '%s\n' "$@" | sort -V | head -n 1)" != "$2"
+}
+
 get_rc_file() {
   case ${SHELL##*/} in
   bash)
@@ -16,6 +20,7 @@ get_rc_file() {
 
 add_nvm_into_rc_file() {
   local is_dvm_defined
+  local cmd_declaration
 
   get_rc_file
 
@@ -26,12 +31,19 @@ add_nvm_into_rc_file() {
     return
   fi
 
+  if [ "$DVM_INSTALL_METHOD" = "remote" ] && compare_version "$DVM_LATEST_VERSION" "v0.5.0"
+  then
+    cmd_declaration="alias dvm="
+  else
+    cmd_declaration=". "
+  fi
+
   echo "
 # Deno Version Manager
 export DVM_DIR=\"\$HOME/.dvm\"
 export DVM_BIN=\"\$DVM_DIR/bin\"
 export PATH=\"\$PATH:\$DVM_BIN\"
-[ -f \"\$DVM_DIR/dvm.sh\" ] && . \"\$DVM_DIR/dvm.sh\"
+[ -f \"\$DVM_DIR/dvm.sh\" ] && $cmd_declaration\"\$DVM_DIR/dvm.sh\"
 [ -f \"\$DVM_DIR/bash_completion\" ] && . \"\$DVM_DIR/bash_completion\"
 " >> "$DVM_RC_FILE"
 }
@@ -116,9 +128,11 @@ install_dvm() {
   then
     # Copy all files to DVM_DIR
     cp -R "$DVM_SCRIPT_DIR/". "$DVM_DIR"
+    DVM_INSTALL_METHOD="local"
   else
     get_latest_version
     install_latest_version
+    DVM_INSTALL_METHOD="remote"
   fi
 
   add_nvm_into_rc_file
