@@ -1,6 +1,17 @@
 #!/usr/bin/env bash
+# source this script
 
-DVM_VERSION="v0.4.1"
+export DVM_VERSION="v0.4.1"
+
+success() {
+  # execute true to set as success
+  true
+}
+
+failure() {
+  # execute false to set as fail
+  false
+}
 
 compare_version() {
   test "$(printf '%s\n' "$@" | sort -V | head -n 1)" != "$2"
@@ -10,7 +21,7 @@ get_package_data() {
   if [ "$(uname -m)" != 'x86_64' ]
   then
     echo '[ERR] only x64 binaries are supported.'
-    exit 1
+    failure
   fi
 
   local min_version
@@ -45,7 +56,7 @@ get_package_data() {
       ;;
     *)
       echo "[ERR] unsupported operating system $DVM_TARGET_OS."
-      exit 1
+      failure
       ;;
   esac
 }
@@ -67,13 +78,13 @@ get_latest_version() {
   if [ ! -x "$(command -v curl)" ]
   then
     echo "[ERR] curl is required."
-    exit 1
+    failure
   fi
 
   if ! response=$(curl -s "$latest_url")
   then
     echo "[ERR] failed to getting deno latest version."
-    exit 1
+    failure
   fi
 
   tag_name=$(echo "$response" | grep tag_name | cut -d '"' -f 4)
@@ -81,7 +92,7 @@ get_latest_version() {
   if [ -z "$tag_name" ]
   then
     echo "[ERR] failed to getting deno latest version."
-    exit 1
+    failure
   fi
 
   DVM_TARGET_VERSION="$tag_name"
@@ -116,7 +127,7 @@ download_file() {
     cmd="curl -LJ $url -o $temp_file"
   else
     echo "[ERR] wget or curl is required."
-    exit 1
+    failure
   fi
 
   if $cmd
@@ -137,7 +148,7 @@ download_file() {
   fi
 
   echo "[ERR] failed to download deno $version."
-  exit 1
+  failure
 }
 
 extract_file() {
@@ -161,7 +172,7 @@ extract_file() {
       chmod +x "$target_dir/deno"
     else
       echo "[ERR] unzip is required."
-      exit 1
+      failure
     fi
     ;;
   "gz")
@@ -171,7 +182,7 @@ extract_file() {
       chmod +x "$target_dir/deno"
     else
       echo "[ERR] gunzip is required."
-      exit 1
+      failure
     fi
     ;;
   *)
@@ -193,13 +204,13 @@ validate_remote_version() {
   if [ ! -x "$(command -v curl)" ]
   then
     echo "[ERR] curl is required."
-    exit 1
+    failure
   fi
 
   if ! response=$(curl -s "$tag_url")
   then
     echo "[ERR] failed to getting deno $version data."
-    exit 1
+    failure
   fi
 
   tag_name=$(echo "$response" | grep tag_name | cut -d '"' -f 4)
@@ -207,7 +218,7 @@ validate_remote_version() {
   if [ -z "$tag_name" ]
   then
     echo "[ERR] deno '$version' not found, use 'ls-remote' command to get available versions."
-    exit 1
+    failure
   fi
 }
 
@@ -225,7 +236,7 @@ install_version() {
   if [ -f "$DVM_DIR/versions/$version/deno" ]
   then
     echo "Deno $version has been installed."
-    exit 0
+    success
   fi
 
   validate_remote_version "$version"
@@ -340,13 +351,13 @@ list_remote_versions() {
     if [ ! -x "$(command -v curl)" ]
     then
       echo "[ERR] curl is required."
-      exit 1
+      failure
     fi
 
     if ! response=$(curl -s "$releases_url&page=$page")
     then
       echo "[ERR] failed to list remote versions."
-      exit 1
+      failure
     fi
 
     tmp_versions=$(echo "$response" | grep tag_name | cut -d '"' -f 4)
@@ -457,7 +468,7 @@ use_version() {
   if [ -z "$DVM_TARGET_VERSION" ]
   then
     print_help
-    exit 1
+    failure
   fi
 
   target_dir="$DVM_DIR/versions/$DVM_TARGET_VERSION"
@@ -475,13 +486,14 @@ use_version() {
     fi
 
     # export PATH with the target dir in front
-    PATH_NO_DVMS=echo ${PATH} | tr ":" "\n" | grep -v $DVM_DIR | tr "\n" ":"
+    PATH_NO_DVMS=$(echo ${PATH} | tr ":" "\n" | grep -v $DVM_DIR | tr "\n" ":")
     export PATH="$target_dir":${PATH_NO_DVMS}
 
-    echo "Using deno $DVM_TARGET_VERSION now."
+    echo "xx Using deno $DVM_TARGET_VERSION now."
+    echo "path is ${PATH}"
   else
     echo "Deno $DVM_TARGET_VERSION is not installed, you can run 'dvm install $DVM_TARGET_VERSION' to install it."
-    exit 1
+    failure
   fi
 }
 
@@ -519,7 +531,7 @@ set_alias() {
   if [ ! -f "$DVM_DIR/versions/$version/deno" ]
   then
     echo "[ERR] deno $version is not installed."
-    exit 1
+    failure
   fi
 
   echo "$version" > "$DVM_DIR/aliases/$alias_name"
@@ -538,7 +550,7 @@ rm_alias() {
   if [ ! -f "$DVM_DIR/aliases/$alias_name" ]
   then
     echo "[ERR] alias $alias_name does not exist."
-    exit 1
+    failure
   fi
 
   aliased_version=$(cat "$DVM_DIR/aliases/$alias_name")
@@ -553,7 +565,7 @@ run_with_version() {
   if [ ! -f "$DVM_DIR/versions/$DVM_TARGET_VERSION/deno" ]
   then
     echo "[ERR] deno $DVM_TARGET_VERSION is not installed."
-    exit 1
+    failure
   fi
 
   echo "Running with deno $DVM_TARGET_VERSION."
@@ -602,13 +614,13 @@ get_dvm_latest_version() {
   if [ ! -x "$(command -v curl)" ]
   then
     echo "[ERR] curl is required."
-    exit 1
+    failure
   fi
 
   if ! response=$(curl -s "$request_url")
   then
     echo "[ERR] failed to get the latest DVM version."
-    exit 1
+    failure
   fi
 
   DVM_LATEST_VERSION=$(echo "$response" | grep tag_name | cut -d '"' -f $field)
@@ -618,7 +630,7 @@ update_dvm() {
   if ! cd "$DVM_DIR" 2>/dev/null
   then
     echo "[ERR] failed to update dvm."
-    exit 1
+    failure
   fi
 
   # reset changes if exists
@@ -763,10 +775,10 @@ confirm_with_prompt() {
   y|Y)
     ;;
   n|N)
-    exit 0
+    success
     ;;
   *)
-    exit 1
+    failure
     ;;
   esac
 }
@@ -825,7 +837,7 @@ dvm() {
   if [ "$#" = "0" ]
   then
     print_help
-    exit 0
+    success
   fi
 
   case $1 in
@@ -870,7 +882,7 @@ dvm() {
     if [ "$DVM_TARGET_VERSION" = "" ]
     then
       print_help
-      exit 1
+      failure
     fi
 
     uninstall_version "$DVM_TARGET_VERSION"
@@ -916,7 +928,7 @@ dvm() {
     if [ "$#" -lt "2" ]
     then
       print_help
-      exit 1
+      failure
     fi
 
     set_alias "$@"
@@ -928,7 +940,7 @@ dvm() {
     if [ "$#" -lt "1" ]
     then
       print_help
-      exit 1
+      failure
     fi
 
     rm_alias "$1"
@@ -941,7 +953,7 @@ dvm() {
     if [ "$DVM_TARGET_VERSION" = "" ]
     then
       print_help
-      exit 1
+      failure
     fi
 
     if [ "$#" != "0" ]
@@ -960,7 +972,7 @@ dvm() {
     if [ -z "$DVM_TARGET_VERSION" ]
     then
       print_help
-      exit 1
+      failure
     fi
 
     locate_version "$@"
@@ -972,7 +984,7 @@ dvm() {
     if [ "$DVM_LATEST_VERSION" = "$DVM_VERSION" ]
     then
       echo "dvm is update to date."
-      exit 0
+      success
     fi
 
     update_dvm
@@ -991,7 +1003,7 @@ dvm() {
         ;;
       *)
         echo "[ERR] unsupprot option \"$1\"."
-        exit 1
+        failure
         ;;
       esac
 
@@ -1029,9 +1041,7 @@ dvm() {
     echo "[ERR] unknown command $1."
     print_help
 
-    exit 1
+    failure
     ;;
   esac
 }
-
-dvm "$@"
