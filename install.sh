@@ -100,7 +100,7 @@ set_dvm_dir() {
   then
     mkdir -p "$DVM_DIR"
   else
-    echo "directory $DVM_DIR is existed."
+    echo "directory $DVM_DIR already exists."
     exit 1
   fi
 }
