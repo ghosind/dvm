@@ -460,7 +460,8 @@ use_version() {
     exit 1
   fi
 
-  target_path="$DVM_DIR/versions/$DVM_TARGET_VERSION/deno"
+  target_dir="$DVM_DIR/versions/$DVM_TARGET_VERSION"
+  target_path="$target_dir/deno"
 
   if [ -f "$target_path" ]
   then
@@ -473,8 +474,9 @@ use_version() {
       echo "[WARN] You may had upgraded this version, it is v$deno_version now."
     fi
 
-    # create a new symbolic link, and link to specified deno executable file.
-    ln -sf "$target_path" "$DVM_BIN/deno"
+    # export PATH with the target dir in front
+    PATH_NO_DVMS=echo ${PATH} | tr ":" "\n" | grep -v $DVM_DIR | tr "\n" ":"
+    export PATH="$target_dir":${PATH_NO_DVMS}
 
     echo "Using deno $DVM_TARGET_VERSION now."
   else
