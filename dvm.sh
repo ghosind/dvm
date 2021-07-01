@@ -133,7 +133,7 @@ dvm_download_file() {
     dvm_failure
   fi
 
-  if $cmd
+  if eval "$cmd"
   then
     local file_type
     file_type=$(file "$temp_file")
