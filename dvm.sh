@@ -489,7 +489,7 @@ dvm_use_version() {
     fi
 
     # export PATH with the target dir in front
-    PATH_NO_DVMS=$(echo ${PATH} | tr ":" "\n" | grep -v $DVM_DIR | tr "\n" ":")
+    PATH_NO_DVMS=$(echo "$PATH" | tr ":" "\n" | grep -v "$DVM_DIR" | tr "\n" ":")
     export PATH="$target_dir":${PATH_NO_DVMS}
 
     echo "Using deno $DVM_TARGET_VERSION now."
