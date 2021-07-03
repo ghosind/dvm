@@ -287,15 +287,15 @@ dvm_list_aliases() {
     return
   fi
 
-  for path in "$DVM_DIR/aliases"/*
+  for alias_path in "$DVM_DIR/aliases"/*
   do
-    if [ ! -f "$path" ]
+    if [ ! -f "$alias_path" ]
     then
       continue;
     fi
 
-    alias_name=${path##*/}
-    aliased_version=$(cat "$path")
+    alias_name=${alias_path##*/}
+    aliased_version=$(cat "$alias_path")
 
     if [ -z "$aliased_version" ] ||
       [ ! -f "$DVM_DIR/versions/$aliased_version/deno" ]
@@ -392,22 +392,22 @@ dvm_check_dvm_dir() {
 }
 
 dvm_clean_download_cache() {
-  for path in "$DVM_DIR/download"/*
+  for cache_path in "$DVM_DIR/download"/*
   do
-    if [ ! -d "$path" ]
+    if [ ! -d "$cache_path" ]
     then
       continue
     fi
 
-    [ -f "$path/deno-downloading.zip" ] && rm "$path/deno-downloading.zip"
+    [ -f "$cache_path/deno-downloading.zip" ] && rm "$cache_path/deno-downloading.zip"
 
-    [ -f "$path/deno-downloading.gz" ] && rm "$path/deno-downloading.gz"
+    [ -f "$cache_path/deno-downloading.gz" ] && rm "$cache_path/deno-downloading.gz"
 
-    [ -f "$path/deno.zip" ] && rm "$path/deno.zip"
+    [ -f "$cache_path/deno.zip" ] && rm "$cache_path/deno.zip"
 
-    [ -f "$path/deno.gz" ] && rm "$path/deno.gz"
+    [ -f "$cache_path/deno.gz" ] && rm "$cache_path/deno.gz"
 
-    rmdir "$path"
+    rmdir "$cache_path"
   done
 }
 
