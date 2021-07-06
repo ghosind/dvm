@@ -503,12 +503,16 @@ dvm_get_current_version() {
   local deno_path
   local deno_dir
 
-  if [ ! -f "$DVM_BIN/deno" ]
+  if ! deno_path=$(which deno)
   then
     return
   fi
 
-  deno_path=$(readlink "$DVM_BIN/deno")
+  if [[ "$deno_path" != "$DVM_DIR/versions/"* ]]
+  then
+    return
+  fi
+
   deno_dir=${deno_path%/deno}
 
   DVM_DENO_VERSION=${deno_dir##*/}
