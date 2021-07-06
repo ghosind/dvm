@@ -911,6 +911,10 @@ dvm() {
     if [ -n "$DVM_DENO_VERSION" ]
     then
       echo "$DVM_DENO_VERSION"
+    elif [ -x "$(command -v deno)" ]
+    then
+      version=$(deno --version | grep "deno" | cut -d " " -f 2)
+      echo "system (v$version)"
     else
       echo "none"
     fi
