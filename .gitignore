@@ -2,3 +2,10 @@ bin/
 aliases/
 versions/
 coverage/
+download/
+
+# Editors
+.vscode
+
+# Misc
+.DS_Store
