@@ -1055,3 +1055,8 @@ dvm() {
     ;;
   esac
 }
+
+if [ -f "$DVM_DIR/aliases/default" ]
+then
+  dvm use "default"
+fi
