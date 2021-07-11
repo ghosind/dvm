@@ -503,7 +503,7 @@ dvm_get_current_version() {
   local deno_path
   local deno_dir
 
-  if ! deno_path=$(which deno)
+  if ! deno_path=$(which deno 2>/dev/null)
   then
     return
   fi
