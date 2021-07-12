@@ -17,6 +17,10 @@ dvm_compare_version() {
   test "$(printf '%s\n' "$@" | sort -V | head -n 1)" != "$2"
 }
 
+dvm_has() {
+  command -v "$1" > /dev/null
+}
+
 dvm_get_package_data() {
   local target_version
 
@@ -906,17 +910,21 @@ dvm() {
     ;;
   current)
     # get the current version
+
+    if ! dvm_has deno
+    then
+      echo "none"
+      return 1
+    fi
+
     dvm_get_current_version
 
     if [ -n "$DVM_DENO_VERSION" ]
     then
       echo "$DVM_DENO_VERSION"
-    elif [ -x "$(command -v deno)" ]
-    then
+    else
       version=$(deno --version | grep "deno" | cut -d " " -f 2)
       echo "system (v$version)"
-    else
-      echo "none"
     fi
 
     ;;
