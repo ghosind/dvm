@@ -82,7 +82,7 @@ dvm_get_latest_version() {
 
   latest_url="https://api.github.com/repos/denoland/deno/releases/latest"
 
-  if [ ! -x "$(command -v curl)" ]
+  if ! dvm_has curl
   then
     echo "[ERR] curl is required."
     dvm_failure
@@ -126,10 +126,10 @@ dvm_download_file() {
   url="$DVM_INSTALL_REGISTRY/$version/$DVM_TARGET_NAME"
   temp_file="$DVM_DIR/download/$version/deno-downloading.$DVM_TARGET_TYPE"
 
-  if [ -x "$(command -v wget)" ]
+  if dvm_has wget
   then
     cmd="wget $url -O $temp_file"
-  elif [ -x "$(command -v curl)" ]
+  elif dvm_has curl
   then
     cmd="curl -LJ $url -o $temp_file"
   else
@@ -170,10 +170,10 @@ dvm_extract_file() {
 
   case $DVM_TARGET_TYPE in
   "zip")
-    if [ -x "$(command -v unzip)" ]
+    if dvm_has unzip
     then
       unzip "$DVM_DIR/download/$1/deno.zip" -d "$target_dir" > /dev/null
-    elif [ "$DVM_TARGET_OS" = "Linux" ] && [ -x "$(command -v gunzip)" ]
+    elif [ "$DVM_TARGET_OS" = "Linux" ] && dvm_has gunzip
     then
       gunzip -c "$DVM_DIR/download/$1/deno.zip" > "$target_dir/deno"
       chmod +x "$target_dir/deno"
@@ -183,7 +183,7 @@ dvm_extract_file() {
     fi
     ;;
   "gz")
-    if [ -x "$(command -v gunzip)" ]
+    if dvm_has gunzip
     then
       gunzip -c "$DVM_DIR/download/$1/deno.gz" > "$target_dir/deno"
       chmod +x "$target_dir/deno"
@@ -208,7 +208,7 @@ dvm_validate_remote_version() {
 
   tag_url="https://api.github.com/repos/denoland/deno/releases/tags/$version"
 
-  if [ ! -x "$(command -v curl)" ]
+  if ! dvm_has curl
   then
     echo "[ERR] curl is required."
     dvm_failure
@@ -355,7 +355,7 @@ dvm_list_remote_versions() {
 
   while [ "$num" -eq "$size" ]
   do
-    if [ ! -x "$(command -v curl)" ]
+    if ! dvm_has curl
     then
       echo "[ERR] curl is required."
       dvm_failure
@@ -621,7 +621,7 @@ dvm_get_dvm_latest_version() {
     ;;
   esac
 
-  if [ ! -x "$(command -v curl)" ]
+  if ! dvm_has curl
   then
     echo "[ERR] curl is required."
     dvm_failure
