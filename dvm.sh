@@ -21,6 +21,15 @@ dvm_has() {
   command -v "$1" > /dev/null
 }
 
+dvm_print() {
+  if [ "$DVM_SILENCE_MODE" = true ]
+  then
+    return
+  fi
+
+  echo "$@"
+}
+
 dvm_get_package_data() {
   local target_version
 
@@ -489,16 +498,16 @@ dvm_use_version() {
     if [ "$DVM_TARGET_VERSION" != "v$deno_version" ]
     then
       # print warnning message when deno version is different with parameter.
-      echo "[WARN] You may had upgraded this version, it is v$deno_version now."
+      dvm_print "[WARN] You may had upgraded this version, it is v$deno_version now."
     fi
 
     # export PATH with the target dir in front
     PATH_NO_DVMS=$(echo "$PATH" | tr ":" "\n" | grep -v "$DVM_DIR" | tr "\n" ":")
     export PATH="$target_dir":${PATH_NO_DVMS}
 
-    echo "Using deno $DVM_TARGET_VERSION now."
+    dvm_print "Using deno $DVM_TARGET_VERSION now."
   else
-    echo "Deno $DVM_TARGET_VERSION is not installed, you can run 'dvm install $DVM_TARGET_VERSION' to install it."
+    dvm_print "Deno $DVM_TARGET_VERSION is not installed, you can run 'dvm install $DVM_TARGET_VERSION' to install it."
     dvm_failure
   fi
 }
@@ -1066,5 +1075,6 @@ dvm() {
 
 if [ -f "$DVM_DIR/aliases/default" ]
 then
+  DVM_SILENCE_MODE=true
   dvm use "default"
 fi
