@@ -252,7 +252,7 @@ dvm_install_version() {
   if [ -f "$DVM_DIR/versions/$version/deno" ]
   then
     echo "Deno $version has been installed."
-    dvm_success
+    return 0
   fi
 
   dvm_validate_remote_version "$version"
@@ -856,7 +856,7 @@ dvm() {
   if [ "$#" = "0" ]
   then
     dvm_print_help
-    dvm_success
+    return 0
   fi
 
   case $1 in
@@ -901,7 +901,7 @@ dvm() {
     if [ "$DVM_TARGET_VERSION" = "" ]
     then
       dvm_print_help
-      dvm_failure
+      return 1
     fi
 
     dvm_uninstall_version "$DVM_TARGET_VERSION"
@@ -955,7 +955,7 @@ dvm() {
     if [ "$#" -lt "2" ]
     then
       dvm_print_help
-      dvm_failure
+      return 1
     fi
 
     dvm_set_alias "$@"
@@ -967,7 +967,7 @@ dvm() {
     if [ "$#" -lt "1" ]
     then
       dvm_print_help
-      dvm_failure
+      return 1
     fi
 
     dvm_rm_alias "$1"
@@ -980,7 +980,7 @@ dvm() {
     if [ "$DVM_TARGET_VERSION" = "" ]
     then
       dvm_print_help
-      dvm_failure
+      return 1
     fi
 
     if [ "$#" != "0" ]
@@ -999,7 +999,7 @@ dvm() {
     if [ -z "$DVM_TARGET_VERSION" ]
     then
       dvm_print_help
-      dvm_failure
+      return 1
     fi
 
     dvm_locate_version "$@"
@@ -1011,7 +1011,7 @@ dvm() {
     if [ "$DVM_LATEST_VERSION" = "$DVM_VERSION" ]
     then
       echo "dvm is update to date."
-      dvm_success
+      return 0
     fi
 
     dvm_update_dvm
@@ -1030,7 +1030,7 @@ dvm() {
         ;;
       *)
         echo "[ERR] unsupprot option \"$1\"."
-        dvm_failure
+        return 1
         ;;
       esac
 
@@ -1068,7 +1068,7 @@ dvm() {
     echo "[ERR] unknown command $1."
     dvm_print_help
 
-    dvm_failure
+    return 1
     ;;
   esac
 }
