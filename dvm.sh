@@ -812,6 +812,20 @@ dvm_purge_dvm() {
   content=$(sed "/Deno Version Manager/d;/DVM_DIR/d;/DVM_BIN/d" "$DVM_RC_FILE")
   echo "$content" > "$DVM_RC_FILE"
 
+  unset -v DVM_BIN DVM_DIR DVM_VERSION DVM_RC_FILE
+  unset -f dvm
+  unset -f dvm_check_alias_dir dvm_check_dvm_dir dvm_clean_download_cache \
+    dvm_compare_version dvm_confirm_with_prompt dvm_download_file \
+    dvm_extract_file dvm_failure dvm_fix_invalid_versions \
+    dvm_get_current_version dvm_get_dvm_latest_version dvm_get_latest_version \
+    dvm_get_package_data dvm_get_rc_file dvm_get_version \
+    dvm_get_version_by_param dvm_has dvm_install_version dvm_list_aliases \
+    dvm_list_local_versions dvm_list_remote_versions dvm_locate_version \
+    dvm_print dvm_print_doctor_message dvm_print_help dvm_purge_dvm \
+    dvm_rm_alias dvm_run_with_version dvm_scan_and_fix_versions dvm_set_alias \
+    dvm_success dvm_uninstall_version dvm_update_dvm dvm_use_version \
+    dvm_validate_remote_version
+
   echo "DVM has been removed from your computer."
 }
 
