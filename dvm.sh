@@ -273,13 +273,12 @@ dvm_install_version() {
 }
 
 dvm_uninstall_version() {
-  local current_bin_path
+  dvm_get_current_version
 
-  current_bin_path=$(file -h "$DVM_BIN/deno" | grep link | cut -d " " -f 5)
-
-  if [ "$current_bin_path" = "$DVM_DIR/versions/$DVM_TARGET_VERSION/deno" ]
+  if [ "$DVM_DENO_VERSION" = "$DVM_TARGET_VERSION" ]
   then
-    rm "$DVM_BIN/deno"
+    echo "Cannot active deno version ($DVM_DENO_VERSION)."
+    return 1
   fi
 
   if [ -f "$DVM_DIR/versions/$DVM_TARGET_VERSION/deno" ]
