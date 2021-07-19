@@ -296,7 +296,12 @@ dvm_list_aliases() {
 
   if [ ! -d "$DVM_DIR/aliases" ]
   then
-    return
+    return 0
+  fi
+
+  if [ -z "$(ls -A "$DVM_DIR/aliases")" ]
+  then
+    return 0
   fi
 
   for alias_path in "$DVM_DIR/aliases"/*
@@ -322,29 +327,32 @@ dvm_list_aliases() {
 dvm_list_local_versions() {
   local version
 
-  dvm_get_current_version
-
-  if [ -d "$DVM_DIR/versions" ]
+  if [ ! -d "$DVM_DIR/versions" ]
   then
-    for dir in "$DVM_DIR/versions"/*
-    do
-      if [ ! -f "$dir/deno" ]
-      then
-        continue
-      fi
-
-      version=${dir##*/}
-
-      if [ "$version" = "$DVM_DENO_VERSION" ]
-      then
-        echo "-> $version"
-      else
-        echo "   $version"
-      fi
-    done
+    return 0
   fi
 
-  dvm_list_aliases
+  if [ -z "$(ls -A "$DVM_DIR/versions")" ]
+  then
+    return 0
+  fi
+
+  for dir in "$DVM_DIR/versions"/*
+  do
+    if [ ! -f "$dir/deno" ]
+    then
+      continue
+    fi
+
+    version=${dir##*/}
+
+    if [ "$version" = "$DVM_DENO_VERSION" ]
+    then
+      echo "-> $version"
+    else
+      echo "   $version"
+    fi
+  done
 }
 
 dvm_list_remote_versions() {
@@ -404,6 +412,16 @@ dvm_check_dvm_dir() {
 }
 
 dvm_clean_download_cache() {
+  if [ ! -d "$DVM_DIR/download" ]
+  then
+    return 0
+  fi
+
+  if [ -z "$(ls -A "$DVM_DIR/download")" ]
+  then
+    return 0
+  fi
+
   for cache_path in "$DVM_DIR/download"/*
   do
     if [ ! -d "$cache_path" ]
@@ -922,7 +940,11 @@ dvm() {
     ;;
   list | ls)
     # list all local versions
+    dvm_get_current_version
+
     dvm_list_local_versions
+
+    dvm_list_aliases
 
     ;;
   list-remote | ls-remote)

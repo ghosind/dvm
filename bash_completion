@@ -11,6 +11,11 @@ add_versions_to_opts() {
     return
   fi
 
+  if [ -z "$(ls -A "$DVM_DIR/versions")" ]
+  then
+    return 0
+  fi
+
   for path in "$DVM_DIR/versions"/*
   do
     if [ -f "$path/deno" ]
@@ -26,6 +31,11 @@ add_aliases_to_opts() {
   if [ ! -d "$DVM_DIR/aliases" ]
   then
     return
+  fi
+
+  if [ -z "$(ls -A "$DVM_DIR/aliases")" ]
+  then
+    return 0
   fi
 
   for path in "$DVM_DIR/aliases"/*
