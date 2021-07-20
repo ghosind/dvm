@@ -374,13 +374,13 @@ dvm_list_remote_versions() {
     if ! dvm_has curl
     then
       echo "[ERR] curl is required."
-      dvm_failure
+      return 1
     fi
 
     if ! response=$(curl -s "$releases_url&page=$page")
     then
       echo "[ERR] failed to list remote versions."
-      dvm_failure
+      return 1
     fi
 
     tmp_versions=$(echo "$response" | grep tag_name | cut -d '"' -f 4)
@@ -501,7 +501,7 @@ dvm_use_version() {
   if [ -z "$DVM_TARGET_VERSION" ]
   then
     dvm_print_help
-    dvm_failure
+    return 1
   fi
 
   target_dir="$DVM_DIR/versions/$DVM_TARGET_VERSION"
@@ -525,7 +525,7 @@ dvm_use_version() {
     dvm_print "Using deno $DVM_TARGET_VERSION now."
   else
     dvm_print "Deno $DVM_TARGET_VERSION is not installed, you can run 'dvm install $DVM_TARGET_VERSION' to install it."
-    dvm_failure
+    return 1
   fi
 }
 
@@ -567,7 +567,7 @@ dvm_set_alias() {
   if [ ! -f "$DVM_DIR/versions/$version/deno" ]
   then
     echo "[ERR] deno $version is not installed."
-    dvm_failure
+    return 1
   fi
 
   echo "$version" > "$DVM_DIR/aliases/$alias_name"
@@ -586,7 +586,7 @@ dvm_rm_alias() {
   if [ ! -f "$DVM_DIR/aliases/$alias_name" ]
   then
     echo "[ERR] alias $alias_name does not exist."
-    dvm_failure
+    return 1
   fi
 
   aliased_version=$(cat "$DVM_DIR/aliases/$alias_name")
@@ -601,7 +601,7 @@ dvm_run_with_version() {
   if [ ! -f "$DVM_DIR/versions/$DVM_TARGET_VERSION/deno" ]
   then
     echo "[ERR] deno $DVM_TARGET_VERSION is not installed."
-    dvm_failure
+    return 1
   fi
 
   echo "Running with deno $DVM_TARGET_VERSION."
@@ -666,7 +666,7 @@ dvm_update_dvm() {
   if ! cd "$DVM_DIR" 2>/dev/null
   then
     echo "[ERR] failed to update dvm."
-    dvm_failure
+    return 1
   fi
 
   # reset changes if exists
