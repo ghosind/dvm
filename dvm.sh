@@ -404,11 +404,6 @@ dvm_check_dvm_dir() {
     # set default dvm directory
     DVM_DIR="$HOME/.dvm"
   fi
-
-  if [ -z "$DVM_BIN" ]
-  then
-    DVM_BIN="$DVM_DIR/bin"
-  fi
 }
 
 dvm_clean_download_cache() {
@@ -489,12 +484,6 @@ dvm_use_version() {
   local deno_version
   # target deno executable file path
   local target_path
-
-  if [ ! -d "$DVM_BIN" ]
-  then
-    # create path if it is not exist
-    mkdir -p "$DVM_BIN"
-  fi
 
   dvm_get_version "$1"
 
@@ -673,6 +662,8 @@ dvm_update_dvm() {
   git reset --hard HEAD
   git fetch
   git checkout "$DVM_LATEST_VERSION"
+
+  echo "DVM has upgrade to latest version."
 }
 
 dvm_fix_invalid_versions() {
