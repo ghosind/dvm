@@ -843,23 +843,25 @@ Deno Version Manager
 
 Usage:
   dvm install                       Download and install the latest version or the version reading from .dvmrc file.
-    <version>                       Download and install the specified version from source.
-    --registry=<registry>           Download and install deno with the specified registry.
+    [version]                       Download and install the specified version from source.
+    [--registry=<registry>]         Download and install deno with the specified registry.
   dvm uninstall [name|version]      Uninstall a specified version.
   dvm use [name|version]            Use the specified version that passed by argument or read from .dvmrc.
   dvm run <name|version> [args]     Run deno on the specified version with arguments.
   dvm alias <name> <version>        Set an alias name to specified version.
-  dvm unalias [name|version]        Delete the specified alias name.
+  dvm unalias <name|version>        Delete the specified alias name.
   dvm current                       Display the current version of Deno.
   dvm ls                            List all installed versions.
   dvm ls-remote                     List all remote versions.
   dvm which [current|name|version]  Display the path of installed version.
   dvm clean                         Remove all downloaded packages.
   dvm doctor                        Scan installed versions and find invalid / corrupted versions.
-    --fix                           Scan and fix all invalid / corrupted versions.
+    [--fix]                         Scan and fix all invalid / corrupted versions.
   dvm upgrade                       Upgrade dvm itself.
   dvm purge                         Remove dvm from your computer.
   dvm help                          Show this message.
+
+* <param> is required paramter, [param] is optional paramter.
 
 Examples:
   dvm install v1.0.0
