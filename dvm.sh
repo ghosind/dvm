@@ -829,18 +829,23 @@ dvm_confirm_with_prompt() {
   fi
 
   prompt="$1"
+  DVM_CONFIRM_YES=false
 
   echo -n "$prompt (y/n) "
   read -r confirm
 
   case "$confirm" in
   y|Y)
+    DVM_CONFIRM_YES=true
     ;;
   n|N)
     dvm_success
+    return
     ;;
   *)
+    echo "[ERR] Unknown command $confirm."
     dvm_failure
+    return
     ;;
   esac
 }
@@ -1114,16 +1119,28 @@ dvm() {
 
     if [ "$mode" == "fix" ]
     then
-      dvm_confirm_with_prompt "Doctor fix command will remove all duplicated / corrupted versions, do you want to continue?"
+      if ! dvm_confirm_with_prompt "Doctor fix command will remove all duplicated / corrupted versions, do you want to continue?" ||
+        [ "$DVM_CONFIRM_YES" != "true" ]
+      then
+        return
+      fi
     fi
 
     dvm_scan_and_fix_versions "$mode"
 
     ;;
   purge)
-    dvm_confirm_with_prompt "Do you want to remove DVM from your computer?"
+    if ! dvm_confirm_with_prompt "Do you want to remove DVM from your computer?" ||
+      [ "$DVM_CONFIRM_YES" != "true" ]
+    then
+      return
+    fi
 
-    dvm_confirm_with_prompt "Remove dvm will also remove installed deno(s), do you want to continue?"
+    if ! dvm_confirm_with_prompt "Remove dvm will also remove installed deno(s), do you want to continue?" ||
+      [ "$DVM_CONFIRM_YES" != "true" ]
+    then
+      return
+    fi
 
     dvm_purge_dvm
 
