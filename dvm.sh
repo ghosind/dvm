@@ -722,6 +722,8 @@ dvm_fix_invalid_versions() {
   done
 
   rmdir "$DVM_DIR/doctor_temp"
+
+  echo "Invalid version(s) has been fixed."
 }
 
 dvm_print_doctor_message() {
@@ -761,6 +763,16 @@ dvm_scan_and_fix_versions() {
   local deno_version
 
   mode="$1"
+
+  if [ ! -d "$DVM_DIR/versions" ]
+  then
+    return
+  fi
+
+  if [ -z "$(ls -A "$DVM_DIR/versions")" ]
+  then
+    return
+  fi
 
   for version_path in "$DVM_DIR/versions/"*
   do
@@ -1101,6 +1113,8 @@ dvm() {
 
     shift
 
+    mode="scan"
+
     while [ "$#" -gt "0" ]
     do
       case "$1" in
@@ -1117,13 +1131,11 @@ dvm() {
       shift
     done
 
-    if [ "$mode" == "fix" ]
+    if [ "$mode" = "fix" ] &&
+      ( ! dvm_confirm_with_prompt "Doctor fix command will remove all duplicated / corrupted versions, do you want to continue?" ||
+      [ "$DVM_CONFIRM_YES" != "true" ] )
     then
-      if ! dvm_confirm_with_prompt "Doctor fix command will remove all duplicated / corrupted versions, do you want to continue?" ||
-        [ "$DVM_CONFIRM_YES" != "true" ]
-      then
-        return
-      fi
+      return
     fi
 
     dvm_scan_and_fix_versions "$mode"
