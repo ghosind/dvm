@@ -1168,4 +1168,5 @@ if [ -f "$DVM_DIR/aliases/default" ]
 then
   DVM_SILENCE_MODE=true
   dvm use "default"
+  DVM_SILENCE_MODE=false
 fi
