@@ -74,7 +74,6 @@ dvm_get_package_data() {
     *)
       echo "[ERR] unsupported operating system $DVM_TARGET_OS ($DVM_TARGET_ARCH)."
       dvm_failure
-      return
       ;;
   esac
 }
@@ -97,12 +96,14 @@ dvm_get_latest_version() {
   then
     echo "[ERR] curl is required."
     dvm_failure
+    return
   fi
 
   if ! response=$(curl -s "$latest_url")
   then
     echo "[ERR] failed to getting deno latest version."
     dvm_failure
+    return
   fi
 
   tag_name=$(echo "$response" | grep tag_name | cut -d '"' -f 4)
@@ -111,6 +112,7 @@ dvm_get_latest_version() {
   then
     echo "[ERR] failed to getting deno latest version."
     dvm_failure
+    return
   fi
 
   DVM_TARGET_VERSION="$tag_name"
@@ -192,7 +194,6 @@ dvm_extract_file() {
     else
       echo "[ERR] unzip is required."
       dvm_failure
-      return
     fi
     ;;
   "gz")
@@ -203,7 +204,6 @@ dvm_extract_file() {
     else
       echo "[ERR] gunzip is required."
       dvm_failure
-      return
     fi
     ;;
   *)
@@ -242,7 +242,6 @@ dvm_validate_remote_version() {
   then
     echo "[ERR] deno '$version' not found, use 'ls-remote' command to get available versions."
     dvm_failure
-    return
   fi
 }
 
@@ -543,7 +542,6 @@ dvm_use_version() {
   else
     dvm_print "Deno $DVM_TARGET_VERSION is not installed, you can run 'dvm install $DVM_TARGET_VERSION' to install it."
     dvm_failure
-    return
   fi
 }
 
@@ -852,12 +850,10 @@ dvm_confirm_with_prompt() {
     ;;
   n|N)
     dvm_success
-    return
     ;;
   *)
     echo "[ERR] Unknown command $confirm."
     dvm_failure
-    return
     ;;
   esac
 }
