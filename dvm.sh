@@ -868,7 +868,10 @@ dvm_purge_dvm() {
   content=$(sed "/Deno Version Manager/d;/DVM_DIR/d;/DVM_BIN/d" "$DVM_RC_FILE")
   echo "$content" > "$DVM_RC_FILE"
 
-  unset -v DVM_BIN DVM_DIR DVM_VERSION DVM_RC_FILE
+  unset -v DVM_BIN DVM_CONFIRM_YES DVM_DENO_VERSION DVM_DIR DVM_FILE_TYPE \
+    DVM_INSTALL_REGISTRY DVM_LATEST_VERSION DVM_RC_FILE DVM_SILENCE_MODE \
+    DVM_SOURCE DVM_TARGET_ARCH DVM_TARGET_NAME DVM_TARGET_OS DVM_TARGET_TYPE \
+    DVM_TARGET_VERSION DVM_VERSION
   unset -f dvm
   unset -f dvm_check_alias_dir dvm_check_dvm_dir dvm_clean_download_cache \
     dvm_compare_version dvm_confirm_with_prompt dvm_download_file \
