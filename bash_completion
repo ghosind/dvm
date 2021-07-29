@@ -5,6 +5,10 @@ then
   return
 fi
 
+_dvm_has_active_version() {
+  echo "$PATH" | grep -q "$DVM_DIR/versions"
+}
+
 _dvm_add_versions_to_opts() {
   if [ ! -d "$DVM_DIR/versions" ]
   then
@@ -61,7 +65,7 @@ _dvm_completion() {
 
   case "$prev" in
   use|uninstall|run|which)
-    if [ "$prev" = "which" ] && [ -f "$DVM_BIN/deno" ]
+    if [ "$prev" = "which" ] && _dvm_has_active_version
     then
       opts="current"
     fi
