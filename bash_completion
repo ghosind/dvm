@@ -5,7 +5,7 @@ then
   return
 fi
 
-add_versions_to_opts() {
+_dvm_add_versions_to_opts() {
   if [ ! -d "$DVM_DIR/versions" ]
   then
     return
@@ -27,7 +27,7 @@ add_versions_to_opts() {
   done
 }
 
-add_aliases_to_opts() {
+_dvm_add_aliases_to_opts() {
   if [ ! -d "$DVM_DIR/aliases" ]
   then
     return
@@ -66,11 +66,11 @@ _dvm_completion() {
       opts="current"
     fi
 
-    add_versions_to_opts
-    add_aliases_to_opts
+    _dvm_add_versions_to_opts
+    _dvm_add_aliases_to_opts
     ;;
   unalias)
-    add_aliases_to_opts
+    _dvm_add_aliases_to_opts
     ;;
   doctor)
     opts="--fix"
