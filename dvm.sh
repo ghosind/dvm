@@ -526,9 +526,9 @@ dvm_use_version() {
   if [ -f "$target_path" ]
   then
     # get target deno executable file version
-    deno_version=$("$target_path" --version | grep deno | cut -d " " -f 2)
+    deno_version=$("$target_path" --version 2>/dev/null | grep deno | cut -d " " -f 2)
 
-    if [ "$DVM_TARGET_VERSION" != "v$deno_version" ]
+    if [ -n "$deno_version" ] && [ "$DVM_TARGET_VERSION" != "v$deno_version" ]
     then
       # print warnning message when deno version is different with parameter.
       dvm_print "[WARN] You may had upgraded this version, it is v$deno_version now."
