@@ -296,6 +296,10 @@ dvm_install_version() {
 }
 
 dvm_uninstall_version() {
+  local input_version
+
+  input_version="$1"
+
   dvm_get_current_version
 
   if [ "$DVM_DENO_VERSION" = "$DVM_TARGET_VERSION" ]
@@ -312,6 +316,11 @@ dvm_uninstall_version() {
     echo "Uninstalled deno $DVM_TARGET_VERSION."
   else
     echo "Deno $DVM_TARGET_VERSION is not installed."
+  fi
+
+  if [ -n "$input_version" ] && [ "$input_version" != "$DVM_TARGET_VERSION" ] && [ -f "$DVM_DIR/aliases/$input_version" ]
+  then
+    rm "$DVM_DIR/aliases/$input_version"
   fi
 }
 
@@ -981,7 +990,7 @@ dvm() {
       return
     fi
 
-    dvm_uninstall_version "$DVM_TARGET_VERSION"
+    dvm_uninstall_version "$1"
 
     ;;
   list | ls)
