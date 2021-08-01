@@ -2,13 +2,12 @@
 
 ![dvm](https://github.com/ghosind/dvm/workflows/dvm/badge.svg)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/e11bedd87a194dd6a67140ec447ab51f)](https://www.codacy.com/manual/ghosind/dvm?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=ghosind/dvm&amp;utm_campaign=Badge_Grade)
-[![codecov](https://codecov.io/gh/ghosind/dvm/branch/master/graph/badge.svg)](https://codecov.io/gh/ghosind/dvm)
 ![Version Badge](https://img.shields.io/github/v/release/ghosind/dvm)
 ![License Badge](https://img.shields.io/github/license/ghosind/dvm)
 
 English | [简体中文](./README-CN.md)
 
-Dvm is an nvm-like version manager for [Deno](https://deno.land/).
+Dvm is a simple, lightweight, and powerful [Deno](https://deno.land/) version manager for Linux/MacOS.
 
 ***Please avoid use `deno upgrade` command to upgrade Deno when you're using DVM to manage your multiple version environment.***
 

@@ -30,11 +30,3 @@ jobs:
 
     - name: Run shellcheck
       uses: ludeeus/action-shellcheck@0.1.0
-
-    - name: Run unit test
-      run: kcov coverage dvm.sh
-      
-    - name: Upload coverage report
-      uses: codecov/codecov-action@v1
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }}
