@@ -519,6 +519,7 @@ dvm_use_version() {
   local deno_version
   # target deno executable file path
   local target_path
+  local path_without_dvm
 
   dvm_get_version "$1"
 
@@ -544,8 +545,8 @@ dvm_use_version() {
     fi
 
     # export PATH with the target dir in front
-    PATH_NO_DVMS=$(echo "$PATH" | tr ":" "\n" | grep -v "$DVM_DIR" | tr "\n" ":")
-    export PATH="$target_dir":${PATH_NO_DVMS}
+    path_without_dvm=$(echo "$PATH" | tr ":" "\n" | grep -v "$DVM_DIR" | tr "\n" ":")
+    export PATH="$target_dir":${path_without_dvm}
 
     dvm_print "Using deno $DVM_TARGET_VERSION now."
   else
