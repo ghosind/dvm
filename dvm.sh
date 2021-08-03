@@ -573,6 +573,23 @@ dvm_get_current_version() {
   DVM_DENO_VERSION=${deno_dir##*/}
 }
 
+dvm_deactivate() {
+  local path_without_dvm
+
+  dvm_get_current_version
+
+  if [ -z "$DVM_DENO_VERSION" ]
+  then
+    dvm_success
+    return
+  fi
+
+  path_without_dvm=$(echo "$PATH" | tr ":" "\n" | grep -v "$DVM_DIR" | tr "\n" ":")
+  export PATH="$path_without_dvm"
+
+  echo "Deno has been deactivated, you can run \"dvm use $DVM_DENO_VERSION\" to restore it."
+}
+
 dvm_check_alias_dir() {
   if [ ! -d "$DVM_DIR/aliases" ]
   then
@@ -1147,6 +1164,10 @@ dvm() {
     fi
 
     dvm_scan_and_fix_versions "$mode"
+
+    ;;
+  deactivate)
+    dvm_deactivate
 
     ;;
   purge)
