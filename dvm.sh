@@ -588,6 +588,8 @@ dvm_deactivate() {
   path_without_dvm=$(echo "$PATH" | tr ":" "\n" | grep -v "$DVM_DIR" | tr "\n" ":")
   export PATH="$path_without_dvm"
 
+  unset DVM_DENO_VERSION
+
   echo "Deno has been deactivated, you can run \"dvm use $DVM_DENO_VERSION\" to restore it."
 }
 
