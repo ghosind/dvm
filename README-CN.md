@@ -180,6 +180,7 @@ DVM支持的命令包括有：
 | | `dvm which current` | 显示当前使用的版本Deno安装的目录 |
 | | `dvm which <version>` | 显示指定版本Deno安装的目录 |
 | `clean` | `dvm clean` | 清除下载缓存 |
+| `deactivate` | `dvm deactivate` | 取消当前shell中活跃的Deno |
 | `doctor` | `dvm doctor` | 列出存在问题的版本（未安装成功/版本号错误） |
 | | `dvm doctor --fix` | 扫描并修复存在问题的版本 |
 | `upgrade` | `dvm upgrade` | 更新DVM |

@@ -935,6 +935,7 @@ Usage:
   dvm ls-remote                     List all remote versions.
   dvm which [current|name|version]  Display the path of installed version.
   dvm clean                         Remove all downloaded packages.
+  dvm deactivate                    Deactivate Deno on current shell.
   dvm doctor                        Scan installed versions and find invalid / corrupted versions.
     [--fix]                         Scan and fix all invalid / corrupted versions.
   dvm upgrade                       Upgrade dvm itself.

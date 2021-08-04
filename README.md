@@ -205,6 +205,7 @@ DVM supported the following commands:
 | | `dvm which current` | Display the path of the current version. |
 | | `dvm which <version>` | Display the path of specified version. |
 | `clean` | `dvm clean` | Remove all downloaded packages. |
+| `deactivate` | `dvm deactivate` | Deactivate Deno on current shell. |
 | `doctor` | `dvm doctor` | Find invalid / corrupted versions. |
 | | `dvm doctor --fix` | Find and fix invalid / corrupted versions. |
 | `upgrade` | `dvm upgrade` | Update dvm itself. |
