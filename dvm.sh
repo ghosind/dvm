@@ -215,12 +215,20 @@ dvm_extract_file() {
 # Get remote version data by GitHub api (Get a release by tag name)
 dvm_validate_remote_version() {
   local version
+  local target_version
   # GitHub get release by tag name api url
   local tag_url
 
   version="$1"
 
-  tag_url="https://api.github.com/repos/denoland/deno/releases/tags/$version"
+  if [[ "$version" != "v"* ]]
+  then
+    target_version="v$version"
+  else
+    target_version="$version"
+  fi
+
+  tag_url="https://api.github.com/repos/denoland/deno/releases/tags/$target_version"
 
   if ! dvm_has curl
   then
@@ -269,6 +277,11 @@ dvm_install_version() {
   if ! dvm_validate_remote_version "$version"
   then
     return
+  fi
+
+  if [[ "$version" != "v"* ]]
+  then
+    version="v$version"
   fi
 
   if ! dvm_get_package_data "$version"
