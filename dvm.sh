@@ -868,23 +868,25 @@ dvm_confirm_with_prompt() {
   fi
 
   prompt="$1"
-  DVM_CONFIRM_YES=false
+  echo -n "$prompt (y/n): "
 
-  echo -n "$prompt (y/n) "
-  read -r confirm
+  while true
+  do
+    read -r confirm
 
-  case "$confirm" in
-  y|Y)
-    DVM_CONFIRM_YES=true
-    ;;
-  n|N)
-    dvm_success
-    ;;
-  *)
-    echo "[ERR] Unknown command $confirm."
-    dvm_failure
-    ;;
-  esac
+    case "$confirm" in
+    y|Y)
+      return 0
+      ;;
+    n|N)
+      return 1
+      ;;
+    *)
+      ;;
+    esac
+
+    echo -n "Please type 'y' or 'n': "
+  done
 }
 
 dvm_purge_dvm() {
@@ -897,10 +899,10 @@ dvm_purge_dvm() {
   content=$(sed "/Deno Version Manager/d;/DVM_DIR/d;/DVM_BIN/d" "$DVM_RC_FILE")
   echo "$content" > "$DVM_RC_FILE"
 
-  unset -v DVM_BIN DVM_CONFIRM_YES DVM_DENO_VERSION DVM_DIR DVM_FILE_TYPE \
-    DVM_INSTALL_REGISTRY DVM_LATEST_VERSION DVM_RC_FILE DVM_SILENCE_MODE \
-    DVM_SOURCE DVM_TARGET_ARCH DVM_TARGET_NAME DVM_TARGET_OS DVM_TARGET_TYPE \
-    DVM_TARGET_VERSION DVM_VERSION
+  unset -v DVM_BIN DVM_DENO_VERSION DVM_DIR DVM_FILE_TYPE DVM_INSTALL_REGISTRY \
+    DVM_LATEST_VERSION DVM_RC_FILE DVM_SILENCE_MODE DVM_SOURCE DVM_TARGET_ARCH \
+    DVM_TARGET_NAME DVM_TARGET_OS DVM_TARGET_TYPE DVM_TARGET_VERSION \
+    DVM_VERSION
   unset -f dvm
   unset -f dvm_check_alias_dir dvm_check_dvm_dir dvm_clean_download_cache \
     dvm_compare_version dvm_confirm_with_prompt dvm_download_file \
@@ -942,7 +944,8 @@ Usage:
   dvm purge                         Remove dvm from your computer.
   dvm help                          Show this message.
 
-* <param> is required paramter, [param] is optional paramter.
+Note:
+  <param> is required paramter, [param] is optional paramter.
 
 Examples:
   dvm install v1.0.0
@@ -1161,8 +1164,7 @@ dvm() {
     done
 
     if [ "$mode" = "fix" ] &&
-      ( ! dvm_confirm_with_prompt "Doctor fix command will remove all duplicated / corrupted versions, do you want to continue?" ||
-      [ "$DVM_CONFIRM_YES" != "true" ] )
+      ! dvm_confirm_with_prompt "Doctor fix command will remove all duplicated / corrupted versions, do you want to continue?"
     then
       return
     fi
@@ -1175,14 +1177,12 @@ dvm() {
 
     ;;
   purge)
-    if ! dvm_confirm_with_prompt "Do you want to remove DVM from your computer?" ||
-      [ "$DVM_CONFIRM_YES" != "true" ]
+    if ! dvm_confirm_with_prompt "Do you want to remove DVM from your computer?"
     then
       return
     fi
 
-    if ! dvm_confirm_with_prompt "Remove dvm will also remove installed deno(s), do you want to continue?" ||
-      [ "$DVM_CONFIRM_YES" != "true" ]
+    if ! dvm_confirm_with_prompt "Remove dvm will also remove installed deno(s), do you want to continue?"
     then
       return
     fi
