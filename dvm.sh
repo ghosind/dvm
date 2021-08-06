@@ -524,6 +524,10 @@ dvm_get_version() {
   DVM_TARGET_VERSION=$(cat ./.dvmrc)
 }
 
+dvm_strip_path() {
+  echo "$PATH" | tr ":" "\n" | grep -v "$DVM_DIR" | tr "\n" ":"
+}
+
 # dvm_use_version
 # Create a symbolic link file to make the specified deno version as active
 # version, the symbolic link is linking to the specified deno executable file.
@@ -558,7 +562,7 @@ dvm_use_version() {
     fi
 
     # export PATH with the target dir in front
-    path_without_dvm=$(echo "$PATH" | tr ":" "\n" | grep -v "$DVM_DIR" | tr "\n" ":")
+    path_without_dvm=$(dvm_strip_path)
     export PATH="$target_dir":${path_without_dvm}
 
     dvm_print "Using deno $DVM_TARGET_VERSION now."
@@ -598,12 +602,12 @@ dvm_deactivate() {
     return
   fi
 
-  path_without_dvm=$(echo "$PATH" | tr ":" "\n" | grep -v "$DVM_DIR" | tr "\n" ":")
+  path_without_dvm=$(dvm_strip_path)
   export PATH="$path_without_dvm"
 
-  unset DVM_DENO_VERSION
-
   echo "Deno has been deactivated, you can run \"dvm use $DVM_DENO_VERSION\" to restore it."
+
+  unset DVM_DENO_VERSION
 }
 
 dvm_check_alias_dir() {
@@ -918,16 +922,16 @@ dvm_purge_dvm() {
     DVM_VERSION
   unset -f dvm
   unset -f dvm_check_alias_dir dvm_check_dvm_dir dvm_clean_download_cache \
-    dvm_compare_version dvm_confirm_with_prompt dvm_download_file \
-    dvm_extract_file dvm_failure dvm_fix_invalid_versions \
+    dvm_compare_version dvm_confirm_with_prompt dvm_deactivate \
+    dvm_download_file dvm_extract_file dvm_failure dvm_fix_invalid_versions \
     dvm_get_current_version dvm_get_dvm_latest_version dvm_get_latest_version \
     dvm_get_package_data dvm_get_rc_file dvm_get_version \
     dvm_get_version_by_param dvm_has dvm_install_version dvm_list_aliases \
     dvm_list_local_versions dvm_list_remote_versions dvm_locate_version \
     dvm_print dvm_print_doctor_message dvm_print_help dvm_purge_dvm \
     dvm_rm_alias dvm_run_with_version dvm_scan_and_fix_versions dvm_set_alias \
-    dvm_success dvm_uninstall_version dvm_update_dvm dvm_use_version \
-    dvm_validate_remote_version
+    dvm_strip_path dvm_success dvm_uninstall_version dvm_update_dvm \
+    dvm_use_version dvm_validate_remote_version
 
   echo "DVM has been removed from your computer."
 }
