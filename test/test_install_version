@@ -16,4 +16,4 @@ dvm install "v$TARGET_VERSION" || dvm_error "[ERR] 'dvm install v$TARGET_VERSION
 [ -d "$DVM_DIR/versions/v$TARGET_VERSION" ] || dvm_error "[ERR] '$DVM_DIR/versions/v$TARGET_VERSION' is not a directory"
 
 # Check deno version
-dvm exec "v$TARGET_VERSION" --version | grep "deno $TARGET_VERSION" || dvm_error "[ERR] deno is invalid"
+dvm run "v$TARGET_VERSION" --version | grep "deno $TARGET_VERSION" || dvm_error "[ERR] deno is invalid"
