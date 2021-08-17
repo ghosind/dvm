@@ -2,7 +2,7 @@ name: dvm
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, test_cases ]
   pull_request:
     branches: [ master ]
 
