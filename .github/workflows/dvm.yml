@@ -13,20 +13,9 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Install dependencies
-      run: |
-        sudo apt update &&
-        sudo apt install binutils-dev libcurl4-openssl-dev zlib1g-dev libdw-dev libiberty-dev cmake &&
-        wget https://github.com/SimonKagstrom/kcov/archive/master.tar.gz &&
-        tar xzf master.tar.gz &&
-        cd kcov-master &&
-        mkdir build &&
-        cd build &&
-        cmake .. &&
-        make &&
-        sudo make install &&
-        cd ../.. &&
-        rm -rf kcov-master
-
     - name: Run shellcheck
       uses: ludeeus/action-shellcheck@0.1.0
+
+    - name: Run test cases
+      run: |
+        ./test/test_install_version
