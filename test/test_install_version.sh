@@ -5,6 +5,7 @@ dvm_error() {
   exit 1
 }
 
+# shellcheck disable=SC1091
 \. ./dvm.sh || dvm_error "[ERR] failed to install dvm"
 
 TARGET_VERSION="1.0.0"

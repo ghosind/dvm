@@ -18,4 +18,4 @@ jobs:
 
     - name: Run test cases
       run: |
-        ./test/test_install_version
+        ./test/test_install_version.sh
