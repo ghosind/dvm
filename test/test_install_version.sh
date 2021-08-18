@@ -22,4 +22,4 @@ dvm run "v$TARGET_VERSION" --version | grep "deno $TARGET_VERSION" || dvm_error 
 dvm use "v$TARGET_VERSION" || dvm_error "[ERR] 'dvm use v$TARGET_VERSION' failed"
 
 # Check with ls command
-dvm ls | grep "-> v$TARGET_VERSION" || dvm_error "[ERR] 'dvm ls' failed"
+dvm ls | grep "\-> v$TARGET_VERSION" || dvm_error "[ERR] 'dvm ls' failed"
