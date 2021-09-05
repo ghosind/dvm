@@ -11,6 +11,12 @@ jobs:
 
     - name: Run shellcheck
       uses: ludeeus/action-shellcheck@0.1.0
+
+    - name: Set download cache
+      uses: actions/cache@v2
+      with:
+        path: ~/.dvm/download
+        key: deno-downloaded
       
     - name: Run test cases
       run: |
