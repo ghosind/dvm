@@ -1,4 +1,4 @@
-name: dvm
+name: test
 
 on: [push, pull_request]
 
@@ -8,9 +8,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-
-    - name: Run shellcheck
-      uses: ludeeus/action-shellcheck@0.1.0
 
     - name: Set download cache
       uses: actions/cache@v2

@@ -1,6 +1,7 @@
 # DVM - Deno Version Manager
 
-![dvm](https://github.com/ghosind/dvm/workflows/dvm/badge.svg)
+![test](https://github.com/ghosind/dvm/workflows/test/badge.svg)
+![lint](https://github.com/ghosind/dvm/workflows/lint/badge.svg)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/e11bedd87a194dd6a67140ec447ab51f)](https://www.codacy.com/manual/ghosind/dvm?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=ghosind/dvm&amp;utm_campaign=Badge_Grade)
 ![Version Badge](https://img.shields.io/github/v/release/ghosind/dvm)
 ![License Badge](https://img.shields.io/github/license/ghosind/dvm)
