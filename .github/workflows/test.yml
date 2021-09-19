@@ -14,7 +14,8 @@ jobs:
       with:
         path: ~/.dvm/download
         key: deno-downloaded
-      
+
     - name: Run test cases
       run: |
         ./test/test_install_version.sh
+        ./test/test_alias.sh
