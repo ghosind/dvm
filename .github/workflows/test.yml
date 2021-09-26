@@ -19,3 +19,4 @@ jobs:
       run: |
         ./test/test_install_version.sh
         ./test/test_alias.sh
+        ./test/test_uninstall_version.sh
