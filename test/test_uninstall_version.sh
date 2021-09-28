@@ -8,7 +8,8 @@ dvm_error() {
 # shellcheck disable=SC1091
 \. ./dvm.sh
 
-# Get current version
+# Set and check current version
+dvm use v1.14.0 || dvm_error "[ERR] 'dvm use v1.14.0' failed"
 dvm current | grep "v1.14.0" || dvm_error "[ERR] current version should be v1.14.0"
 
 # Uninstall by current
