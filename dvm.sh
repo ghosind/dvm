@@ -22,7 +22,7 @@ dvm_has() {
 }
 
 dvm_print() {
-  if [ "$DVM_SILENCE_MODE" = true ]
+  if [ "$DVM_QUIET_MODE" = true ]
   then
     return
   fi
@@ -917,7 +917,7 @@ dvm_purge_dvm() {
   echo "$content" > "$DVM_RC_FILE"
 
   unset -v DVM_BIN DVM_DENO_VERSION DVM_DIR DVM_FILE_TYPE DVM_INSTALL_REGISTRY \
-    DVM_LATEST_VERSION DVM_RC_FILE DVM_SILENCE_MODE DVM_SOURCE DVM_TARGET_ARCH \
+    DVM_LATEST_VERSION DVM_RC_FILE DVM_QUIET_MODE DVM_SOURCE DVM_TARGET_ARCH \
     DVM_TARGET_NAME DVM_TARGET_OS DVM_TARGET_TYPE DVM_TARGET_VERSION \
     DVM_VERSION
   unset -f dvm
@@ -1228,7 +1228,7 @@ dvm() {
 
 if [ -f "$DVM_DIR/aliases/default" ]
 then
-  DVM_SILENCE_MODE=true
+  DVM_QUIET_MODE=true
   dvm use "default"
-  DVM_SILENCE_MODE=false
+  DVM_QUIET_MODE=false
 fi
