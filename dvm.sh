@@ -454,6 +454,10 @@ dvm_check_dvm_dir() {
   fi
 }
 
+dvm_set_default_env() {
+  DVM_QUIET_MODE=false
+}
+
 dvm_clean_download_cache() {
   if [ ! -d "$DVM_DIR/download" ]
   then
@@ -486,6 +490,12 @@ dvm_clean_download_cache() {
 
 dvm_get_version_by_param() {
   DVM_TARGET_VERSION=""
+
+  
+  while [[ "$1" == "-"* ]]
+  do
+    shift
+  done
 
   if [ "$#" = "0" ]
   then
@@ -930,8 +940,9 @@ dvm_purge_dvm() {
     dvm_list_local_versions dvm_list_remote_versions dvm_locate_version \
     dvm_parse_options dvm_print dvm_print_doctor_message dvm_print_help \
     dvm_purge_dvm dvm_rm_alias dvm_run_with_version dvm_scan_and_fix_versions \
-    dvm_set_alias dvm_strip_path dvm_success dvm_uninstall_version \
-    dvm_update_dvm dvm_use_version dvm_validate_remote_version
+    dvm_set_alias dvm_set_default_env dvm_strip_path dvm_success \
+    dvm_uninstall_version dvm_update_dvm dvm_use_version \
+    dvm_validate_remote_version
 
   echo "DVM has been removed from your computer."
 }
@@ -993,6 +1004,7 @@ Examples:
 dvm() {
   local version
   dvm_check_dvm_dir
+  dvm_set_default_env
 
   if [ "$#" = "0" ]
   then
@@ -1015,6 +1027,8 @@ dvm() {
       case "$1" in
       "--registry="*)
         DVM_INSTALL_REGISTRY=${1#--registry=}
+        ;;
+      "-"*)
         ;;
       *)
         version="$1"
@@ -1049,7 +1063,7 @@ dvm() {
       return
     fi
 
-    dvm_uninstall_version "$1"
+    dvm_uninstall_version "$DVM_TARGET_VERSION"
 
     ;;
   list | ls)
