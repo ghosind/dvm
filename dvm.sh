@@ -21,13 +21,42 @@ dvm_has() {
   command -v "$1" > /dev/null
 }
 
+dvm_get_color() {
+  local color="$1"
+
+  case "$color" in
+    red)
+      DVM_PRINT_COLOR='\x1b[31m'
+      ;;
+    green)
+      DVM_PRINT_COLOR='\x1b[32m'
+      ;;
+    yellow)
+      DVM_PRINT_COLOR='\x1b[33m'
+      ;;
+    blue)
+      DVM_PRINT_COLOR='\x1b[34m'
+      ;;
+    *)
+      ;;
+  esac
+}
+
 dvm_print() {
   if [ "$DVM_QUIET_MODE" = true ]
   then
     return
   fi
 
-  echo "$@"
+  DVM_PRINT_COLOR=""
+
+  dvm_get_color "$1"
+  if [ "$DVM_PRINT_COLOR" != "" ]
+  then
+    shift
+  fi
+
+  echo "$DVM_PRINT_COLOR$*"
 }
 
 dvm_get_package_data() {
@@ -927,15 +956,15 @@ dvm_purge_dvm() {
   echo "$content" > "$DVM_RC_FILE"
 
   unset -v DVM_BIN DVM_DENO_VERSION DVM_DIR DVM_FILE_TYPE DVM_INSTALL_REGISTRY \
-    DVM_LATEST_VERSION DVM_RC_FILE DVM_QUIET_MODE DVM_SOURCE DVM_TARGET_ARCH \
-    DVM_TARGET_NAME DVM_TARGET_OS DVM_TARGET_TYPE DVM_TARGET_VERSION \
-    DVM_VERSION
+    DVM_LATEST_VERSION DVM_RC_FILE DVM_PRINT_COLOR DVM_QUIET_MODE DVM_SOURCE \
+    DVM_TARGET_ARCH DVM_TARGET_NAME DVM_TARGET_OS DVM_TARGET_TYPE \
+    DVM_TARGET_VERSION DVM_VERSION
   unset -f dvm
   unset -f dvm_check_alias_dir dvm_check_dvm_dir dvm_clean_download_cache \
     dvm_compare_version dvm_confirm_with_prompt dvm_deactivate \
     dvm_download_file dvm_extract_file dvm_failure dvm_fix_invalid_versions \
-    dvm_get_current_version dvm_get_dvm_latest_version dvm_get_latest_version \
-    dvm_get_package_data dvm_get_rc_file dvm_get_version \
+    dvm_get_color dvm_get_current_version dvm_get_dvm_latest_version \
+    dvm_get_latest_version dvm_get_package_data dvm_get_rc_file dvm_get_version \
     dvm_get_version_by_param dvm_has dvm_install_version dvm_list_aliases \
     dvm_list_local_versions dvm_list_remote_versions dvm_locate_version \
     dvm_parse_options dvm_print dvm_print_doctor_message dvm_print_help \
