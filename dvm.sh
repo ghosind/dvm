@@ -75,7 +75,7 @@ dvm_get_package_data() {
     [ "$DVM_TARGET_ARCH" = 'arm64' ] &&
     dvm_compare_version "$target_version" "v1.6.0"
   then
-    echo '[ERR] aarch64-darwin support deno v1.6.0 and above versions only.'
+    dvm_print '[ERR] aarch64-darwin support deno v1.6.0 and above versions only.'
     dvm_failure
     return
   fi
@@ -128,14 +128,14 @@ dvm_get_latest_version() {
 
   if ! dvm_has curl
   then
-    echo "[ERR] curl is required."
+    dvm_print "[ERR] curl is required."
     dvm_failure
     return
   fi
 
   if ! response=$(curl -s "$latest_url")
   then
-    echo "[ERR] failed to getting deno latest version."
+    dvm_print "[ERR] failed to getting deno latest version."
     dvm_failure
     return
   fi
@@ -144,7 +144,7 @@ dvm_get_latest_version() {
 
   if [ -z "$tag_name" ]
   then
-    echo "[ERR] failed to getting deno latest version."
+    dvm_print "[ERR] failed to getting deno latest version."
     dvm_failure
     return
   fi
@@ -180,7 +180,7 @@ dvm_download_file() {
   then
     cmd="curl -LJ $url -o $temp_file"
   else
-    echo "[ERR] wget or curl is required."
+    dvm_print "[ERR] wget or curl is required."
     dvm_failure
     return
   fi
@@ -202,7 +202,7 @@ dvm_download_file() {
     rm "$temp_file"
   fi
 
-  echo "[ERR] failed to download deno $version."
+  dvm_print "[ERR] failed to download deno $version."
   dvm_failure
 }
 
@@ -226,7 +226,7 @@ dvm_extract_file() {
       gunzip -c "$DVM_DIR/download/$1/deno.zip" > "$target_dir/deno"
       chmod +x "$target_dir/deno"
     else
-      echo "[ERR] unzip is required."
+      dvm_print "[ERR] unzip is required."
       dvm_failure
     fi
     ;;
@@ -236,7 +236,7 @@ dvm_extract_file() {
       gunzip -c "$DVM_DIR/download/$1/deno.gz" > "$target_dir/deno"
       chmod +x "$target_dir/deno"
     else
-      echo "[ERR] gunzip is required."
+      dvm_print "[ERR] gunzip is required."
       dvm_failure
     fi
     ;;
@@ -266,14 +266,14 @@ dvm_validate_remote_version() {
 
   if ! dvm_has curl
   then
-    echo "[ERR] curl is required."
+    dvm_print "[ERR] curl is required."
     dvm_failure
     return
   fi
 
   if ! response=$(curl -s "$tag_url")
   then
-    echo "[ERR] failed to getting deno $version data."
+    dvm_print "[ERR] failed to getting deno $version data."
     dvm_failure
     return
   fi
@@ -282,7 +282,7 @@ dvm_validate_remote_version() {
 
   if [ -z "$tag_name" ]
   then
-    echo "[ERR] deno '$version' not found, use 'ls-remote' command to get available versions."
+    dvm_print "[ERR] deno '$version' not found, use 'ls-remote' command to get available versions."
     dvm_failure
   fi
 }
@@ -303,7 +303,7 @@ dvm_install_version() {
 
   if [ -f "$DVM_DIR/versions/$version/deno" ]
   then
-    echo "Deno $version has been installed."
+    dvm_print "Deno $version has been installed."
     dvm_success
     return
   fi
@@ -325,13 +325,13 @@ dvm_install_version() {
 
   if [ ! -f "$DVM_DIR/download/$version/deno.$DVM_TARGET_TYPE" ]
   then
-    echo "Downloading and installing deno $version..."
+    dvm_print "Downloading and installing deno $version..."
     if ! dvm_download_file "$version"
     then
       return
     fi
   else
-    echo "Installing deno $version from cache..."
+    dvm_print "Installing deno $version from cache..."
   fi
 
   if ! dvm_extract_file "$version"
@@ -339,7 +339,7 @@ dvm_install_version() {
     return
   fi
 
-  echo "Deno $version has installed."
+  dvm_print "Deno $version has installed."
 }
 
 dvm_uninstall_version() {
@@ -351,7 +351,7 @@ dvm_uninstall_version() {
 
   if [ "$DVM_DENO_VERSION" = "$DVM_TARGET_VERSION" ]
   then
-    echo "Cannot active deno version ($DVM_DENO_VERSION)."
+    dvm_print "Cannot active deno version ($DVM_DENO_VERSION)."
     dvm_failure
     return
   fi
@@ -360,9 +360,9 @@ dvm_uninstall_version() {
   then
     rm -rf "$DVM_DIR/versions/$DVM_TARGET_VERSION"
 
-    echo "Uninstalled deno $DVM_TARGET_VERSION."
+    dvm_print "Uninstalled deno $DVM_TARGET_VERSION."
   else
-    echo "Deno $DVM_TARGET_VERSION is not installed."
+    dvm_print "Deno $DVM_TARGET_VERSION is not installed."
   fi
 
   if [ -n "$input_version" ] && [ "$input_version" != "$DVM_TARGET_VERSION" ] && [ -f "$DVM_DIR/aliases/$input_version" ]
@@ -397,9 +397,9 @@ dvm_list_aliases() {
     if [ -z "$aliased_version" ] ||
       [ ! -f "$DVM_DIR/versions/$aliased_version/deno" ]
     then
-      echo "$alias_name -> N/A"
+      dvm_print "$alias_name -> N/A"
     else
-      echo "$alias_name -> $aliased_version"
+      dvm_print "$alias_name -> $aliased_version"
     fi
   done
 }
@@ -428,9 +428,9 @@ dvm_list_local_versions() {
 
     if [ "$version" = "$DVM_DENO_VERSION" ]
     then
-      echo "-> $version"
+      dvm_print "-> $version"
     else
-      echo "   $version"
+      dvm_print "   $version"
     fi
   done
 }
@@ -453,14 +453,14 @@ dvm_list_remote_versions() {
   do
     if ! dvm_has curl
     then
-      echo "[ERR] curl is required."
+      dvm_print "[ERR] curl is required."
       dvm_failure
       return
     fi
 
     if ! response=$(curl -s "$releases_url&page=$page")
     then
-      echo "[ERR] failed to list remote versions."
+      dvm_print "[ERR] failed to list remote versions."
       dvm_failure
       return
     fi
@@ -562,7 +562,7 @@ dvm_get_version() {
 
   if [ ! -f "./.dvmrc" ]
   then
-    echo "No .dvmrc file found."
+    dvm_print "No .dvmrc file found."
     return
   fi
 
@@ -650,7 +650,7 @@ dvm_deactivate() {
   path_without_dvm=$(dvm_strip_path)
   export PATH="$path_without_dvm"
 
-  echo "Deno has been deactivated, you can run \"dvm use $DVM_DENO_VERSION\" to restore it."
+  dvm_print "Deno has been deactivated, you can run \"dvm use $DVM_DENO_VERSION\" to restore it."
 
   unset DVM_DENO_VERSION
 }
@@ -673,14 +673,14 @@ dvm_set_alias() {
 
   if [ ! -f "$DVM_DIR/versions/$version/deno" ]
   then
-    echo "[ERR] deno $version is not installed."
+    dvm_print "[ERR] deno $version is not installed."
     dvm_failure
     return
   fi
 
-  echo "$version" > "$DVM_DIR/aliases/$alias_name"
+  dvm_print "$version" > "$DVM_DIR/aliases/$alias_name"
 
-  echo "$alias_name -> $version"
+  dvm_print "$alias_name -> $version"
 }
 
 dvm_rm_alias() {
@@ -693,7 +693,7 @@ dvm_rm_alias() {
 
   if [ ! -f "$DVM_DIR/aliases/$alias_name" ]
   then
-    echo "[ERR] alias $alias_name does not exist."
+    dvm_print "[ERR] alias $alias_name does not exist."
     dvm_failure
     return
   fi
@@ -702,19 +702,19 @@ dvm_rm_alias() {
 
   rm "$DVM_DIR/aliases/$alias_name"
 
-  echo "Deleted alias $alias_name."
-  echo "Restore it with 'dvm alias $alias_name $aliased_version'."
+  dvm_print "Deleted alias $alias_name."
+  dvm_print "Restore it with 'dvm alias $alias_name $aliased_version'."
 }
 
 dvm_run_with_version() {
   if [ ! -f "$DVM_DIR/versions/$DVM_TARGET_VERSION/deno" ]
   then
-    echo "[ERR] deno $DVM_TARGET_VERSION is not installed."
+    dvm_print "[ERR] deno $DVM_TARGET_VERSION is not installed."
     dvm_failure
     return
   fi
 
-  echo "Running with deno $DVM_TARGET_VERSION."
+  dvm_print "Running with deno $DVM_TARGET_VERSION."
 
   "$DVM_DIR/versions/$DVM_TARGET_VERSION/deno" "$@"
 }
@@ -735,9 +735,9 @@ dvm_locate_version() {
 
   if [ -f "$DVM_DIR/versions/$target_version/deno" ]
   then
-    echo "$DVM_DIR/versions/$target_version/deno"
+    dvm_print "$DVM_DIR/versions/$target_version/deno"
   else
-    echo "Deno $target_version is not installed."
+    dvm_print "Deno $target_version is not installed."
   fi
 }
 
@@ -759,14 +759,14 @@ dvm_get_dvm_latest_version() {
 
   if ! dvm_has curl
   then
-    echo "[ERR] curl is required."
+    dvm_print "[ERR] curl is required."
     dvm_failure
     return
   fi
 
   if ! response=$(curl -s "$request_url")
   then
-    echo "[ERR] failed to get the latest DVM version."
+    dvm_print "[ERR] failed to get the latest DVM version."
     dvm_failure
     return
   fi
@@ -777,7 +777,7 @@ dvm_get_dvm_latest_version() {
 dvm_update_dvm() {
   if ! cd "$DVM_DIR" 2>/dev/null
   then
-    echo "[ERR] failed to update dvm."
+    dvm_print "[ERR] failed to update dvm."
     dvm_failure
     return
   fi
@@ -787,7 +787,7 @@ dvm_update_dvm() {
   git fetch
   git checkout "$DVM_LATEST_VERSION"
 
-  echo "DVM has upgrade to latest version."
+  dvm_print "DVM has upgrade to latest version."
 }
 
 dvm_fix_invalid_versions() {
@@ -812,7 +812,7 @@ dvm_fix_invalid_versions() {
 
   rmdir "$DVM_DIR/doctor_temp"
 
-  echo "Invalid version(s) has been fixed."
+  dvm_print "Invalid version(s) has been fixed."
 }
 
 dvm_print_doctor_message() {
@@ -824,7 +824,7 @@ dvm_print_doctor_message() {
 
   if [ -z "$invalid_message" ] && [ -z "$corrupted_message" ]
   then
-    echo "Everything is ok."
+    dvm_print "Everything is ok."
     return
   fi
 
@@ -979,7 +979,7 @@ dvm_purge_dvm() {
     dvm_uninstall_version dvm_update_dvm dvm_use_version \
     dvm_validate_remote_version
 
-  echo "DVM has been removed from your computer."
+  dvm_print "DVM has been removed from your computer."
 }
 
 dvm_parse_options() {
@@ -1085,7 +1085,7 @@ dvm() {
       then
         version=$(cat ./.dvmrc)
       else
-        echo "No .dvmrc file found"
+        dvm_print "No .dvmrc file found"
       fi
     fi
 
@@ -1126,7 +1126,7 @@ dvm() {
 
     if ! dvm_has deno
     then
-      echo "none"
+      dvm_print "none"
       return
     fi
 
@@ -1134,10 +1134,10 @@ dvm() {
 
     if [ -n "$DVM_DENO_VERSION" ]
     then
-      echo "$DVM_DENO_VERSION"
+      dvm_print "$DVM_DENO_VERSION"
     else
       version=$(deno --version | grep "deno" | cut -d " " -f 2)
-      echo "system (v$version)"
+      dvm_print "system (v$version)"
     fi
 
     ;;
@@ -1222,7 +1222,7 @@ dvm() {
 
     if [ "$DVM_LATEST_VERSION" = "$DVM_VERSION" ]
     then
-      echo "dvm is update to date."
+      dvm_print "dvm is update to date."
       dvm_success
       return
     fi
@@ -1244,7 +1244,7 @@ dvm() {
         mode="fix"
         ;;
       *)
-        echo "[ERR] unsupprot option \"$1\"."
+        dvm_print "[ERR] unsupprot option \"$1\"."
         dvm_failure
         return
         ;;
@@ -1288,11 +1288,11 @@ dvm() {
   --version)
     # print dvm version
 
-    echo "$DVM_VERSION"
+    dvm_print "$DVM_VERSION"
 
     ;;
   *)
-    echo "[ERR] unknown command $1."
+    dvm_print "[ERR] unknown command $1."
     dvm_print_help
     dvm_failure
     ;;
