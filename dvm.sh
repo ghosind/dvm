@@ -1028,6 +1028,8 @@ Usage:
 
 Options:
   -q, --quiet                       Make outputs more quiet.
+  --color                           Print colorful messages.
+  --no-color                        Print messages without color.
 
 Note:
   <param> is required paramter, [param] is optional paramter.
