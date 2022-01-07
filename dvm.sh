@@ -24,11 +24,6 @@ dvm_has() {
 dvm_get_color() {
   local color="$1"
 
-  if [ "$DVM_COLOR_MODE" != true ]
-  then
-    return
-  fi
-
   case "$color" in
     red)
       DVM_PRINT_COLOR='\x1b[31m'
@@ -61,7 +56,12 @@ dvm_print() {
     shift
   fi
 
-  echo "$DVM_PRINT_COLOR$*"
+  if [ "$DVM_COLOR_MODE" = true ]
+  then
+    echo "$DVM_PRINT_COLOR$*"
+  else
+    echo "$@"
+  fi
 }
 
 dvm_get_package_data() {
@@ -75,7 +75,7 @@ dvm_get_package_data() {
     [ "$DVM_TARGET_ARCH" = 'arm64' ] &&
     dvm_compare_version "$target_version" "v1.6.0"
   then
-    dvm_print '[ERR] aarch64-darwin support deno v1.6.0 and above versions only.'
+    dvm_print "red" '[ERR] aarch64-darwin support deno v1.6.0 and above versions only.'
     dvm_failure
     return
   fi
@@ -106,7 +106,7 @@ dvm_get_package_data() {
       DVM_TARGET_NAME='deno-x86_64-unknown-linux-gnu.zip'
       ;;
     *)
-      echo "[ERR] unsupported operating system $DVM_TARGET_OS ($DVM_TARGET_ARCH)."
+      dvm_print "red" "[ERR] unsupported operating system $DVM_TARGET_OS ($DVM_TARGET_ARCH)."
       dvm_failure
       ;;
   esac
@@ -128,14 +128,14 @@ dvm_get_latest_version() {
 
   if ! dvm_has curl
   then
-    dvm_print "[ERR] curl is required."
+    dvm_print "red" "[ERR] curl is required."
     dvm_failure
     return
   fi
 
   if ! response=$(curl -s "$latest_url")
   then
-    dvm_print "[ERR] failed to getting deno latest version."
+    dvm_print "red" "[ERR] failed to getting deno latest version."
     dvm_failure
     return
   fi
@@ -144,7 +144,7 @@ dvm_get_latest_version() {
 
   if [ -z "$tag_name" ]
   then
-    dvm_print "[ERR] failed to getting deno latest version."
+    dvm_print "red" "[ERR] failed to getting deno latest version."
     dvm_failure
     return
   fi
@@ -180,7 +180,7 @@ dvm_download_file() {
   then
     cmd="curl -LJ $url -o $temp_file"
   else
-    dvm_print "[ERR] wget or curl is required."
+    dvm_print "red" "[ERR] wget or curl is required."
     dvm_failure
     return
   fi
@@ -202,7 +202,7 @@ dvm_download_file() {
     rm "$temp_file"
   fi
 
-  dvm_print "[ERR] failed to download deno $version."
+  dvm_print "red" "[ERR] failed to download deno $version."
   dvm_failure
 }
 
@@ -226,7 +226,7 @@ dvm_extract_file() {
       gunzip -c "$DVM_DIR/download/$1/deno.zip" > "$target_dir/deno"
       chmod +x "$target_dir/deno"
     else
-      dvm_print "[ERR] unzip is required."
+      dvm_print "red" "[ERR] unzip is required."
       dvm_failure
     fi
     ;;
@@ -236,7 +236,7 @@ dvm_extract_file() {
       gunzip -c "$DVM_DIR/download/$1/deno.gz" > "$target_dir/deno"
       chmod +x "$target_dir/deno"
     else
-      dvm_print "[ERR] gunzip is required."
+      dvm_print "red" "[ERR] gunzip is required."
       dvm_failure
     fi
     ;;
@@ -266,14 +266,14 @@ dvm_validate_remote_version() {
 
   if ! dvm_has curl
   then
-    dvm_print "[ERR] curl is required."
+    dvm_print "red" "[ERR] curl is required."
     dvm_failure
     return
   fi
 
   if ! response=$(curl -s "$tag_url")
   then
-    dvm_print "[ERR] failed to getting deno $version data."
+    dvm_print "red" "[ERR] failed to getting deno $version data."
     dvm_failure
     return
   fi
@@ -282,7 +282,7 @@ dvm_validate_remote_version() {
 
   if [ -z "$tag_name" ]
   then
-    dvm_print "[ERR] deno '$version' not found, use 'ls-remote' command to get available versions."
+    dvm_print "red" "[ERR] deno '$version' not found, use 'ls-remote' command to get available versions."
     dvm_failure
   fi
 }
@@ -428,7 +428,7 @@ dvm_list_local_versions() {
 
     if [ "$version" = "$DVM_DENO_VERSION" ]
     then
-      dvm_print "-> $version"
+      dvm_print "green" "-> $version"
     else
       dvm_print "   $version"
     fi
@@ -453,14 +453,14 @@ dvm_list_remote_versions() {
   do
     if ! dvm_has curl
     then
-      dvm_print "[ERR] curl is required."
+      dvm_print "red" "[ERR] curl is required."
       dvm_failure
       return
     fi
 
     if ! response=$(curl -s "$releases_url&page=$page")
     then
-      dvm_print "[ERR] failed to list remote versions."
+      dvm_print "red" "[ERR] failed to list remote versions."
       dvm_failure
       return
     fi
@@ -603,7 +603,7 @@ dvm_use_version() {
     if [ -n "$deno_version" ] && [ "$DVM_TARGET_VERSION" != "v$deno_version" ]
     then
       # print warnning message when deno version is different with parameter.
-      dvm_print "[WARN] You may had upgraded this version, it is v$deno_version now."
+      dvm_print "yellow" "[WARN] You may had upgraded this version, it is v$deno_version now."
     fi
 
     # export PATH with the target dir in front
@@ -673,7 +673,7 @@ dvm_set_alias() {
 
   if [ ! -f "$DVM_DIR/versions/$version/deno" ]
   then
-    dvm_print "[ERR] deno $version is not installed."
+    dvm_print "red" "[ERR] deno $version is not installed."
     dvm_failure
     return
   fi
@@ -693,7 +693,7 @@ dvm_rm_alias() {
 
   if [ ! -f "$DVM_DIR/aliases/$alias_name" ]
   then
-    dvm_print "[ERR] alias $alias_name does not exist."
+    dvm_print "red" "[ERR] alias $alias_name does not exist."
     dvm_failure
     return
   fi
@@ -709,7 +709,7 @@ dvm_rm_alias() {
 dvm_run_with_version() {
   if [ ! -f "$DVM_DIR/versions/$DVM_TARGET_VERSION/deno" ]
   then
-    dvm_print "[ERR] deno $DVM_TARGET_VERSION is not installed."
+    dvm_print "red" "[ERR] deno $DVM_TARGET_VERSION is not installed."
     dvm_failure
     return
   fi
@@ -759,14 +759,14 @@ dvm_get_dvm_latest_version() {
 
   if ! dvm_has curl
   then
-    dvm_print "[ERR] curl is required."
+    dvm_print "red" "[ERR] curl is required."
     dvm_failure
     return
   fi
 
   if ! response=$(curl -s "$request_url")
   then
-    dvm_print "[ERR] failed to get the latest DVM version."
+    dvm_print "red" "[ERR] failed to get the latest DVM version."
     dvm_failure
     return
   fi
@@ -777,7 +777,7 @@ dvm_get_dvm_latest_version() {
 dvm_update_dvm() {
   if ! cd "$DVM_DIR" 2>/dev/null
   then
-    dvm_print "[ERR] failed to update dvm."
+    dvm_print "red" "[ERR] failed to update dvm."
     dvm_failure
     return
   fi
@@ -1246,7 +1246,7 @@ dvm() {
         mode="fix"
         ;;
       *)
-        dvm_print "[ERR] unsupprot option \"$1\"."
+        dvm_print "red" "[ERR] unsupprot option \"$1\"."
         dvm_failure
         return
         ;;
@@ -1294,7 +1294,7 @@ dvm() {
 
     ;;
   *)
-    dvm_print "[ERR] unknown command $1."
+    dvm_print "red" "[ERR] unknown command $1."
     dvm_print_help
     dvm_failure
     ;;
