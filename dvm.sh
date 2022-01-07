@@ -979,7 +979,7 @@ dvm_purge_dvm() {
     dvm_uninstall_version dvm_update_dvm dvm_use_version \
     dvm_validate_remote_version
 
-  dvm_print "DVM has been removed from your computer."
+  echo "DVM has been removed from your computer."
 }
 
 dvm_parse_options() {
