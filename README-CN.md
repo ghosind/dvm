@@ -161,7 +161,7 @@ $ dvm run v1.0.0 app.ts
 DVM支持的命令包括有：
 
 | 命令 | 使用方法 | 描述 |
-|:-------:|:-----:|:-----------:|
+|:-------:|:-----:|:------------|
 | `install` | `dvm install` | 下载并安装从`.dvmrc`读取的指定版本或最新deno版本 |
 | | `dvm install <version>` | 下载并安装指定的版本 |
 | | `dvm install <version> --registry=<registry>` | 通过指定的镜像下载deno |
@@ -189,6 +189,14 @@ DVM支持的命令包括有：
 | `help` | `dvm help` | 打印帮助信息 |
 
 更多信息请参考[dvm wiki](https://github.com/ghosind/dvm/wiki)。
+
+### 可选参数
+
+| 参数 | 描述 |
+|:------:|:------------|
+| `-q`, `--quiet` | 安静模式，大大减少输出的数量，只保留了少数必要的输出 |
+| `--color` | 以色彩模式运行，输出的文本不再单调 |
+| `--no-color` | 以默认颜色输出 |
 
 ## 如何卸载DVM
 

@@ -186,7 +186,7 @@ $ dvm run v1.0.0 app.ts
 DVM supported the following commands:
 
 | Command | Usage | Description |
-|:-------:|:-----:|:-----------:|
+|:-------:|:-----:|:------------|
 | `install` | `dvm install` | Download and install the latest version or the version reading from `.dvmrc` file. |
 | | `dvm install <version>` | Download and install the specified version from source. |
 | | `dvm install <version> --registry=<registry>` | Download and install deno with the specified registry. |
@@ -214,6 +214,14 @@ DVM supported the following commands:
 | `help` | `dvm help` | Show dvm help message. |
 
 Please visit [dvm wiki](https://github.com/ghosind/dvm/wiki) for more details.
+
+### Options
+
+| Option | Description |
+|:------:|:------------|
+| `-q`, `--quiet` | Run DVM with quiet mode, it'll hide most of the outputs. |
+| `--color` | Print messages with color mode. |
+| `--no-color` | Print messages with no color mode. |
 
 ## Uninstalling DVM
 
