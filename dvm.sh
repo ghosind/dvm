@@ -122,7 +122,7 @@ dvm_get_latest_version() {
   # the latest release tag name
   local tag_name
 
-  echo -e "\ntry to getting deno latest version ..."
+  dvm_print "\ntry to getting deno latest version ..."
 
   latest_url="https://api.github.com/repos/denoland/deno/releases/latest"
 
@@ -830,17 +830,17 @@ dvm_print_doctor_message() {
 
   if [ -n "$invalid_message" ]
   then
-    echo "Invalid versions:"
-    echo -e "$invalid_message"
+    dvm_print "Invalid versions:"
+    dvm_print "$invalid_message"
   fi
 
   if [ -n "$corrupted_message" ]
   then
-    echo "Corrupted versions:"
-    echo -e "$corrupted_message"
+    dvm_print "Corrupted versions:"
+    dvm_print "$corrupted_message"
   fi
 
-  echo "You can run \"dvm doctor --fix\" to fix these errors."
+  dvm_print "You can run \"dvm doctor --fix\" to fix these errors."
 }
 
 dvm_scan_and_fix_versions() {
