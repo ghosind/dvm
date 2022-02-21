@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# Ensure the script is downloaded completely
+{
+
 compare_version() {
   test "$(printf '%s\n' "$@" | sort -V | head -n 1)" != "$2"
 }
@@ -191,3 +194,5 @@ do
 done
 
 install_dvm
+
+}
