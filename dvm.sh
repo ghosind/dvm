@@ -60,7 +60,7 @@ dvm_print() {
   then
     echo -e "$DVM_PRINT_COLOR$*\x1b[37m"
   else
-    echo "$@"
+    echo -e "$@"
   fi
 }
 
