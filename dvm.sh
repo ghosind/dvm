@@ -133,7 +133,13 @@ dvm_get_latest_version() {
     return
   fi
 
-  if ! response=$(curl -s "$latest_url")
+  cmd="curl -s $latest_url"
+  if [ "$DVM_QUIET_MODE" = true ]
+  then
+    cmd="$cmd -s"
+  fi
+
+  if ! response=$(eval "$cmd")
   then
     dvm_print "red" "[ERR] failed to getting deno latest version."
     dvm_failure
@@ -183,6 +189,10 @@ dvm_download_file() {
   elif dvm_has curl
   then
     cmd="curl -LJ $url -o $temp_file"
+    if [ "$DVM_QUIET_MODE" = true ]
+    then
+      cmd="$cmd -s"
+    fi
   else
     dvm_print "red" "[ERR] wget or curl is required."
     dvm_failure
@@ -275,7 +285,13 @@ dvm_validate_remote_version() {
     return
   fi
 
-  if ! response=$(curl -s "$tag_url")
+  cmd="curl -s $tag_url"
+  if [ "$DVM_QUIET_MODE" = true ]
+  then
+    cmd="$cmd -s"
+  fi
+
+  if ! response=$(eval "$cmd")
   then
     dvm_print "red" "[ERR] failed to getting deno $version data."
     dvm_failure
@@ -451,7 +467,7 @@ dvm_list_remote_versions() {
   page=1
   size=100
   num="$size"
-  releases_url="https://api.github.com/repos/denoland/deno/releases?per_page=$size"
+  releases_url="https://api.github.com/repos/denoland/deno/releases\?per_page=$size"
 
   while [ "$num" -eq "$size" ]
   do
@@ -462,7 +478,13 @@ dvm_list_remote_versions() {
       return
     fi
 
-    if ! response=$(curl -s "$releases_url&page=$page")
+    cmd="curl -s $releases_url\&page=$page"
+    if [ "$DVM_QUIET_MODE" = true ]
+    then
+      cmd="$cmd -s"
+    fi
+
+    if ! response=$(eval "$cmd")
     then
       dvm_print "red" "[ERR] failed to list remote versions."
       dvm_failure
@@ -768,7 +790,13 @@ dvm_get_dvm_latest_version() {
     return
   fi
 
-  if ! response=$(curl -s "$request_url")
+  cmd="curl -s $request_url"
+  if [ "$DVM_QUIET_MODE" = true ]
+  then
+    cmd="$cmd -s"
+  fi
+
+  if ! response=$(eval "$cmd")
   then
     dvm_print "red" "[ERR] failed to get the latest DVM version."
     dvm_failure
