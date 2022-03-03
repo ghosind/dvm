@@ -176,6 +176,10 @@ dvm_download_file() {
   if dvm_has wget
   then
     cmd="wget $url -O $temp_file"
+    if [ "$DVM_QUIET_MODE" = true ]
+    then
+      cmd="$cmd -q"
+    fi
   elif dvm_has curl
   then
     cmd="curl -LJ $url -o $temp_file"
