@@ -143,8 +143,14 @@ install_dvm() {
 }
 
 set_default() {
-  DVM_DIR="$HOME/.dvm"
-  DVM_SOURCE="github"
+  if [ -z "$DVM_DIR" ]
+  then
+    DVM_DIR="$HOME/.dvm"
+  fi
+  if [ -z "$DVM_SOURCE" ]
+  then
+    DVM_SOURCE="github"
+  fi
 }
 
 print_help() {
@@ -192,6 +198,12 @@ do
     ;;
   esac
 done
+
+if [ "$DVM_SOURCE" != "github" ] && [ "$DVM_SOURCE" != "gitee" ]
+then
+  print_help
+  exit 1
+fi
 
 install_dvm
 
