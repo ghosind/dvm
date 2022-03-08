@@ -40,23 +40,23 @@ There are two ways to install DVM.
 1. Install dvm from network by the following command:
 
 ```sh
-$ curl -o- "https://raw.githubusercontent.com/ghosind/dvm/master/install.sh" | bash
+curl -o- "https://raw.githubusercontent.com/ghosind/dvm/master/install.sh" | bash
 ```
 
 For Chinese user, you can also install it from Gitee by the following command:
 
 ```sh
-$ curl -o- "https://gitee.com/ghosind/dvm/raw/master/install.sh" | DVM_SOURCE=gitee bash
+curl -o- "https://gitee.com/ghosind/dvm/raw/master/install.sh" | DVM_SOURCE=gitee bash
 ```
 
 2. Clone this project and execute `install.sh` script:
 
 ```sh
-$ git clone "https://github.com/ghosind/dvm.git"
+git clone "https://github.com/ghosind/dvm.git"
 # you can also clone it from gitee
 # git clone "https://gitee.com/ghosind/dvm.git"
-$ cd dvm
-$ ./install.sh
+cd dvm
+./install.sh
 ```
 
 After installed dvm, please restart your terminal or use `source <your_rc_file>` to apply changes.
@@ -64,8 +64,8 @@ After installed dvm, please restart your terminal or use `source <your_rc_file>`
 The default install location is `~/.dvm`, you can use `-d <dir>` option (for local install only) or `$DVM_DIR` environment variable to specify an inexistent directory as the install location.
 
 ```sh
-$ curl -o- "https://raw.githubusercontent.com/ghosind/dvm/master/install.sh" | DVM_DIR=~/deno/dvm bash
-$ ./install.sh -d ~/deno/dvm
+curl -o- "https://raw.githubusercontent.com/ghosind/dvm/master/install.sh" | DVM_DIR=~/deno/dvm bash
+./install.sh -d ~/deno/dvm
 ```
 
 ### Upgrade DVM
@@ -73,7 +73,7 @@ $ ./install.sh -d ~/deno/dvm
 Since DVM `v0.3.0`, we provided `upgrade` command to update your DVM to the latest version.
 
 ```sh
-$ dvm upgrade
+dvm upgrade
 ```
 
 If you want to update the DVM that less than `v0.3.0`, you may need to uninstall the current version and re-install the latest version. You can get the uninstall steps from [Manual uninstall](#manual-uninstall) section.
@@ -88,9 +88,9 @@ Use `dvm list-remote` or `dvm ls-remote` to list all available versions from rem
 
 ```sh
 # list all available versions
-$ dvm list-remote
+dvm list-remote
 # ls-remote is an alias for list-remote command
-$ dvm ls-remote
+dvm ls-remote
 ```
 
 ### List installed versions
@@ -99,9 +99,9 @@ Use `dvm list` or `dvm ls` to list all installed versions.
 
 ```sh
 # list all installed versions
-$ dvm list
+dvm list
 # ls command is an alias for list command
-$ dvm ls
+dvm ls
 ```
 
 ### Install Deno
@@ -109,9 +109,9 @@ $ dvm ls
 Use `dvm install <version>` command to download and install a specified version from the source.
 
 ```sh
-$ dvm install v1.0.0
+dvm install v1.0.0
 deno v1.0.0 has installed.
-$ dvn install v0.42.0
+dvn install v0.42.0
 deno v0.42.0 has installed.
 ```
 
@@ -120,10 +120,10 @@ deno v0.42.0 has installed.
 Use `dvm uninstall <version|alias-name>` command to uninstall a specified version.
 
 ```sh
-$ dvm uninstall v0.39.0
+dvm uninstall v0.39.0
 uninstalled deno v0.39.0.
 # default is an alias name
-$ dvm uninstall default
+dvm uninstall default
 uninstalled deno default.
 ```
 
@@ -133,13 +133,13 @@ Use `dvm use [version]` command to link `deno` to the specified installed versio
 
 ```sh
 # use v1.0.0
-$ dvm use v1.0.0
+dvm use v1.0.0
 using deno v1.0.0 now.
 
 # get version from .dvmrc file
-# $ cat .dvmrc
+# cat .dvmrc
 # # v1.4.0
-$ dvm use
+dvm use
 using deno v1.4.0 now.
 ```
 
@@ -148,7 +148,7 @@ using deno v1.4.0 now.
 Use `dvm current` command to display the current version of Deno.
 
 ```sh
-$ dvm current
+dvm current
 v1.0.0
 ```
 
@@ -157,12 +157,12 @@ v1.0.0
 Use `dvm alias` command to set alias name for a installed version of Deno.
 
 ```sh
-$ dvm ls
+dvm ls
    v1.0.0
 # Set an alias
-$ dvm alias default v1.0.0
+dvm alias default v1.0.0
 default -> v1.0.0
-$ dvm ls
+dvm ls
    v1.0.0
 default -> v1.0.0
 ```
@@ -172,13 +172,13 @@ default -> v1.0.0
 Use `dvm run` command to run Deno on the specified version with arguments.
 
 ```sh
-$ dvm run v1.0.0
+dvm run v1.0.0
 Running with deno v1.0.0
 Deno 1.0.0
 exit using ctrl+d or close()
 >
 # Run app.ts with Deno v1.0.0
-$ dvm run v1.0.0 app.ts
+dvm run v1.0.0 app.ts
 ```
 
 ## Commands

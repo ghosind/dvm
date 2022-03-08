@@ -40,23 +40,23 @@ DVM是一个强大的轻量级[Deno](https://deno.land/)版本管理工具。
 1. 运行下列命令从网络安装DVM：
 
 ```sh
-$ curl -o- https://raw.githubusercontent.com/ghosind/dvm/master/install.sh | bash
+curl -o- https://raw.githubusercontent.com/ghosind/dvm/master/install.sh | bash
 ```
 
 对于国内的用户，可使用DVM的Gitee镜像以提高下载速度：
 
 ```sh
-$ curl -o- https://gitee.com/ghosind/dvm/raw/master/install.sh | DVM_SOURCE=gitee bash
+curl -o- https://gitee.com/ghosind/dvm/raw/master/install.sh | DVM_SOURCE=gitee bash
 ```
 
 2. Clone远程git仓库至本地，并运行`install.sh`脚本：
 
 ```sh
-$ git clone "https://github.com/ghosind/dvm.git"
+git clone "https://github.com/ghosind/dvm.git"
 # 同样，可以从我们的gitee项目上clone
-# $ git clone "https://gitee.com/ghosind/dvm.git"
-$ cd dvm
-$ ./install.sh
+# git clone "https://gitee.com/ghosind/dvm.git"
+cd dvm
+./install.sh
 ```
 
 在完成DVM的安装后，请重启终端或运行`source <Shell_配置文件>`以应用更改，安装程序将会提醒具体的操作步骤。
@@ -64,8 +64,8 @@ $ ./install.sh
 默认情况下，DVM将安装在`~/.dvm`目录下，可使用`-d <dir>`参数（仅限于本地安装使用）或`$DVM_DIR`环境变量指定一个不存在的目录作为DVM的安装目录。
 
 ```sh
-$ curl -o- "https://raw.githubusercontent.com/ghosind/dvm/master/install.sh" | DVM_DIR=~/deno/dvm bash
-$ ./install.sh -d ~/deno/dvm
+curl -o- "https://raw.githubusercontent.com/ghosind/dvm/master/install.sh" | DVM_DIR=~/deno/dvm bash
+./install.sh -d ~/deno/dvm
 ```
 
 ### 升级DVM
@@ -73,7 +73,7 @@ $ ./install.sh -d ~/deno/dvm
 若您使用DVM `v0.3.0`及以上版本，可通过DVM本身提供的`upgrade`命令将本地DVM升级至最新的稳定版本。
 
 ```sh
-$ dvm upgrade
+dvm upgrade
 ```
 
 若您使用DVM `v0.3.0`以下的版本时，需要卸载现有版本并重新安装的方法进行升级。您可通过[手工卸载](#手工卸载)章节提供的卸载方式卸载DVM，再重新进行安装。
@@ -86,7 +86,7 @@ $ dvm upgrade
 
 ```sh
 # 列除所有当前已安装的版本
-$ dvm ls
+dvm ls
 ```
 
 ### 列出可安装版本
@@ -95,7 +95,7 @@ $ dvm ls
 
 ```sh
 # 列出所有可安装的版本
-$ dvm ls-remote
+dvm ls-remote
 ```
 
 ### 安装版本
@@ -103,8 +103,8 @@ $ dvm ls-remote
 使用`dvm install <version>`下载并安装指定版本：
 
 ```sh
-$ dvm install v1.0.0
-$ dvn install v0.42.0
+dvm install v1.0.0
+dvn install v0.42.0
 ```
 
 ### 删除版本
@@ -112,8 +112,8 @@ $ dvn install v0.42.0
 使用`dvm uninstall <version>`卸载指定版本：
 
 ```
-$ dvm uninstall v0.39.0
-$ dvm uninstall v1.0.0-rc
+dvm uninstall v0.39.0
+dvm uninstall v1.0.0-rc
 ```
 
 ### 切换版本
@@ -122,12 +122,12 @@ $ dvm uninstall v1.0.0-rc
 
 ```sh
 # 使用Deno v1.0.0
-$ dvm use v1.0.0
+dvm use v1.0.0
 
 # 使用通过.dvmrc文件指定的版本
-# $ cat .dvmrc
+# cat .dvmrc
 # # v1.0.0
-$ dvm use
+dvm use
 ```
 
 ### 当前版本信息
@@ -135,7 +135,7 @@ $ dvm use
 使用`dvm current`命令输出当前使用的Deno版本信息：
 
 ```sh
-$ dvm current
+dvm current
 # v1.0.0
 ```
 
@@ -144,7 +144,7 @@ $ dvm current
 使用`dvm alias`命令可为已安装的版本设置别名：
 
 ```sh
-$ dvm alias default v1.0.0
+dvm alias default v1.0.0
 ```
 
 ### 运行指定版本
@@ -153,7 +153,7 @@ $ dvm alias default v1.0.0
 
 ```sh
 # 使用Deno v1.0.0运行app.ts
-$ dvm run v1.0.0 app.ts
+dvm run v1.0.0 app.ts
 ```
 
 ## DVM命令
