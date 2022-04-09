@@ -725,7 +725,7 @@ dvm_set_alias() {
     return
   fi
 
-  dvm_print "$version" > "$DVM_DIR/aliases/$alias_name"
+  echo "$version" > "$DVM_DIR/aliases/$alias_name"
 
   dvm_print "$alias_name -> $version"
 }
