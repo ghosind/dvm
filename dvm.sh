@@ -693,8 +693,30 @@ dvm_set_alias() {
 
   dvm_check_alias_dir
 
-  alias_name="$1"
-  version="$2"
+  while [ "$#" -gt "0" ]
+  do
+    case "$1" in
+    "-"*)
+      ;;
+    *)
+      if [ -z "$alias_name" ]
+      then
+        alias_name="$1"
+      elif [ -z "$version" ]
+      then
+        version="$1" 
+      fi
+    esac
+
+    shift
+  done
+
+  if [ -z "$alias_name" ] || [ -z "$version" ]
+  then
+    dvm_print_help
+    dvm_failure
+    return
+  fi
 
   if [ ! -f "$DVM_DIR/versions/$version/deno" ]
   then
@@ -1188,13 +1210,6 @@ dvm() {
     ;;
   alias)
     shift
-
-    if [ "$#" -lt "2" ]
-    then
-      dvm_print_help
-      dvm_failure
-      return
-    fi
 
     dvm_set_alias "$@"
 
