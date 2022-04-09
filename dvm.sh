@@ -736,7 +736,20 @@ dvm_rm_alias() {
 
   dvm_check_alias_dir
 
-  alias_name="$1"
+  while [ "$#" -gt "0" ]
+  do
+    case "$1" in
+    "-"*)
+      ;;
+    *)
+      if [ -z "$alias_name" ]
+      then
+        alias_name="$1"
+      fi
+    esac
+
+    shift
+  done
 
   if [ ! -f "$DVM_DIR/aliases/$alias_name" ]
   then
@@ -1217,14 +1230,7 @@ dvm() {
   unalias)
     shift
 
-    if [ "$#" -lt "1" ]
-    then
-      dvm_print_help
-      dvm_failure
-      return
-    fi
-
-    dvm_rm_alias "$1"
+    dvm_rm_alias "$@"
 
     ;;
   run)
