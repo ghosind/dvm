@@ -551,7 +551,6 @@ dvm_clean_download_cache() {
 
 dvm_get_version_by_param() {
   DVM_TARGET_VERSION=""
-
   
   while [[ "$1" == "-"* ]]
   do
@@ -1278,9 +1277,6 @@ dvm() {
         mode="fix"
         ;;
       *)
-        dvm_print "red" "[ERR] unsupprot option \"$1\"."
-        dvm_failure
-        return
         ;;
       esac
 
