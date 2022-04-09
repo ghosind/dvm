@@ -609,7 +609,7 @@ dvm_use_version() {
   local target_path
   local path_without_dvm
 
-  dvm_get_version "$1"
+  dvm_get_version "$@"
 
   if [ -z "$DVM_TARGET_VERSION" ]
   then
