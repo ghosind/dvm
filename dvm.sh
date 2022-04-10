@@ -1245,10 +1245,18 @@ dvm() {
       return
     fi
 
-    if [ "$#" != "0" ]
-    then
-      shift
-    fi
+    while [ "$#" != "0" ]
+    do
+      case "$1" in
+      "-"*)
+        shift
+        ;;
+      *)
+        shift
+        break
+        ;;
+      esac
+    done
 
     dvm_run_with_version "$@"
 
