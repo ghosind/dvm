@@ -142,10 +142,6 @@ dvm_get_latest_version() {
   fi
 
   cmd="curl -s $latest_url"
-  if [ "$DVM_QUIET_MODE" = true ]
-  then
-    cmd="$cmd -s"
-  fi
 
   if ! response=$(eval "$cmd")
   then
@@ -294,10 +290,6 @@ dvm_validate_remote_version() {
   fi
 
   cmd="curl -s $tag_url"
-  if [ "$DVM_QUIET_MODE" = true ]
-  then
-    cmd="$cmd -s"
-  fi
 
   if ! response=$(eval "$cmd")
   then
@@ -487,10 +479,6 @@ dvm_list_remote_versions() {
     fi
 
     cmd="curl -s $releases_url\&page=$page"
-    if [ "$DVM_QUIET_MODE" = true ]
-    then
-      cmd="$cmd -s"
-    fi
 
     if ! response=$(eval "$cmd")
     then
@@ -833,10 +821,6 @@ dvm_get_dvm_latest_version() {
   fi
 
   cmd="curl -s $request_url"
-  if [ "$DVM_QUIET_MODE" = true ]
-  then
-    cmd="$cmd -s"
-  fi
 
   if ! response=$(eval "$cmd")
   then
