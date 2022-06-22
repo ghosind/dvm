@@ -29,7 +29,7 @@ dvm_print_warning() {
   dvm_print "yellow" "[WARN]" "$@"
 }
 
-dvm_get_color() {
+dvm_set_color() {
   local color="$1"
 
   case "$color" in
@@ -58,7 +58,7 @@ dvm_print() {
 
   DVM_PRINT_COLOR=""
 
-  dvm_get_color "$1"
+  dvm_set_color "$1"
   if [ "$DVM_PRINT_COLOR" != "" ]
   then
     shift
@@ -1027,14 +1027,14 @@ dvm_purge_dvm() {
   unset -f dvm_check_alias_dir dvm_check_dvm_dir dvm_clean_download_cache \
     dvm_compare_version dvm_confirm_with_prompt dvm_deactivate \
     dvm_download_file dvm_extract_file dvm_failure dvm_fix_invalid_versions \
-    dvm_get_color dvm_get_current_version dvm_get_dvm_latest_version \
+    dvm_get_current_version dvm_get_dvm_latest_version \
     dvm_get_latest_version dvm_get_package_data dvm_get_rc_file dvm_get_version \
     dvm_get_version_by_param dvm_has dvm_install_version dvm_list_aliases \
     dvm_list_local_versions dvm_list_remote_versions dvm_locate_version \
     dvm_parse_options dvm_print dvm_print_doctor_message dvm_print_error dvm_print_help \
     dvm_print_warning dvm_purge_dvm dvm_rm_alias dvm_run_with_version \
-    dvm_scan_and_fix_versions dvm_set_alias dvm_set_default_env dvm_strip_path \
-    dvm_success dvm_uninstall_version dvm_update_dvm dvm_use_version \
+    dvm_scan_and_fix_versions dvm_set_alias dvm_set_color dvm_set_default_env \
+    dvm_strip_path dvm_success dvm_uninstall_version dvm_update_dvm dvm_use_version \
     dvm_validate_remote_version
 
   echo "DVM has been removed from your computer."
