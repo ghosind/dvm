@@ -75,6 +75,9 @@ dvm_print() {
 dvm_request() {
   local url
 
+  # Clear response content.
+  DVM_REQUEST_RESPONSE=""
+
   if ! dvm_has curl
   then
     dvm_print_error "curl is required"
@@ -82,8 +85,6 @@ dvm_request() {
   fi
 
   url="$1"
-
-
   cmd="curl -s $url"
 
   if ! DVM_REQUEST_RESPONSE=$(eval "$cmd")
@@ -155,23 +156,14 @@ dvm_get_latest_version() {
 
   latest_url="https://api.github.com/repos/denoland/deno/releases/latest"
 
-  if ! dvm_has curl
-  then
-    dvm_print_error "curl is required."
-    dvm_failure
-    return
-  fi
-
-  cmd="curl -s $latest_url"
-
-  if ! response=$(eval "$cmd")
+  if ! dvm_request "$latest_url"
   then
     dvm_print_error "failed to getting deno latest version."
     dvm_failure
     return
   fi
 
-  tag_name=$(echo "$response" | grep tag_name | cut -d '"' -f 4)
+  tag_name=$(echo "$DVM_REQUEST_RESPONSE" | grep tag_name | cut -d '"' -f 4)
 
   if [ -z "$tag_name" ]
   then
@@ -303,23 +295,14 @@ dvm_validate_remote_version() {
 
   tag_url="https://api.github.com/repos/denoland/deno/releases/tags/$target_version"
 
-  if ! dvm_has curl
-  then
-    dvm_print_error "curl is required."
-    dvm_failure
-    return
-  fi
-
-  cmd="curl -s $tag_url"
-
-  if ! response=$(eval "$cmd")
+  if ! dvm_request "$tag_url"
   then
     dvm_print_error "failed to getting deno $version data."
     dvm_failure
     return
   fi
 
-  tag_name=$(echo "$response" | grep tag_name | cut -d '"' -f 4)
+  tag_name=$(echo "$DVM_REQUEST_RESPONSE" | grep tag_name | cut -d '"' -f 4)
 
   if [ -z "$tag_name" ]
   then
@@ -492,23 +475,14 @@ dvm_list_remote_versions() {
 
   while [ "$num" -eq "$size" ]
   do
-    if ! dvm_has curl
-    then
-      dvm_print_error "curl is required."
-      dvm_failure
-      return
-    fi
-
-    cmd="curl -s $releases_url\&page=$page"
-
-    if ! response=$(eval "$cmd")
+    if ! dvm_request "$releases_url\&page=$page"
     then
       dvm_print_error "failed to list remote versions."
       dvm_failure
       return
     fi
 
-    tmp_versions=$(echo "$response" | grep tag_name | cut -d '"' -f 4)
+    tmp_versions=$(echo "$DVM_REQUEST_RESPONSE" | grep tag_name | cut -d '"' -f 4)
     num=$(echo "$tmp_versions" | wc -l)
     page=$((page + 1))
 
