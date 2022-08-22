@@ -72,6 +72,27 @@ dvm_print() {
   fi
 }
 
+dvm_request() {
+  local url
+
+  if ! dvm_has curl
+  then
+    dvm_print_error "curl is required"
+    dvm_failure
+  fi
+
+  url="$1"
+
+
+  cmd="curl -s $url"
+
+  if ! DVM_REQUEST_RESPONSE=$(eval "$cmd")
+  then
+    dvm_failure
+    return
+  fi
+}
+
 dvm_get_package_data() {
   local target_version
 
@@ -813,23 +834,14 @@ dvm_get_dvm_latest_version() {
     ;;
   esac
 
-  if ! dvm_has curl
-  then
-    dvm_print_error "curl is required."
-    dvm_failure
-    return
-  fi
-
-  cmd="curl -s $request_url"
-
-  if ! response=$(eval "$cmd")
+  if ! dvm_request "$request_url"
   then
     dvm_print_error "failed to get the latest DVM version."
     dvm_failure
     return
   fi
 
-  DVM_LATEST_VERSION=$(echo "$response" | grep tag_name | cut -d '"' -f $field)
+  DVM_LATEST_VERSION=$(echo "$DVM_REQUEST_RESPONSE" | grep tag_name | cut -d '"' -f $field)
 }
 
 dvm_update_dvm() {
@@ -1021,8 +1033,8 @@ dvm_purge_dvm() {
 
   unset -v DVM_BIN DVM_COLOR_MODE DVM_DENO_VERSION DVM_DIR DVM_FILE_TYPE7 \
     DVM_INSTALL_REGISTRY DVM_LATEST_VERSION DVM_RC_FILE DVM_PRINT_COLOR \
-    DVM_QUIET_MODE DVM_SOURCE DVM_TARGET_ARCH DVM_TARGET_NAME DVM_TARGET_OS \
-    DVM_TARGET_TYPE DVM_TARGET_VERSION DVM_VERSION
+    DVM_QUIET_MODE DVM_REQUEST_RESPONSE DVM_SOURCE DVM_TARGET_ARCH DVM_TARGET_NAME \
+    DVM_TARGET_OS DVM_TARGET_TYPE DVM_TARGET_VERSION DVM_VERSION
   unset -f dvm
   unset -f dvm_check_alias_dir dvm_check_dvm_dir dvm_clean_download_cache \
     dvm_compare_version dvm_confirm_with_prompt dvm_deactivate \
@@ -1032,7 +1044,7 @@ dvm_purge_dvm() {
     dvm_get_version_by_param dvm_has dvm_install_version dvm_list_aliases \
     dvm_list_local_versions dvm_list_remote_versions dvm_locate_version \
     dvm_parse_options dvm_print dvm_print_doctor_message dvm_print_error dvm_print_help \
-    dvm_print_warning dvm_purge_dvm dvm_rm_alias dvm_run_with_version \
+    dvm_print_warning dvm_purge_dvm dvm_request dvm_rm_alias dvm_run_with_version \
     dvm_scan_and_fix_versions dvm_set_alias dvm_set_color dvm_set_default_env \
     dvm_strip_path dvm_success dvm_uninstall_version dvm_update_dvm dvm_use_version \
     dvm_validate_remote_version
