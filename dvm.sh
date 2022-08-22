@@ -147,8 +147,6 @@ dvm_get_package_data() {
 dvm_get_latest_version() {
   # the url of github api
   local latest_url
-  # the response of requesting deno latest version
-  local response
   # the latest release tag name
   local tag_name
 
@@ -466,7 +464,6 @@ dvm_list_remote_versions() {
   local size
   local num
   local tmp_versions
-  local response
 
   page=1
   size=100
@@ -795,7 +792,6 @@ dvm_locate_version() {
 dvm_get_dvm_latest_version() {
   local request_url
   local field
-  local response
 
   case "$DVM_SOURCE" in
   gitee)
