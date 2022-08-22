@@ -1099,6 +1099,70 @@ dvm() {
   dvm_parse_options "$@"
 
   case $1 in
+  alias)
+    shift
+
+    dvm_set_alias "$@"
+
+    ;;
+  clean)
+    # remove all download packages.
+    dvm_clean_download_cache
+
+    ;;
+  current)
+    # get the current version
+
+    if ! dvm_has deno
+    then
+      dvm_print "none"
+      return
+    fi
+
+    dvm_get_current_version
+
+    if [ -n "$DVM_DENO_VERSION" ]
+    then
+      dvm_print "$DVM_DENO_VERSION"
+    else
+      version=$(deno --version | grep "deno" | cut -d " " -f 2)
+      dvm_print "system (v$version)"
+    fi
+
+    ;;
+  deactivate)
+    dvm_deactivate
+
+    ;;
+  doctor)
+    local mode
+
+    shift
+
+    mode="scan"
+
+    while [ "$#" -gt "0" ]
+    do
+      case "$1" in
+      "--fix")
+        mode="fix"
+        ;;
+      *)
+        ;;
+      esac
+
+      shift
+    done
+
+    if [ "$mode" = "fix" ] &&
+      ! dvm_confirm_with_prompt "Doctor fix command will remove all duplicated / corrupted versions, do you want to continue?"
+    then
+      return
+    fi
+
+    dvm_scan_and_fix_versions "$mode"
+
+    ;;
   install)
     # install the specified version
     shift
@@ -1134,21 +1198,6 @@ dvm() {
     dvm_install_version "$version"
 
     ;;
-  uninstall)
-    # uninstall the specified version
-    shift
-
-    dvm_get_version "$@"
-    if [ "$DVM_TARGET_VERSION" = "" ]
-    then
-      dvm_print_help
-      dvm_failure
-      return
-    fi
-
-    dvm_uninstall_version "$DVM_TARGET_VERSION"
-
-    ;;
   list | ls)
     # list all local versions
     dvm_get_current_version
@@ -1163,48 +1212,18 @@ dvm() {
     dvm_list_remote_versions
 
     ;;
-  current)
-    # get the current version
-
-    if ! dvm_has deno
+  purge)
+    if ! dvm_confirm_with_prompt "Do you want to remove DVM from your computer?"
     then
-      dvm_print "none"
       return
     fi
 
-    dvm_get_current_version
-
-    if [ -n "$DVM_DENO_VERSION" ]
+    if ! dvm_confirm_with_prompt "Remove dvm will also remove installed deno(s), do you want to continue?"
     then
-      dvm_print "$DVM_DENO_VERSION"
-    else
-      version=$(deno --version | grep "deno" | cut -d " " -f 2)
-      dvm_print "system (v$version)"
+      return
     fi
 
-    ;;
-  use)
-    # change current version to specified version
-    shift
-
-    dvm_use_version "$@"
-
-    ;;
-  clean)
-    # remove all download packages.
-    dvm_clean_download_cache
-
-    ;;
-  alias)
-    shift
-
-    dvm_set_alias "$@"
-
-    ;;
-  unalias)
-    shift
-
-    dvm_rm_alias "$@"
+    dvm_purge_dvm
 
     ;;
   run)
@@ -1250,6 +1269,27 @@ dvm() {
     dvm_locate_version "$@"
 
     ;;
+  unalias)
+    shift
+
+    dvm_rm_alias "$@"
+
+    ;;
+  uninstall)
+    # uninstall the specified version
+    shift
+
+    dvm_get_version "$@"
+    if [ "$DVM_TARGET_VERSION" = "" ]
+    then
+      dvm_print_help
+      dvm_failure
+      return
+    fi
+
+    dvm_uninstall_version "$DVM_TARGET_VERSION"
+
+    ;;
   upgrade)
     if ! dvm_get_dvm_latest_version
     then
@@ -1266,51 +1306,11 @@ dvm() {
     dvm_update_dvm
 
     ;;
-  doctor)
-    local mode
-
+  use)
+    # change current version to specified version
     shift
 
-    mode="scan"
-
-    while [ "$#" -gt "0" ]
-    do
-      case "$1" in
-      "--fix")
-        mode="fix"
-        ;;
-      *)
-        ;;
-      esac
-
-      shift
-    done
-
-    if [ "$mode" = "fix" ] &&
-      ! dvm_confirm_with_prompt "Doctor fix command will remove all duplicated / corrupted versions, do you want to continue?"
-    then
-      return
-    fi
-
-    dvm_scan_and_fix_versions "$mode"
-
-    ;;
-  deactivate)
-    dvm_deactivate
-
-    ;;
-  purge)
-    if ! dvm_confirm_with_prompt "Do you want to remove DVM from your computer?"
-    then
-      return
-    fi
-
-    if ! dvm_confirm_with_prompt "Remove dvm will also remove installed deno(s), do you want to continue?"
-    then
-      return
-    fi
-
-    dvm_purge_dvm
+    dvm_use_version "$@"
 
     ;;
   help|--help|-h)
