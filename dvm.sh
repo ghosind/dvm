@@ -173,7 +173,7 @@ dvm_get_latest_version() {
   DVM_TARGET_VERSION="$tag_name"
 }
 
-dvm_download_file() {
+dvm_download_deno() {
   local cmd
   local version
   local url
@@ -348,7 +348,7 @@ dvm_install_version() {
   if [ ! -f "$DVM_DIR/download/$version/deno.$DVM_TARGET_TYPE" ]
   then
     dvm_print "Downloading and installing deno $version..."
-    if ! dvm_download_file "$version"
+    if ! dvm_download_deno "$version"
     then
       return
     fi
@@ -1008,7 +1008,7 @@ dvm_purge_dvm() {
   unset -f dvm
   unset -f dvm_check_alias_dir dvm_check_dvm_dir dvm_clean_download_cache \
     dvm_compare_version dvm_confirm_with_prompt dvm_deactivate \
-    dvm_download_file dvm_extract_file dvm_failure dvm_fix_invalid_versions \
+    dvm_download_deno dvm_extract_file dvm_failure dvm_fix_invalid_versions \
     dvm_get_current_version dvm_get_dvm_latest_version \
     dvm_get_latest_version dvm_get_package_data dvm_get_rc_file dvm_get_version \
     dvm_get_version_by_param dvm_has dvm_install_version dvm_list_aliases \
