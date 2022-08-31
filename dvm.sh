@@ -94,6 +94,40 @@ dvm_request() {
   fi
 }
 
+dvm_download_file() {
+  local url
+  local file
+  local cmd
+
+  url="$1"
+  file="$2"
+
+  if dvm_has wget
+  then
+    cmd="wget $url -O $file"
+    if [ "$DVM_QUIET_MODE" = true ]
+    then
+      cmd="$cmd -q"
+    fi
+  elif dvm_has curl
+  then
+    cmd="curl -LJ $url -o $file"
+    if [ "$DVM_QUIET_MODE" = true ]
+    then
+      cmd="$cmd -s"
+    fi
+  else
+    dvm_print_error "wget or curl is required."
+    dvm_failure
+    return
+  fi
+
+  if ! eval "$cmd"
+  then
+    dvm_failure
+  fi
+}
+
 dvm_get_package_data() {
   local target_version
 
@@ -174,7 +208,6 @@ dvm_get_latest_version() {
 }
 
 dvm_download_deno() {
-  local cmd
   local version
   local url
   local temp_file
@@ -194,27 +227,7 @@ dvm_download_deno() {
   url="$DVM_INSTALL_REGISTRY/$version/$DVM_TARGET_NAME"
   temp_file="$DVM_DIR/download/$version/deno-downloading.$DVM_TARGET_TYPE"
 
-  if dvm_has wget
-  then
-    cmd="wget $url -O $temp_file"
-    if [ "$DVM_QUIET_MODE" = true ]
-    then
-      cmd="$cmd -q"
-    fi
-  elif dvm_has curl
-  then
-    cmd="curl -LJ $url -o $temp_file"
-    if [ "$DVM_QUIET_MODE" = true ]
-    then
-      cmd="$cmd -s"
-    fi
-  else
-    dvm_print_error "wget or curl is required."
-    dvm_failure
-    return
-  fi
-
-  if eval "$cmd"
+  if dvm_download_file "$url" "$temp_file"
   then
     local file_type
     file_type=$(file "$temp_file")
@@ -1008,8 +1021,8 @@ dvm_purge_dvm() {
   unset -f dvm
   unset -f dvm_check_alias_dir dvm_check_dvm_dir dvm_clean_download_cache \
     dvm_compare_version dvm_confirm_with_prompt dvm_deactivate \
-    dvm_download_deno dvm_extract_file dvm_failure dvm_fix_invalid_versions \
-    dvm_get_current_version dvm_get_dvm_latest_version \
+    dvm_download_deno dvm_download_file dvm_extract_file dvm_failure \
+    dvm_fix_invalid_versions dvm_get_current_version dvm_get_dvm_latest_version \
     dvm_get_latest_version dvm_get_package_data dvm_get_rc_file dvm_get_version \
     dvm_get_version_by_param dvm_has dvm_install_version dvm_list_aliases \
     dvm_list_local_versions dvm_list_remote_versions dvm_locate_version \
