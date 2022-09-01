@@ -94,11 +94,16 @@ dvm_request() {
   url="$1"
   cmd="curl -s $url"
 
+  dvm_debug "request url: $url"
+  dvm_debug "request command: $cmd"
+
   if ! DVM_REQUEST_RESPONSE=$(eval "$cmd")
   then
     dvm_failure
     return
   fi
+
+  dvm_debug "request response: $DVM_REQUEST_RESPONSE"
 }
 
 dvm_download_file() {
@@ -108,6 +113,9 @@ dvm_download_file() {
 
   url="$1"
   file="$2"
+
+  dvm_debug "downloading url: $url"
+  dvm_debug "download destination file: $file"
 
   if dvm_has wget
   then
@@ -129,6 +137,8 @@ dvm_download_file() {
     return
   fi
 
+  dvm_debug "download file command: $cmd"
+
   if ! eval "$cmd"
   then
     dvm_failure
@@ -141,6 +151,10 @@ dvm_get_package_data() {
   DVM_TARGET_OS=$(uname -s)
   DVM_TARGET_ARCH=$(uname -m)
   target_version="$1"
+
+  dvm_debug "target os: $DVM_TARGET_OS"
+  dvm_debug "target arch: $DVM_TARGET_ARCH"
+  dvm_debug "target deno version: $target_version"
 
   if [ "$DVM_TARGET_OS" = "Darwin" ] &&
     [ "$DVM_TARGET_ARCH" = 'arm64' ] &&
@@ -159,6 +173,8 @@ dvm_get_package_data() {
     DVM_TARGET_TYPE="zip"
     DVM_FILE_TYPE="Zip archive data"
   fi
+
+  dvm_debug "target file type: $DVM_TARGET_TYPE"
 
   case "$DVM_TARGET_OS:$DVM_TARGET_ARCH:$DVM_TARGET_TYPE" in
     "Darwin:x86_64:gz")
@@ -181,6 +197,8 @@ dvm_get_package_data() {
       dvm_failure
       ;;
   esac
+
+  dvm_debug "target file name: $DVM_TARGET_NAME"
 }
 
 # dvm_get_latest_version
@@ -231,6 +249,8 @@ dvm_download_deno() {
     DVM_INSTALL_REGISTRY="https://github.com/denoland/deno/releases/download"
   fi
 
+  dvm_debug "regitry url: $DVM_INSTALL_REGISTRY"
+
   url="$DVM_INSTALL_REGISTRY/$version/$DVM_TARGET_NAME"
   temp_file="$DVM_DIR/download/$version/deno-downloading.$DVM_TARGET_TYPE"
 
@@ -259,6 +279,9 @@ dvm_extract_file() {
   local target_dir
 
   target_dir="$DVM_DIR/versions/$1"
+
+  dvm_debug "extracting source file: $DVM_DIR/download/$1/deno.$DVM_TARGET_TYPE"
+  dvm_debug "extracting target path: $target_dir"
 
   if [ ! -d "$target_dir" ]
   then
@@ -310,6 +333,8 @@ dvm_validate_remote_version() {
   else
     target_version="$version"
   fi
+
+  dvm_debug "validation target deno version: $version"
 
   tag_url="https://api.github.com/repos/denoland/deno/releases/tags/$target_version"
 
@@ -668,6 +693,8 @@ dvm_get_current_version() {
   deno_dir=${deno_path%/deno}
 
   DVM_DENO_VERSION=${deno_dir##*/}
+
+  dvm_debug "active deno version: $DVM_DENO_VERSION"
 }
 
 dvm_deactivate() {
@@ -785,6 +812,9 @@ dvm_run_with_version() {
 
   dvm_print "Running with deno $DVM_TARGET_VERSION."
 
+  dvm_debug "target deno version: $DVM_TARGET_VERSION"
+  dvm_debug "run deno with parameters:" "$@"
+
   "$DVM_DIR/versions/$DVM_TARGET_VERSION/deno" "$@"
 }
 
@@ -825,6 +855,8 @@ dvm_get_dvm_latest_version() {
     ;;
   esac
 
+  dvm_debug "dvm source url: $request_url"
+
   if ! dvm_request "$request_url"
   then
     dvm_print_error "failed to get the latest DVM version."
@@ -833,6 +865,7 @@ dvm_get_dvm_latest_version() {
   fi
 
   DVM_LATEST_VERSION=$(echo "$DVM_REQUEST_RESPONSE" | grep tag_name | cut -d '"' -f $field)
+  dvm_debug "dvm latest version: $DVM_LATEST_VERSION"
 }
 
 dvm_update_dvm() {
@@ -979,6 +1012,8 @@ dvm_get_rc_file() {
     DVM_RC_FILE="$HOME/.profile"
     ;;
   esac
+
+  dvm_debug "environment file: $DVM_RC_FILE"
 }
 
 dvm_confirm_with_prompt() {
