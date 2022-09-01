@@ -12,12 +12,6 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Set download cache
-      uses: actions/cache@v2
-      with:
-        path: ~/.dvm/download
-        key: deno-downloaded
-
     - name: Run test cases
       run: |
         ./test/test_install_version.sh
