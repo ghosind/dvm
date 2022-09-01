@@ -72,6 +72,13 @@ dvm_print() {
   fi
 }
 
+dvm_debug() {
+  if [ "$DVM_VERBOSE_MODE" = true ]
+  then
+    echo -e "[DEBUG]" "$@"
+  fi
+}
+
 dvm_request() {
   local url
 
@@ -518,6 +525,7 @@ dvm_check_dvm_dir() {
 dvm_set_default_env() {
   DVM_COLOR_MODE=false
   DVM_QUIET_MODE=false
+  DVM_VERBOSE_MODE=false
 }
 
 dvm_clean_download_cache() {
@@ -1017,10 +1025,10 @@ dvm_purge_dvm() {
   unset -v DVM_BIN DVM_COLOR_MODE DVM_DENO_VERSION DVM_DIR DVM_FILE_TYPE7 \
     DVM_INSTALL_REGISTRY DVM_LATEST_VERSION DVM_RC_FILE DVM_PRINT_COLOR \
     DVM_QUIET_MODE DVM_REQUEST_RESPONSE DVM_SOURCE DVM_TARGET_ARCH DVM_TARGET_NAME \
-    DVM_TARGET_OS DVM_TARGET_TYPE DVM_TARGET_VERSION DVM_VERSION
+    DVM_TARGET_OS DVM_TARGET_TYPE DVM_TARGET_VERSION DVM_VERBOSE_MODE DVM_VERSION
   unset -f dvm
   unset -f dvm_check_alias_dir dvm_check_dvm_dir dvm_clean_download_cache \
-    dvm_compare_version dvm_confirm_with_prompt dvm_deactivate \
+    dvm_compare_version dvm_confirm_with_prompt dvm_deactivate dvm_debug \
     dvm_download_deno dvm_download_file dvm_extract_file dvm_failure \
     dvm_fix_invalid_versions dvm_get_current_version dvm_get_dvm_latest_version \
     dvm_get_latest_version dvm_get_package_data dvm_get_rc_file dvm_get_version \
@@ -1048,6 +1056,8 @@ dvm_parse_options() {
       --no-color)
         DVM_COLOR_MODE=false
         ;;
+      --verbose)
+        DVM_VERBOSE_MODE=true
     esac
 
     shift
@@ -1083,6 +1093,7 @@ Options:
   -q, --quiet                       Make outputs more quiet.
   --color                           Print colorful messages.
   --no-color                        Print messages without color.
+  --verbose                         Run in verbose mode, it'll print debug messages.
 
 Note:
   <param> is required paramter, [param] is optional paramter.

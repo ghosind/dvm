@@ -82,7 +82,7 @@ _dvm_completion() {
   dvm|"$DVM_DIR/dvm.sh")
     if [[ ${cur} == -* ]]
     then
-      opts="-h -q --color --help --no-color --quiet --version"
+      opts="-h -q --color --help --no-color --quiet --verbose --version"
     else
       opts="alias clean current deactivate doctor help install list list-remote
         ls ls-remote run upgrade unalias uninstall use which"
@@ -91,7 +91,7 @@ _dvm_completion() {
   *)
     if [[ ${cur} == -* ]]
     then
-      opts="-q --color --no-color --quiet"
+      opts="-q --color --no-color --quiet --verbose"
     else
       opts=""
     fi

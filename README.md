@@ -222,6 +222,7 @@ Please visit [dvm wiki](https://github.com/ghosind/dvm/wiki) for more details.
 | `-q`, `--quiet` | Run DVM with quiet mode, it'll hide most of the outputs. |
 | `--color` | Print messages with color mode. |
 | `--no-color` | Print messages with no color mode. |
+| `--verbose` | Print debug messages. |
 
 ## Uninstalling DVM
 
