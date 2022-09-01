@@ -9,13 +9,13 @@ dvm_test_error() {
 \. ./dvm.sh
 
 # set active version to other.
-dvm use v1.14.0
+dvm use v1.14.0 --verbose
 dvm ls | grep "\-> v1.14.0" || dvm_test_error "active version should be v1.14.0"
 
 # set alias
-dvm alias default v1.0.0 || dvm_test_error "run 'dvm alias default v1.0.0' failed"
+dvm alias default v1.0.0 --verbose || dvm_test_error "run 'dvm alias default v1.0.0' failed"
 
 # activate with alias name
-dvm use default || dvm_test_error "run 'dvm use default' failed"
+dvm use default --verbose || dvm_test_error "run 'dvm use default' failed"
 
 dvm ls | grep "\-> v1.0.0" || dvm_test_error "active version should be v1.0.0"
