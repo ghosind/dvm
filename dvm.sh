@@ -340,17 +340,20 @@ dvm_validate_remote_version() {
 
   if ! dvm_request "$tag_url"
   then
-    dvm_print_error "failed to getting deno $version data."
-    dvm_failure
-    return
+    dvm_print_warning "failed to validating deno version."
   fi
 
   tag_name=$(echo "$DVM_REQUEST_RESPONSE" | grep tag_name | cut -d '"' -f 4)
 
   if [ -z "$tag_name" ]
   then
-    dvm_print_error "deno '$version' not found, use 'ls-remote' command to get available versions."
-    dvm_failure
+    if echo "$DVM_REQUEST_RESPONSE" | grep "Not Found" > /dev/null
+    then
+      dvm_print_error "deno '$version' not found, use 'ls-remote' command to get available versions."
+      dvm_failure
+    else
+      dvm_print_warning "failed to validating deno version."
+    fi
   fi
 }
 
