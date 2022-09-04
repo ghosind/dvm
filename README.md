@@ -190,6 +190,7 @@ DVM supported the following commands:
 | `install` | `dvm install` | Download and install the latest version or the version reading from `.dvmrc` file. |
 | | `dvm install <version>` | Download and install the specified version from source. |
 | | `dvm install <version> --registry=<registry>` | Download and install deno with the specified registry. |
+| | `dvm install <version> --skip-validation` | Do not validate deno version before trying to download it. |
 | `uninstall` | `dvm uninstall <version>` | Uninstall the specified version. |
 | `use` | `dvm use` | Use the specified version read from .dvmrc. |
 | | `dvm use <version>` | Use the specified version that passed by argument. |

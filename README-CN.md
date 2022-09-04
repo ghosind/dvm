@@ -165,6 +165,7 @@ DVM支持的命令包括有：
 | `install` | `dvm install` | 下载并安装从`.dvmrc`读取的指定版本或最新deno版本 |
 | | `dvm install <version>` | 下载并安装指定的版本 |
 | | `dvm install <version> --registry=<registry>` | 通过指定的镜像下载deno |
+| | `dvm install <version> --skip-validation` | 下载deno前不对版本进行校验 |
 | `uninstall` | `dvm uninstall <version>` | 卸载指定的版本 |
 | `use` | `dvm use` | 将指定的版本设置为当前使用的版本，未指定版本将从当前目录下的`.dvmrc`文件中读取 |
 | | `dvm use <version>` | 将指定的版本设置为当前使用的版本 |

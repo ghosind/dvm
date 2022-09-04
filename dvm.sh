@@ -378,9 +378,12 @@ dvm_install_version() {
     return
   fi
 
-  if ! dvm_validate_remote_version "$version"
-  then
-    return
+  if [ "$DVM_INSTALL_SKIP_VALIDATION" = false ]
+  then 
+    if ! dvm_validate_remote_version "$version"
+    then
+      return
+    fi
   fi
 
   if [[ "$version" != "v"* ]]
@@ -1061,9 +1064,10 @@ dvm_purge_dvm() {
   echo "$content" > "$DVM_RC_FILE"
 
   unset -v DVM_BIN DVM_COLOR_MODE DVM_DENO_VERSION DVM_DIR DVM_FILE_TYPE7 \
-    DVM_INSTALL_REGISTRY DVM_LATEST_VERSION DVM_RC_FILE DVM_PRINT_COLOR \
-    DVM_QUIET_MODE DVM_REQUEST_RESPONSE DVM_SOURCE DVM_TARGET_ARCH DVM_TARGET_NAME \
-    DVM_TARGET_OS DVM_TARGET_TYPE DVM_TARGET_VERSION DVM_VERBOSE_MODE DVM_VERSION
+    DVM_INSTALL_REGISTRY DVM_INSTALL_SKIP_VALIDATION DVM_LATEST_VERSION DVM_RC_FILE \
+    DVM_PRINT_COLOR DVM_QUIET_MODE DVM_REQUEST_RESPONSE DVM_SOURCE DVM_TARGET_ARCH \
+    DVM_TARGET_NAME DVM_TARGET_OS DVM_TARGET_TYPE DVM_TARGET_VERSION DVM_VERBOSE_MODE \
+    DVM_VERSION
   unset -f dvm
   unset -f dvm_check_alias_dir dvm_check_dvm_dir dvm_clean_download_cache \
     dvm_compare_version dvm_confirm_with_prompt dvm_deactivate dvm_debug \
@@ -1231,11 +1235,17 @@ dvm() {
 
     version=""
 
+    DVM_INSTALL_REGISTRY=""
+    DVM_INSTALL_SKIP_VALIDATION=false
+
     while [ "$#" -gt "0" ]
     do
       case "$1" in
       "--registry="*)
         DVM_INSTALL_REGISTRY=${1#--registry=}
+        ;;
+      "--skip-validation")
+        DVM_INSTALL_SKIP_VALIDATION=true
         ;;
       "-"*)
         ;;
