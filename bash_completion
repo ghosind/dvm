@@ -54,6 +54,18 @@ _dvm_add_aliases_to_opts() {
   done
 }
 
+_dvm_add_options_to_opts() {
+  if [ "$prev" == "run" ]
+  then
+    return
+  fi
+
+  if [[ ${cur} == -* ]]
+  then
+    opts="$opts -q --color --no-color --quiet --verbose"
+  fi
+}
+
 _dvm_completion() {
   local cur
   local prev
@@ -64,6 +76,12 @@ _dvm_completion() {
   opts=""
 
   case "$prev" in
+  install)
+    if [[ ${cur} == -* ]]
+    then
+      opts="--registry= --skip-validation"
+    fi
+    ;;
   use|uninstall|run|which)
     if [ "$prev" = "which" ] && _dvm_has_active_version
     then
@@ -82,21 +100,18 @@ _dvm_completion() {
   dvm|"$DVM_DIR/dvm.sh")
     if [[ ${cur} == -* ]]
     then
-      opts="-h -q --color --help --no-color --quiet --verbose --version"
+      opts="-h --help --version"
     else
       opts="alias clean current deactivate doctor help install list list-remote
         ls ls-remote run upgrade unalias uninstall use which"
     fi
     ;;
   *)
-    if [[ ${cur} == -* ]]
-    then
-      opts="-q --color --no-color --quiet --verbose"
-    else
-      opts=""
-    fi
+    opts=""
     ;;
   esac
+
+  _dvm_add_options_to_opts
 
   # shellcheck disable=SC2207
   COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
