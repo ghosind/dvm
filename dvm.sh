@@ -94,6 +94,11 @@ dvm_request() {
   url="$1"
   cmd="curl -s $url"
 
+  if [ "$DVM_VERBOSE_MODE" = true ]
+  then
+    cmd="$cmd -v"
+  fi
+
   dvm_debug "request url: $url"
   dvm_debug "request command: $cmd"
 
@@ -123,6 +128,9 @@ dvm_download_file() {
     if [ "$DVM_QUIET_MODE" = true ]
     then
       cmd="$cmd -q"
+    elif [ "$DVM_VERBOSE_MODE" = true ]
+    then
+      cmd="$cmd -d"
     fi
   elif dvm_has curl
   then
@@ -130,6 +138,9 @@ dvm_download_file() {
     if [ "$DVM_QUIET_MODE" = true ]
     then
       cmd="$cmd -s"
+    elif [ "$DVM_VERBOSE_MODE" = true ]
+    then
+      cmd="$cmd -v"
     fi
   else
     dvm_print_error "wget or curl is required."
