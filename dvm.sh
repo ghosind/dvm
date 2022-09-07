@@ -59,12 +59,12 @@ dvm_print() {
   DVM_PRINT_COLOR=""
 
   dvm_set_color "$1"
-  if [ "$DVM_PRINT_COLOR" != "" ]
+  if [ -n "$DVM_PRINT_COLOR" ]
   then
     shift
   fi
 
-  if [ "$DVM_COLOR_MODE" = true ]
+  if [ "$DVM_COLOR_MODE" = true ] && [ -n "$DVM_PRINT_COLOR" ]
   then
     echo -e "$DVM_PRINT_COLOR$*\x1b[0m"
   else
