@@ -171,7 +171,7 @@ dvm_get_package_data() {
     [ "$DVM_TARGET_ARCH" = 'arm64' ] &&
     dvm_compare_version "$target_version" "v1.6.0"
   then
-    dvm_print_error "aarch64-darwin support deno v1.6.0 and above versions only."
+    dvm_print_error "Mac with M-series chips (aarch64-darwin) support deno v1.6.0 and above versions only."
     dvm_failure
     return
   fi
