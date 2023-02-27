@@ -8,7 +8,7 @@
 
 English | [简体中文](./README-CN.md)
 
-Dvm is a simple, lightweight, and powerful [Deno](https://deno.land/) version manager for Linux/MacOS.
+Dvm is a lightweight, and powerful [Deno](https://deno.land/) version manager for MacOS, Linux, WSL, and Windows with Bash.
 
 ***Please avoid use `deno upgrade` command to upgrade Deno when you're using DVM to manage your multiple version environment.***
 
@@ -28,7 +28,6 @@ Dvm is a simple, lightweight, and powerful [Deno](https://deno.land/) version ma
 - [Uninstalling DVM](#uninstalling-dvm)
    - [Use `purge` command](#use-purge-command)
    - [Manual uninstall](#manual-uninstall)
-- [Contribution](#contribution)
 - [License](#license)
 
 ## Installing and Updating
@@ -252,18 +251,6 @@ export PATH="$PATH:$DVM_BIN"
 [ -f "$DVM_DIR/dvm.sh" ] && . "$DVM_DIR/dvm.sh"
 [ -f "$DVM_DIR/bash_completion" ] && . "$DVM_DIR/bash_completion"
 ```
-
-## Contribution
-
-1. Fork dvm project. ([https://github.com/ghosind/dvm](https://github.com/ghosind/dvm))
-2. Clone your fork to local. (`git clone <your_forked_repo>`)
-3. Create your branch. (`git checkout -b features/someFeatures`)
-4. Make your changes.
-5. Commit your changes. (`git commit -m 'Add some features'`)
-6. Push to the branch. (`git push origin features/someFeatures`)
-7. Create a new Pull Request.
-
-Please make sure your commits could pass the ShellCheck before creating pull request.
 
 ## License
 

@@ -8,7 +8,7 @@
 
 简体中文 | [English](./README.md)
 
-DVM是一个强大的轻量级[Deno](https://deno.land/)版本管理工具。
+DVM是一个强大的轻量级[Deno](https://deno.land/)版本管理工具，可在MacOS、Linux、WSL以及装有Bash的Windows上使用。
 
 ***在使用DVM管理你的多版本环境时，请避免使用`deno upgrade`命令进行升级deno版本。***
 
@@ -28,7 +28,6 @@ DVM是一个强大的轻量级[Deno](https://deno.land/)版本管理工具。
 - [如何卸载DVM](#如何卸载DVM)
     - [使用`purge`命令](#使用purge命令)
     - [手工卸载](#手工卸载)
-- [参与项目](#参与项目)
 - [许可](#许可)
 
 ## 安装与升级
@@ -223,18 +222,6 @@ export PATH="$PATH:$DVM_BIN"
 [ -f "$DVM_DIR/dvm.sh" ] && . "$DVM_DIR/dvm.sh"
 [ -f "$DVM_DIR/bash_completion" ] && . "$DVM_DIR/bash_completion"
 ```
-
-## 参与项目
-
-1. Fork dvm项目。 ([https://github.com/ghosind/dvm](https://github.com/ghosind/dvm))
-2. 下载项目代码至本地。(`git clone <your_forked_repo>`)
-3. 创建新的分支。 (`git checkout -b features/someFeatures`)
-4. 修改代码。
-5. 上传对应的修改。 (`git commit -m 'Add some features'`)
-6. 上传至远程仓库。 (`git push origin features/someFeatures`)
-7. 创建Pull Request。
-
-请在提交PR前确保你的修改能通过ShellCheck的检查。
 
 ## 许可
 
