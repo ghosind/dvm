@@ -204,6 +204,9 @@ dvm_get_package_data() {
     "Linux:x86_64:zip")
       DVM_TARGET_NAME='deno-x86_64-unknown-linux-gnu.zip'
       ;;
+    *"NT"*":x86_64:zip")
+      DVM_TARGET_NAME='deno-x86_64-pc-windows-msvc.zip'
+      ;;
     *)
       dvm_print_error "unsupported operating system $DVM_TARGET_OS ($DVM_TARGET_ARCH)."
       dvm_failure
