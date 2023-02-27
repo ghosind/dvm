@@ -206,6 +206,7 @@ dvm_get_package_data() {
     *)
       dvm_print_error "unsupported operating system $DVM_TARGET_OS ($DVM_TARGET_ARCH)."
       dvm_failure
+      return
       ;;
   esac
 
