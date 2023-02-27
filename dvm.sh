@@ -89,6 +89,7 @@ dvm_request() {
   then
     dvm_print_error "curl is required"
     dvm_failure
+    return
   fi
 
   url="$1"
