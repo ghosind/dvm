@@ -22,32 +22,24 @@ dvm_has() {
 }
 
 dvm_print_error() {
-  dvm_print "red" "[ERR]" "$@"
+  dvm_print_with_color "31m" "[ERR]" "$@"
 }
 
 dvm_print_warning() {
-  dvm_print "yellow" "[WARN]" "$@"
+  dvm_print_with_color "33m" "[WARN]" "$@"
 }
 
-dvm_set_color() {
+dvm_print_with_color() {
   local color="$1"
 
-  case "$color" in
-    red)
-      DVM_PRINT_COLOR='\x1b[31m'
-      ;;
-    green)
-      DVM_PRINT_COLOR='\x1b[32m'
-      ;;
-    yellow)
-      DVM_PRINT_COLOR='\x1b[33m'
-      ;;
-    blue)
-      DVM_PRINT_COLOR='\x1b[34m'
-      ;;
-    *)
-      ;;
-  esac
+  shift
+
+  if [ "$DVM_COLOR_MODE" = true ] && [ -n "$color" ]
+  then
+    dvm_print "\x1b[$color$*\x1b[0m"
+  else
+    dvm_print "$@"
+  fi
 }
 
 dvm_print() {
@@ -56,20 +48,7 @@ dvm_print() {
     return
   fi
 
-  DVM_PRINT_COLOR=""
-
-  dvm_set_color "$1"
-  if [ -n "$DVM_PRINT_COLOR" ]
-  then
-    shift
-  fi
-
-  if [ "$DVM_COLOR_MODE" = true ] && [ -n "$DVM_PRINT_COLOR" ]
-  then
-    echo -e "$DVM_PRINT_COLOR$*\x1b[0m"
-  else
-    echo -e "$@"
-  fi
+  echo -e "$@"
 }
 
 dvm_debug() {
@@ -1093,8 +1072,8 @@ dvm_purge_dvm() {
     dvm_get_version_by_param dvm_has dvm_install_version dvm_list_aliases \
     dvm_list_local_versions dvm_list_remote_versions dvm_locate_version \
     dvm_parse_options dvm_print dvm_print_doctor_message dvm_print_error dvm_print_help \
-    dvm_print_warning dvm_purge_dvm dvm_request dvm_rm_alias dvm_run_with_version \
-    dvm_scan_and_fix_versions dvm_set_alias dvm_set_color dvm_set_default_env \
+    dvm_print_warning dvm_print_with_color dvm_purge_dvm dvm_request dvm_rm_alias \
+    dvm_run_with_version dvm_scan_and_fix_versions dvm_set_alias dvm_set_default_env \
     dvm_strip_path dvm_success dvm_uninstall_version dvm_update_dvm dvm_use_version \
     dvm_validate_remote_version
 
