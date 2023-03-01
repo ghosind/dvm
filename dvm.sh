@@ -1058,12 +1058,15 @@ dvm_purge_dvm() {
   content=$(sed "/Deno Version Manager/d;/DVM_DIR/d;/DVM_BIN/d" "$DVM_RC_FILE")
   echo "$content" > "$DVM_RC_FILE"
 
+  # unset global variables
   unset -v DVM_BIN DVM_COLOR_MODE DVM_DENO_VERSION DVM_DIR DVM_FILE_TYPE7 \
     DVM_INSTALL_REGISTRY DVM_INSTALL_SKIP_VALIDATION DVM_LATEST_VERSION DVM_RC_FILE \
     DVM_PRINT_COLOR DVM_QUIET_MODE DVM_REQUEST_RESPONSE DVM_SOURCE DVM_TARGET_ARCH \
     DVM_TARGET_NAME DVM_TARGET_OS DVM_TARGET_TYPE DVM_TARGET_VERSION DVM_VERBOSE_MODE \
     DVM_VERSION
+  # unset dvm itself
   unset -f dvm
+  # unset dvm functions
   unset -f dvm_check_alias_dir dvm_check_dvm_dir dvm_clean_download_cache \
     dvm_compare_version dvm_confirm_with_prompt dvm_deactivate dvm_debug \
     dvm_download_deno dvm_download_file dvm_extract_file dvm_failure \
@@ -1076,6 +1079,9 @@ dvm_purge_dvm() {
     dvm_run_with_version dvm_scan_and_fix_versions dvm_set_alias dvm_set_default_env \
     dvm_strip_path dvm_success dvm_uninstall_version dvm_update_dvm dvm_use_version \
     dvm_validate_remote_version
+  # unset dvm shell completion functions
+  unset -f _dvm_add_aliases_to_opts _dvm_add_versions_to_opts _dvm_has_active_version \
+    _dvm_add_options_to_opts _dvm_completion
 
   echo "DVM has been removed from your computer."
 }
