@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # source this script
 
-export DVM_VERSION="v0.6.2"
+export DVM_VERSION="v0.7.0"
 
 dvm_success() {
   # execute true to set as success
