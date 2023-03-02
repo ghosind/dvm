@@ -10,6 +10,8 @@
 
 DVM是一个强大的轻量级[Deno](https://deno.land/)版本管理工具，可在MacOS、Linux、WSL以及装有Bash的Windows上使用。
 
+DVM仅在v0.7.0及之后的版本支持Windows。对于Windows用户，使用DVM前需要安装Bash Shell。例如，可以在安装WSL后在PowerShell中执行`bash`命令。
+
 ***在使用DVM管理你的多版本环境时，请避免使用`deno upgrade`命令进行升级deno版本。***
 
 - [安装与升级](#安装与升级)

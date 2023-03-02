@@ -10,7 +10,9 @@ English | [简体中文](./README-CN.md)
 
 Dvm is a lightweight, and powerful [Deno](https://deno.land/) version manager for MacOS, Linux, WSL, and Windows with Bash.
 
-***Please avoid use `deno upgrade` command to upgrade Deno when you're using DVM to manage your multiple version environment.***
+For Windows users, you must install DVM v0.7.0 or later versions, and also need to install a bash shell if you want to use this tool. For example, you can install WSL and execute `bash` command in PowerShell.
+
+***Please do not use `deno upgrade` command to upgrade Deno after you had installed Deno with DVM.***
 
 - [Installing and Updating](#installing-and-updating)
    - [Installation](#installation)
