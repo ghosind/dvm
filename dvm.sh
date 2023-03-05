@@ -408,6 +408,8 @@ dvm_install_version() {
   fi
 
   dvm_print "Deno $version has installed."
+
+  dvm_use_version "$version"
 }
 
 dvm_uninstall_version() {
