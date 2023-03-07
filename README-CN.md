@@ -131,6 +131,8 @@ dvm use v1.0.0
 dvm use
 ```
 
+通过`use`命令设置的版本仅适用于当前终端会话中，若希望为所有的终端会话设置使用的版本，请为版本设置`default`别名，可参考[设置别名](#设置别名)章节为指定版本设置别名。
+
 ### 当前版本信息
 
 使用`dvm current`命令输出当前使用的Deno版本信息：
@@ -220,7 +222,7 @@ rm -rf "$DVM_DIR"
 ```sh
 # Deno Version Manager
 export DVM_DIR="$HOME/.dvm"
-export PATH="$PATH:$DVM_BIN"
+export PATH="$PATH:$DVM_DIR"
 [ -f "$DVM_DIR/dvm.sh" ] && . "$DVM_DIR/dvm.sh"
 [ -f "$DVM_DIR/bash_completion" ] && . "$DVM_DIR/bash_completion"
 ```

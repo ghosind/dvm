@@ -111,9 +111,12 @@ Use `dvm install <version>` command to download and install a specified version 
 
 ```sh
 dvm install v1.0.0
-deno v1.0.0 has installed.
-dvn install v0.42.0
-deno v0.42.0 has installed.
+# deno v1.0.0 has installed.
+# Using deno v1.0.0 now.
+
+dvm install v0.42.0
+# deno v0.42.0 has installed.
+# Using deno v1.0.0 now.
 ```
 
 ### Uninstall Deno
@@ -122,10 +125,11 @@ Use `dvm uninstall <version|alias-name>` command to uninstall a specified versio
 
 ```sh
 dvm uninstall v0.39.0
-uninstalled deno v0.39.0.
+# uninstalled deno v0.39.0.
+
 # default is an alias name
 dvm uninstall default
-uninstalled deno default.
+# uninstalled deno default.
 ```
 
 ### Set active version
@@ -135,14 +139,20 @@ Use `dvm use [version]` command to link `deno` to the specified installed versio
 ```sh
 # use v1.0.0
 dvm use v1.0.0
-using deno v1.0.0 now.
+# Using deno v1.0.0 now.
+```
 
-# get version from .dvmrc file
+If you do not specify the active version, DVM will try to read `.dvmrc` file from the current working directory.
+
+```sh
 # cat .dvmrc
 # # v1.4.0
 dvm use
-using deno v1.4.0 now.
+# Found './dvmrc' with version v1.4.0
+# Using deno v1.4.0 now.
 ```
+
+Set active version by `use` command is for a single terminal session only. If you want to set an active version for all terminal sessions, please set a `default` alias to a version. See [Set an alias](#set-active-version) section for more details.
 
 ### Get current version
 
@@ -150,7 +160,7 @@ Use `dvm current` command to display the current version of Deno.
 
 ```sh
 dvm current
-v1.0.0
+# v1.0.0
 ```
 
 ### Set an alias
@@ -159,13 +169,15 @@ Use `dvm alias` command to set alias name for a installed version of Deno.
 
 ```sh
 dvm ls
-   v1.0.0
+#    v1.0.0
+
 # Set an alias
 dvm alias default v1.0.0
-default -> v1.0.0
+# default -> v1.0.0
+
 dvm ls
-   v1.0.0
-default -> v1.0.0
+#    v1.0.0
+# default -> v1.0.0
 ```
 
 ### Run with a version
@@ -174,10 +186,15 @@ Use `dvm run` command to run Deno on the specified version with arguments.
 
 ```sh
 dvm run v1.0.0
-Running with deno v1.0.0
-Deno 1.0.0
-exit using ctrl+d or close()
->
+# Running with deno v1.0.0
+# Deno 1.0.0
+# exit using ctrl+d or close()
+# >
+```
+
+You can also run a script file with the specified version.
+
+```sh
 # Run app.ts with Deno v1.0.0
 dvm run v1.0.0 app.ts
 ```
@@ -249,7 +266,7 @@ Edit shell config file (like `.bashrc` or `.zshrc`), and remove the following li
 ```sh
 # Deno Version Manager
 export DVM_DIR="$HOME/.dvm"
-export PATH="$PATH:$DVM_BIN"
+export PATH="$PATH:$DVM_DIR"
 [ -f "$DVM_DIR/dvm.sh" ] && . "$DVM_DIR/dvm.sh"
 [ -f "$DVM_DIR/bash_completion" ] && . "$DVM_DIR/bash_completion"
 ```
