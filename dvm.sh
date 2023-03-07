@@ -394,6 +394,20 @@ dvm_get_version_from_dvmrc() {
   dvm_read_dvmrc_file "$HOME"
 }
 
+dvm_set_default_alias() {
+  local version="$1"
+
+  dvm_check_alias_dir
+
+  if [ -f "$DVM_DIR/aliases/default" ]
+  then
+    return
+  fi
+
+  echo "$version" > "$DVM_DIR/aliases/default"
+  dvm_print "Creating default alias: default -> $version"
+}
+
 dvm_install_version() {
   local version
 
@@ -457,6 +471,7 @@ dvm_install_version() {
   dvm_print "Deno $version has installed."
 
   dvm_use_version "$version"
+  dvm_set_default_alias "$version"
 }
 
 dvm_uninstall_version() {
@@ -1120,7 +1135,7 @@ dvm_purge_dvm() {
     dvm_locate_version dvm_parse_options dvm_print dvm_print_doctor_message \
     dvm_print_error dvm_print_help dvm_print_warning dvm_print_with_color dvm_purge_dvm \
     dvm_read_dvmrc_file dvm_request dvm_rm_alias dvm_run_with_version \
-    dvm_scan_and_fix_versions dvm_set_alias dvm_set_default_env \
+    dvm_scan_and_fix_versions dvm_set_alias dvm_set_default_alias dvm_set_default_env \
     dvm_strip_path dvm_success dvm_uninstall_version dvm_update_dvm dvm_use_version \
     dvm_validate_remote_version
   # unset dvm shell completion functions
