@@ -227,6 +227,7 @@ dvm_get_latest_version() {
   dvm_print "Found deno latest version $tag_name"
 
   DVM_TARGET_VERSION="$tag_name"
+  DVM_INSTALL_SKIP_VALIDATION=true
 }
 
 dvm_download_deno() {
