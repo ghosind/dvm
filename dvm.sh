@@ -560,7 +560,7 @@ dvm_list_local_versions() {
 
     if [ "$version" = "$DVM_DENO_VERSION" ]
     then
-      dvm_print "green" "-> $version"
+      dvm_print_with_color "32m" "-> $version"
     else
       dvm_print "   $version"
     fi
