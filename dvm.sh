@@ -365,7 +365,7 @@ dvm_read_dvmrc_file() {
   if [ -f "$file" ]
   then
     dvm_debug "reading version from file $file"
-    version=$(cat "$file")
+    version=$(head -n 1 "$file")
   fi
 
   if [ -n "$version" ]
@@ -509,7 +509,7 @@ dvm_list_aliases() {
     fi
 
     alias_name=${alias_path##*/}
-    aliased_version=$(cat "$alias_path")
+    aliased_version=$(head -n 1 "$alias_path")
 
     if [ -z "$aliased_version" ] ||
       [ ! -f "$DVM_DIR/versions/$aliased_version/deno" ]
@@ -648,7 +648,7 @@ dvm_get_version_by_param() {
 
   if [ -f "$DVM_DIR/aliases/$1" ]
   then
-    DVM_TARGET_VERSION=$(cat "$DVM_DIR/aliases/$1")
+    DVM_TARGET_VERSION=$(head -n 1 "$DVM_DIR/aliases/$1")
 
     if [ ! -f "$DVM_DIR/versions/$DVM_TARGET_VERSION/deno" ]
     then
@@ -838,7 +838,7 @@ dvm_rm_alias() {
     return
   fi
 
-  aliased_version=$(cat "$DVM_DIR/aliases/$alias_name")
+  aliased_version=$(head -n 1 "$DVM_DIR/aliases/$alias_name")
 
   rm "$DVM_DIR/aliases/$alias_name"
 
