@@ -622,13 +622,19 @@ dvm_get_version() {
     return
   fi
 
-  if [ ! -f "./.dvmrc" ]
+  if [ ! -f "$PWD/.dvmrc" ]
   then
     dvm_print "No .dvmrc file found."
     return
   fi
 
-  DVM_TARGET_VERSION=$(cat ./.dvmrc)
+  DVM_TARGET_VERSION=$(cat "$PWD/.dvmrc")
+
+  if [ -n "$DVM_TARGET_VERSION" ]
+  then
+    dvm_print "Found '$PWD/.dvmrc' with version <$DVM_TARGET_VERSION>"
+    return
+  fi
 }
 
 dvm_strip_path() {
