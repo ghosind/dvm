@@ -355,6 +355,45 @@ dvm_validate_remote_version() {
   fi
 }
 
+# dvm_read_dvmrc_file
+# read .dvmrc file in the specified path, and set it to DVM_TARGET_VERSION variable
+# if is not empty.
+dvm_read_dvmrc_file() {
+  local version
+  local file="$1/.dvmrc"
+
+  if [ -f "$file" ]
+  then
+    dvm_debug "reading version from file $file"
+    version=$(cat "$file")
+  fi
+
+  if [ -n "$version" ]
+  then
+    dvm_print "Found '$file' with version $version"
+    DVM_TARGET_VERSION="$version"
+  fi
+}
+
+# dvm_get_version_from_dvmrc
+# Try to read version from .dvmrc file in the current working directory or the user
+# home directory.
+dvm_get_version_from_dvmrc() {
+  dvm_read_dvmrc_file "$PWD"
+
+  if [ -n "$DVM_TARGET_VERSION" ]
+  then
+    return
+  fi
+
+  if [ "$PWD" = "$HOME" ]
+  then
+    return
+  fi
+
+  dvm_read_dvmrc_file "$HOME"
+}
+
 dvm_install_version() {
   local version
 
@@ -362,24 +401,16 @@ dvm_install_version() {
 
   if [ -z "$version" ]
   then
-    if [ -f "$PWD/.dvmrc" ]
-    then
-      version=$(cat "$PWD/.dvmrc")
-    else
-      dvm_print "No .dvmrc file found"
-    fi
-    
-    if [ -n "$version" ]
-    then
-      dvm_print "Found '$PWD/.dvmrc' with version $version"
-    else
-      if ! dvm_get_latest_version
-      then
-        return
-      fi
+    DVM_TARGET_VERSION=""
 
-      version="$DVM_TARGET_VERSION"
+    dvm_get_version_from_dvmrc
+    
+    if [ -z "$DVM_TARGET_VERSION" ] && ! dvm_get_latest_version
+    then
+      return
     fi
+
+    version="$DVM_TARGET_VERSION"
   fi
 
   if [ -f "$DVM_DIR/versions/$version/deno" ]
@@ -638,19 +669,7 @@ dvm_get_version() {
     return
   fi
 
-  if [ ! -f "$PWD/.dvmrc" ]
-  then
-    dvm_print "No .dvmrc file found."
-    return
-  fi
-
-  DVM_TARGET_VERSION=$(cat "$PWD/.dvmrc")
-
-  if [ -n "$DVM_TARGET_VERSION" ]
-  then
-    dvm_print "Found '$PWD/.dvmrc' with version $DVM_TARGET_VERSION"
-    return
-  fi
+  dvm_get_version_from_dvmrc
 }
 
 dvm_strip_path() {
@@ -1096,11 +1115,12 @@ dvm_purge_dvm() {
     dvm_download_deno dvm_download_file dvm_extract_file dvm_failure \
     dvm_fix_invalid_versions dvm_get_current_version dvm_get_dvm_latest_version \
     dvm_get_latest_version dvm_get_package_data dvm_get_rc_file dvm_get_version \
-    dvm_get_version_by_param dvm_has dvm_install_version dvm_list_aliases \
-    dvm_list_local_versions dvm_list_remote_versions dvm_locate_version \
-    dvm_parse_options dvm_print dvm_print_doctor_message dvm_print_error dvm_print_help \
-    dvm_print_warning dvm_print_with_color dvm_purge_dvm dvm_request dvm_rm_alias \
-    dvm_run_with_version dvm_scan_and_fix_versions dvm_set_alias dvm_set_default_env \
+    dvm_get_version_from_dvmrc dvm_get_version_by_param dvm_has dvm_install_version \
+    dvm_list_aliases dvm_list_local_versions dvm_list_remote_versions \
+    dvm_locate_version dvm_parse_options dvm_print dvm_print_doctor_message \
+    dvm_print_error dvm_print_help dvm_print_warning dvm_print_with_color dvm_purge_dvm \
+    dvm_read_dvmrc_file dvm_request dvm_rm_alias dvm_run_with_version \
+    dvm_scan_and_fix_versions dvm_set_alias dvm_set_default_env \
     dvm_strip_path dvm_success dvm_uninstall_version dvm_update_dvm dvm_use_version \
     dvm_validate_remote_version
   # unset dvm shell completion functions
