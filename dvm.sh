@@ -224,6 +224,8 @@ dvm_get_latest_version() {
     return
   fi
 
+  dvm_print "Found deno latest version $tag_name"
+
   DVM_TARGET_VERSION="$tag_name"
 }
 
@@ -359,11 +361,24 @@ dvm_install_version() {
 
   if [ -z "$version" ]
   then
-    if ! dvm_get_latest_version
+    if [ -f "$PWD/.dvmrc" ]
     then
-      return
+      version=$(cat "$PWD/.dvmrc")
+    else
+      dvm_print "No .dvmrc file found"
     fi
-    version="$DVM_TARGET_VERSION"
+    
+    if [ -n "$version" ]
+    then
+      dvm_print "Found '$PWD/.dvmrc' with version $version"
+    else
+      if ! dvm_get_latest_version
+      then
+        return
+      fi
+
+      version="$DVM_TARGET_VERSION"
+    fi
   fi
 
   if [ -f "$DVM_DIR/versions/$version/deno" ]
@@ -632,7 +647,7 @@ dvm_get_version() {
 
   if [ -n "$DVM_TARGET_VERSION" ]
   then
-    dvm_print "Found '$PWD/.dvmrc' with version <$DVM_TARGET_VERSION>"
+    dvm_print "Found '$PWD/.dvmrc' with version $DVM_TARGET_VERSION"
     return
   fi
 }
@@ -1265,16 +1280,6 @@ dvm() {
 
       shift
     done
-
-    if [ -z "$version" ]
-    then
-      if [ -f "./.dvmrc" ]
-      then
-        version=$(cat ./.dvmrc)
-      else
-        dvm_print "No .dvmrc file found"
-      fi
-    fi
 
     dvm_install_version "$version"
 
