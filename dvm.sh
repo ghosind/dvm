@@ -1457,6 +1457,6 @@ dvm() {
 if [ -f "$DVM_DIR/aliases/default" ]
 then
   DVM_QUIET_MODE=true
-  dvm use "default"
+  dvm_use_version "default"
   DVM_QUIET_MODE=false
 fi
