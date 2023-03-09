@@ -44,7 +44,6 @@ add_nvm_into_rc_file() {
   echo "
 # Deno Version Manager
 export DVM_DIR=\"\$HOME/.dvm\"
-export PATH=\"\$PATH:\$DVM_DIR\"
 [ -f \"\$DVM_DIR/dvm.sh\" ] && $cmd_declaration\"\$DVM_DIR/dvm.sh\"
 [ -f \"\$DVM_DIR/bash_completion\" ] && . \"\$DVM_DIR/bash_completion\"
 " >> "$DVM_RC_FILE"

@@ -222,7 +222,6 @@ rm -rf "$DVM_DIR"
 ```sh
 # Deno Version Manager
 export DVM_DIR="$HOME/.dvm"
-export PATH="$PATH:$DVM_DIR"
 [ -f "$DVM_DIR/dvm.sh" ] && . "$DVM_DIR/dvm.sh"
 [ -f "$DVM_DIR/bash_completion" ] && . "$DVM_DIR/bash_completion"
 ```
