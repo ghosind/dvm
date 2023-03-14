@@ -7,27 +7,27 @@ compare_version() {
   test "$(printf '%s\n' "$@" | sort -V | head -n 1)" != "$2"
 }
 
-get_rc_file() {
+get_profile_file() {
   case ${SHELL##*/} in
   bash)
-    DVM_RC_FILE="$HOME/.bashrc"
+    DVM_PROFILE_FILE="$HOME/.bashrc"
     ;;
   zsh)
-    DVM_RC_FILE="$HOME/.zshrc"
+    DVM_PROFILE_FILE="$HOME/.zshrc"
     ;;
   *)
-    DVM_RC_FILE="$HOME/.profile"
+    DVM_PROFILE_FILE="$HOME/.profile"
     ;;
   esac
 }
 
-add_nvm_into_rc_file() {
+add_nvm_into_profile_file() {
   local is_dvm_defined
   local cmd_declaration
 
-  get_rc_file
+  get_profile_file
 
-  is_dvm_defined=$(grep DVM_DIR < "$DVM_RC_FILE")
+  is_dvm_defined=$(grep DVM_DIR < "$DVM_PROFILE_FILE")
 
   if [ -n "$is_dvm_defined" ]
   then
@@ -46,7 +46,7 @@ add_nvm_into_rc_file() {
 export DVM_DIR=\"\$HOME/.dvm\"
 [ -f \"\$DVM_DIR/dvm.sh\" ] && $cmd_declaration\"\$DVM_DIR/dvm.sh\"
 [ -f \"\$DVM_DIR/bash_completion\" ] && . \"\$DVM_DIR/bash_completion\"
-" >> "$DVM_RC_FILE"
+" >> "$DVM_PROFILE_FILE"
 }
 
 get_latest_version() {
@@ -136,9 +136,9 @@ install_dvm() {
     DVM_INSTALL_METHOD="remote"
   fi
 
-  add_nvm_into_rc_file
+  add_nvm_into_profile_file
 
-  echo "DVM has been installed, please restart your terminal or run \`source $DVM_RC_FILE\` to apply changes."
+  echo "DVM has been installed, please restart your terminal or run \`source $DVM_PROFILE_FILE\` to apply changes."
 }
 
 set_default() {
