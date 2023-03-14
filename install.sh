@@ -99,7 +99,7 @@ install_latest_version() {
     exit 1
   fi
 
-  cmd="git clone -b $DVM_LATEST_VERSION $git_url $DVM_DIR"
+  cmd="git clone -b $DVM_LATEST_VERSION $git_url $DVM_DIR --depth=1"
 
   if ! ${cmd}
   then
