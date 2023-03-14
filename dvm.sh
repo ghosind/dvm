@@ -613,9 +613,16 @@ dvm_check_dvm_dir() {
 }
 
 dvm_set_default_env() {
+  # Set modes
   DVM_COLOR_MODE=false
   DVM_QUIET_MODE=false
   DVM_VERBOSE_MODE=false
+
+  # Set global variables to default values
+  DVM_INSTALL_REGISTRY=""
+  DVM_INSTALL_SKIP_VALIDATION=false
+  DVM_REQUEST_RESPONSE=""
+  DVM_TARGET_VERSION=""
 }
 
 dvm_clean_download_cache() {
@@ -1211,7 +1218,8 @@ Examples:
 }
 
 dvm() {
-  local version
+  local version=""
+
   dvm_check_dvm_dir
   dvm_set_default_env
 
@@ -1292,11 +1300,6 @@ dvm() {
   install)
     # install the specified version
     shift
-
-    version=""
-
-    DVM_INSTALL_REGISTRY=""
-    DVM_INSTALL_SKIP_VALIDATION=false
 
     while [ "$#" -gt "0" ]
     do
