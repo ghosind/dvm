@@ -3,11 +3,11 @@
 # Ensure the script is downloaded completely
 {
 
-compare_version() {
+dvm_compare_version() {
   test "$(printf '%s\n' "$@" | sort -V | head -n 1)" != "$2"
 }
 
-get_profile_file() {
+dvm_get_profile_file() {
   case ${SHELL##*/} in
   bash)
     DVM_PROFILE_FILE="$HOME/.bashrc"
@@ -21,11 +21,11 @@ get_profile_file() {
   esac
 }
 
-add_nvm_into_profile_file() {
+dvm_add_into_profile_file() {
   local is_dvm_defined
   local cmd_declaration
 
-  get_profile_file
+  dvm_get_profile_file
 
   is_dvm_defined=$(grep DVM_DIR < "$DVM_PROFILE_FILE")
 
@@ -34,7 +34,7 @@ add_nvm_into_profile_file() {
     return
   fi
 
-  if [ "$DVM_INSTALL_METHOD" = "remote" ] && compare_version "$DVM_LATEST_VERSION" "v0.5.0"
+  if [ "$DVM_INSTALL_METHOD" = "remote" ] && dvm_compare_version "$DVM_LATEST_VERSION" "v0.5.0"
   then
     cmd_declaration="alias dvm="
   else
@@ -49,7 +49,7 @@ export DVM_DIR=\"\$HOME/.dvm\"
 " >> "$DVM_PROFILE_FILE"
 }
 
-get_latest_version() {
+dvm_get_latest_version() {
   local request_url
   local response
   local field
@@ -80,7 +80,7 @@ get_latest_version() {
   DVM_LATEST_VERSION=$(echo "$response" | grep tag_name | cut -d '"' -f $field)
 }
 
-install_latest_version() {
+dvm_install_latest_version() {
   local git_url
   local cmd
 
@@ -118,7 +118,7 @@ set_dvm_dir() {
   fi
 }
 
-install_dvm() {
+dvm_install() {
   set_dvm_dir
 
   DVM_SCRIPT_DIR=${0%/*}
@@ -131,17 +131,17 @@ install_dvm() {
     cp -R "$DVM_SCRIPT_DIR/". "$DVM_DIR"
     DVM_INSTALL_METHOD="local"
   else
-    get_latest_version
-    install_latest_version
+    dvm_get_latest_version
+    dvm_install_latest_version
     DVM_INSTALL_METHOD="remote"
   fi
 
-  add_nvm_into_profile_file
+  dvm_add_into_profile_file
 
   echo "DVM has been installed, please restart your terminal or run \`source $DVM_PROFILE_FILE\` to apply changes."
 }
 
-set_default() {
+dvm_set_default() {
   if [ -z "$DVM_DIR" ]
   then
     DVM_DIR="$HOME/.dvm"
@@ -152,7 +152,7 @@ set_default() {
   fi
 }
 
-print_help() {
+dvm_print_help() {
   printf "DVM install script
 
 Usage: install.sh [-r <github|gitee>] [-d <dvm_dir>]
@@ -167,19 +167,19 @@ Example:
 "
 }
 
-set_default
+dvm_set_default
 
 while getopts "hr:d:" opt
 do
   case "$opt" in
   h)
-    print_help
+    dvm_print_help
     exit 0
     ;;
   r)
     if [ "$OPTARG" != "github" ] && [ "$OPTARG" != "gitee" ]
     then
-      print_help
+      dvm_print_help
       exit 1
     fi
     DVM_SOURCE="$OPTARG"
@@ -187,7 +187,7 @@ do
   d)
     if [ -z "$OPTARG" ]
     then
-      print_help
+      dvm_print_help
       exit 1
     fi
 
@@ -200,10 +200,10 @@ done
 
 if [ "$DVM_SOURCE" != "github" ] && [ "$DVM_SOURCE" != "gitee" ]
 then
-  print_help
+  dvm_print_help
   exit 1
 fi
 
-install_dvm
+dvm_install
 
 }
