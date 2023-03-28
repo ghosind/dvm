@@ -142,14 +142,8 @@ dvm_install() {
 }
 
 dvm_set_default() {
-  if [ -z "$DVM_DIR" ]
-  then
-    DVM_DIR="$HOME/.dvm"
-  fi
-  if [ -z "$DVM_SOURCE" ]
-  then
-    DVM_SOURCE="github"
-  fi
+  DVM_DIR=${DVM_DIR:-$HOME/.dvm}
+  DVM_SOURCE=${DVM_SOURCE:-github}
 }
 
 dvm_print_help() {
