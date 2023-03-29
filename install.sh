@@ -27,7 +27,6 @@ dvm_get_profile_file() {
 
 dvm_add_into_profile_file() {
   local is_dvm_defined
-  local cmd_declaration
 
   dvm_get_profile_file
 
@@ -38,17 +37,10 @@ dvm_add_into_profile_file() {
     return
   fi
 
-  if [ "$DVM_INSTALL_METHOD" = "remote" ] && dvm_compare_version "$DVM_LATEST_VERSION" "v0.5.0"
-  then
-    cmd_declaration="alias dvm="
-  else
-    cmd_declaration=". "
-  fi
-
   echo "
 # Deno Version Manager
 export DVM_DIR=\"\$HOME/.dvm\"
-[ -f \"\$DVM_DIR/dvm.sh\" ] && $cmd_declaration\"\$DVM_DIR/dvm.sh\"
+[ -f \"\$DVM_DIR/dvm.sh\" ] && . \"\$DVM_DIR/dvm.sh\"
 [ -f \"\$DVM_DIR/bash_completion\" ] && . \"\$DVM_DIR/bash_completion\"
 " >> "$DVM_PROFILE_FILE"
 }
@@ -133,11 +125,9 @@ dvm_install() {
   then
     # Copy all files to DVM_DIR
     cp -R "$DVM_SCRIPT_DIR/". "$DVM_DIR"
-    DVM_INSTALL_METHOD="local"
   else
     dvm_get_latest_version
     dvm_install_latest_version
-    DVM_INSTALL_METHOD="remote"
   fi
 
   dvm_add_into_profile_file
