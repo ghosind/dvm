@@ -7,6 +7,10 @@ dvm_compare_version() {
   test "$(printf '%s\n' "$@" | sort -V | head -n 1)" != "$2"
 }
 
+dvm_has() {
+  command -v "$1" > /dev/null
+}
+
 dvm_get_profile_file() {
   case ${SHELL##*/} in
   bash)
@@ -65,9 +69,9 @@ dvm_get_latest_version() {
     ;;
   esac
 
-  if [ ! -x "$(command -v curl)" ]
+  if ! dvm_has curl
   then
-    echo "Curl is required."
+    echo "curl is required."
     exit 1
   fi
 
@@ -93,7 +97,7 @@ dvm_install_latest_version() {
     ;;
   esac
 
-  if [ ! -x "$(command -v git)" ]
+  if ! dvm_has git
   then
     echo "git is require."
     exit 1
