@@ -604,15 +604,10 @@ dvm_list_remote_versions() {
   echo -e "$all_versions" | sed 'x;1!H;$!d;x'
 }
 
-dvm_check_dvm_dir() {
-  if [ -z "$DVM_DIR" ]
-  then
-    # set default dvm directory
-    DVM_DIR="$HOME/.dvm"
-  fi
-}
-
 dvm_set_default_env() {
+   # set default dvm directory
+  DVM_DIR=${DVM_DIR:-$HOME/.dvm}
+
   # Set modes
   DVM_COLOR_MODE=false
   DVM_QUIET_MODE=false
@@ -1131,13 +1126,12 @@ dvm_purge_dvm() {
   # unset dvm itself
   unset -f dvm
   # unset dvm functions
-  unset -f dvm_check_alias_dir dvm_check_dvm_dir dvm_clean_download_cache \
-    dvm_compare_version dvm_confirm_with_prompt dvm_deactivate dvm_debug \
-    dvm_download_deno dvm_download_file dvm_extract_file dvm_failure \
-    dvm_fix_invalid_versions dvm_get_current_version dvm_get_dvm_latest_version \
-    dvm_get_latest_version dvm_get_package_data dvm_get_profile_file dvm_get_version \
-    dvm_get_version_from_dvmrc dvm_get_version_by_param dvm_has dvm_install_version \
-    dvm_list_aliases dvm_list_local_versions dvm_list_remote_versions \
+  unset -f dvm_check_alias_dir dvm_clean_download_cache dvm_compare_version \
+    dvm_confirm_with_prompt dvm_deactivate dvm_debug dvm_download_deno dvm_download_file \
+    dvm_extract_file dvm_failure dvm_fix_invalid_versions dvm_get_current_version \
+    dvm_get_dvm_latest_version dvm_get_latest_version dvm_get_package_data dvm_get_profile_file \
+    dvm_get_version dvm_get_version_from_dvmrc dvm_get_version_by_param dvm_has \
+    dvm_install_version dvm_list_aliases dvm_list_local_versions dvm_list_remote_versions \
     dvm_locate_version dvm_parse_options dvm_print dvm_print_doctor_message \
     dvm_print_error dvm_print_help dvm_print_warning dvm_print_with_color dvm_purge_dvm \
     dvm_read_dvmrc_file dvm_request dvm_rm_alias dvm_run_with_version \
@@ -1219,7 +1213,6 @@ Examples:
 dvm() {
   local version=""
 
-  dvm_check_dvm_dir
   dvm_set_default_env
 
   if [ "$#" = "0" ]
