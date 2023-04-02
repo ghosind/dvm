@@ -355,43 +355,49 @@ dvm_validate_remote_version() {
   fi
 }
 
-# dvm_read_dvmrc_file
-# read .dvmrc file in the specified path, and set it to DVM_TARGET_VERSION variable
-# if is not empty.
+# Read .dvmrc file from the specified path, and set it to DVM_TARGET_VERSION
+# variable if the file is not empty.
+# Parameters:
+# - $1: path directory
 dvm_read_dvmrc_file() {
   local version
-  local file="$1/.dvmrc"
+  local file_dir="$1"
+  local file="$file_dir/.dvmrc"
 
   if [ -f "$file" ]
   then
     dvm_debug "reading version from file $file"
     version=$(head -n 1 "$file")
+  else
+    dvm_debug "no .dvmrc found in $file_dir"
   fi
 
   if [ -n "$version" ]
   then
     dvm_print "Found '$file' with version $version"
     DVM_TARGET_VERSION="$version"
+    return 0
+  else
+    dvm_debug "empty .dvmrc file $file_dir"
   fi
+
+  return 1
 }
 
-# dvm_get_version_from_dvmrc
 # Try to read version from .dvmrc file in the current working directory or the user
 # home directory.
 dvm_get_version_from_dvmrc() {
-  dvm_read_dvmrc_file "$PWD"
-
-  if [ -n "$DVM_TARGET_VERSION" ]
+  if dvm_read_dvmrc_file "$PWD"
   then
-    return
+    return 0
+  fi
+  
+  if [ "$PWD" != "$HOME" ] && dvm_read_dvmrc_file "$HOME"
+  then
+    return 0
   fi
 
-  if [ "$PWD" = "$HOME" ]
-  then
-    return
-  fi
-
-  dvm_read_dvmrc_file "$HOME"
+  return 1
 }
 
 dvm_set_default_alias() {
