@@ -421,11 +421,7 @@ dvm_install_version() {
 
   if [ -z "$version" ]
   then
-    DVM_TARGET_VERSION=""
-
-    dvm_get_version_from_dvmrc
-    
-    if [ -z "$DVM_TARGET_VERSION" ] && ! dvm_get_latest_version
+    if ! dvm_get_version_from_dvmrc && ! dvm_get_latest_version
     then
       return
     fi
