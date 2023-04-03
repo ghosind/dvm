@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
-# source this script
+# Deno Version Manager
+# Copyright (C) 2020 ~ 2023, Chen Su and all contributors.
+# A lightweight, and powerful Deno version manager for MacOS, Linux, WSL, and
+# Windows with Bash.
 
 export DVM_VERSION="v0.7.1"
 
