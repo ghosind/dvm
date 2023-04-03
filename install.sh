@@ -50,16 +50,13 @@ export DVM_DIR=\"\$HOME/.dvm\"
 dvm_get_latest_version() {
   local request_url
   local response
-  local field
 
   case "$DVM_SOURCE" in
   gitee)
     request_url="https://gitee.com/api/v5/repos/ghosind/dvm/releases/latest"
-    field="6"
     ;;
   github|*)
     request_url="https://api.github.com/repos/ghosind/dvm/releases/latest"
-    field="4"
     ;;
   esac
 
@@ -75,7 +72,7 @@ dvm_get_latest_version() {
     exit 1
   fi
 
-  DVM_LATEST_VERSION=$(echo "$response" | grep tag_name | cut -d '"' -f $field)
+  DVM_LATEST_VERSION=$(echo "$response" | sed 's/"/\n/g' | grep tag_name -A 2 | grep v)
 }
 
 dvm_install_latest_version() {
