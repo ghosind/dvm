@@ -103,7 +103,7 @@ dvm_install_latest_version() {
   fi
 }
 
-set_dvm_dir() {
+dvm_check_dir() {
   if [ ! -d "$DVM_DIR" ]
   then
     mkdir -p "$DVM_DIR"
@@ -114,7 +114,7 @@ set_dvm_dir() {
 }
 
 dvm_install() {
-  set_dvm_dir
+  dvm_check_dir
 
   DVM_SCRIPT_DIR=${0%/*}
 
