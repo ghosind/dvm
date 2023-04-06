@@ -199,7 +199,6 @@ dvm_get_package_data() {
   dvm_debug "target file name: $DVM_TARGET_NAME"
 }
 
-# dvm_get_latest_version
 # Calls GitHub api to getting deno latest release tag name.
 dvm_get_latest_version() {
   # the url of github api
@@ -218,7 +217,7 @@ dvm_get_latest_version() {
     return
   fi
 
-  tag_name=$(echo "$DVM_REQUEST_RESPONSE" | grep tag_name | cut -d '"' -f 4)
+  tag_name=$(echo "$DVM_REQUEST_RESPONSE" | sed 's/"/\n/g' | grep tag_name -A 2 | grep v)
 
   if [ -z "$tag_name" ]
   then
@@ -318,8 +317,10 @@ dvm_extract_file() {
   esac
 }
 
-# dvm_validate_remote_version
-# Get remote version data by GitHub api (Get a release by tag name)
+# Get remote data by GitHub api (Get a release by tag name) to validate the
+# version from the parameter.
+# Parameters:
+# - $1: the version to validate.
 dvm_validate_remote_version() {
   local version
   local target_version
@@ -344,7 +345,7 @@ dvm_validate_remote_version() {
     dvm_print_warning "failed to validating deno version."
   fi
 
-  tag_name=$(echo "$DVM_REQUEST_RESPONSE" | grep tag_name | cut -d '"' -f 4)
+  tag_name=$(echo "$DVM_REQUEST_RESPONSE" | sed 's/"/\n/g' | grep tag_name -A 2 | grep v)
 
   if [ -z "$tag_name" ]
   then
@@ -354,6 +355,7 @@ dvm_validate_remote_version() {
       dvm_failure
     else
       dvm_print_warning "failed to validating deno version."
+      dvm_debug "validation response: $DVM_REQUEST_RESPONSE"
     fi
   fi
 }
@@ -906,18 +908,16 @@ dvm_locate_version() {
   fi
 }
 
+# Gets the latest version of DVM from the GitHub or Gitee repo.
 dvm_get_dvm_latest_version() {
   local request_url
-  local field
 
   case "$DVM_SOURCE" in
   gitee)
     request_url="https://gitee.com/api/v5/repos/ghosind/dvm/releases/latest"
-    field="6"
     ;;
   github|*)
     request_url="https://api.github.com/repos/ghosind/dvm/releases/latest"
-    field="4"
     ;;
   esac
 
@@ -930,7 +930,7 @@ dvm_get_dvm_latest_version() {
     return
   fi
 
-  DVM_LATEST_VERSION=$(echo "$DVM_REQUEST_RESPONSE" | grep tag_name | cut -d '"' -f $field)
+  DVM_LATEST_VERSION=$(echo "$DVM_REQUEST_RESPONSE" | sed 's/"/\n/g' | grep tag_name -A 2 | grep v)
   dvm_debug "dvm latest version: $DVM_LATEST_VERSION"
 }
 
