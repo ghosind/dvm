@@ -931,7 +931,13 @@ dvm_get_dvm_latest_version() {
   fi
 
   DVM_LATEST_VERSION=$(echo "$DVM_REQUEST_RESPONSE" | sed 's/"/\n/g' | grep tag_name -A 2 | grep v)
-  dvm_debug "dvm latest version: $DVM_LATEST_VERSION"
+  if [ -n "$DVM_LATEST_VERSION" ]
+  then
+    dvm_debug "dvm latest version: $DVM_LATEST_VERSION"
+  else
+    dvm_debug "getting dvm latest response: $DVM_REQUEST_RESPONSE"
+    dvm_failure
+  fi
 }
 
 dvm_update_dvm() {
