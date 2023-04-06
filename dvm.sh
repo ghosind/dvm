@@ -608,12 +608,13 @@ dvm_list_remote_versions() {
   echo -e "$all_versions" | sed '/^$/d' | sed 'x;1!H;$!d;x'
 }
 
+# Set the environment variables to the default values.
 dvm_set_default_env() {
    # set default dvm directory
   DVM_DIR=${DVM_DIR:-$HOME/.dvm}
 
   # Set modes
-  DVM_COLOR_MODE=false
+  DVM_COLOR_MODE=true
   DVM_QUIET_MODE=false
   DVM_VERBOSE_MODE=false
 
