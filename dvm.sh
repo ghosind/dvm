@@ -574,6 +574,8 @@ dvm_list_local_versions() {
   done
 }
 
+# Call GitHub API to getting all versions (release tag names) from the
+# Deno repo.
 dvm_list_remote_versions() {
   local releases_url
   local all_versions
@@ -596,19 +598,14 @@ dvm_list_remote_versions() {
       return
     fi
 
-    tmp_versions=$(echo "$DVM_REQUEST_RESPONSE" | grep tag_name | cut -d '"' -f 4)
+    tmp_versions=$(echo "$DVM_REQUEST_RESPONSE" | sed 's/"/\n/g' | grep tag_name -A 2 | grep v)
     num=$(echo "$tmp_versions" | wc -l)
     page=$((page + 1))
 
-    if [ -n "$all_versions" ]
-    then
-      all_versions="$all_versions\n$tmp_versions"
-    else
-      all_versions="$tmp_versions"
-    fi
+    all_versions="$all_versions\n$tmp_versions"
   done
 
-  echo -e "$all_versions" | sed 'x;1!H;$!d;x'
+  echo -e "$all_versions" | sed '/^$/d' | sed 'x;1!H;$!d;x'
 }
 
 dvm_set_default_env() {
