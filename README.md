@@ -17,6 +17,7 @@ For Windows users, you must install DVM v0.7.0 or later versions, and also need 
 - [Installing and Updating](#installing-and-updating)
    - [Installation](#installation)
    - [Upgrade DVM](#upgrade-dvm)
+- [Prerequirement](#prerequirement)
 - [Getting Start](#getting-start)
   - [List available versions](#list-available-versions)
   - [List installed versions](#list-installed-versions)
@@ -78,6 +79,15 @@ dvm upgrade
 ```
 
 If you want to update the DVM that less than `v0.3.0`, you may need to uninstall the current version and re-install the latest version. You can get the uninstall steps from [Manual uninstall](#manual-uninstall) section.
+
+## Prerequirement
+
+Please make sure you have required dependencies installed:
+
+- curl
+- git
+- unzip (for Deno v0.36.0 and newer versions)
+- gunzip (for Deno v0.35.0 and lower versions)
 
 ## Getting Start
 
