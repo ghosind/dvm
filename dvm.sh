@@ -105,17 +105,7 @@ dvm_download_file() {
   dvm_debug "downloading url: $url"
   dvm_debug "download destination file: $file"
 
-  if dvm_has wget
-  then
-    cmd="wget $url -O $file"
-    if [ "$DVM_QUIET_MODE" = true ]
-    then
-      cmd="$cmd -q"
-    elif [ "$DVM_VERBOSE_MODE" = true ]
-    then
-      cmd="$cmd -d"
-    fi
-  elif dvm_has curl
+  if dvm_has curl
   then
     cmd="curl -LJ $url -o $file"
     if [ "$DVM_QUIET_MODE" = true ]
@@ -126,7 +116,7 @@ dvm_download_file() {
       cmd="$cmd -v"
     fi
   else
-    dvm_print_error "wget or curl is required."
+    dvm_print_error "curl is required."
     dvm_failure
     return
   fi
@@ -396,7 +386,7 @@ dvm_get_version_from_dvmrc() {
   then
     return 0
   fi
-  
+
   if [ "$PWD" != "$HOME" ] && dvm_read_dvmrc_file "$HOME"
   then
     return 0
@@ -442,7 +432,7 @@ dvm_install_version() {
   fi
 
   if [ "$DVM_INSTALL_SKIP_VALIDATION" = false ]
-  then 
+  then
     if ! dvm_validate_remote_version "$version"
     then
       return
@@ -657,7 +647,7 @@ dvm_clean_download_cache() {
 
 dvm_get_version_by_param() {
   DVM_TARGET_VERSION=""
-  
+
   while [[ "$1" == "-"* ]]
   do
     shift
@@ -806,7 +796,7 @@ dvm_set_alias() {
         alias_name="$1"
       elif [ -z "$version" ]
       then
-        version="$1" 
+        version="$1"
       fi
     esac
 
