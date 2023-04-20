@@ -24,14 +24,24 @@ dvm_has() {
   command -v "$1" > /dev/null
 }
 
+# Print error message with red color text.
+# Parameters:
+# $1...: the message to print.
 dvm_print_error() {
-  dvm_print_with_color "31m" "[ERR]" "$@"
+  dvm_print_with_color "31" "[ERR]" "$@"
 }
 
+# Print warning message with yellow color text.
+# Parameters:
+# $1...: the message to print.
 dvm_print_warning() {
-  dvm_print_with_color "33m" "[WARN]" "$@"
+  dvm_print_with_color "33" "[WARN]" "$@"
 }
 
+# Print message with the specific color.
+# Parameters:
+# - $1: the color code.
+# - $2...: the message to print.
 dvm_print_with_color() {
   local color="$1"
 
@@ -39,7 +49,7 @@ dvm_print_with_color() {
 
   if [ "$DVM_COLOR_MODE" = true ] && [ -n "$color" ]
   then
-    dvm_print "\x1b[$color$*\x1b[0m"
+    dvm_print "\x1b[${color}m$*\x1b[0m"
   else
     dvm_print "$@"
   fi
@@ -557,7 +567,7 @@ dvm_list_local_versions() {
 
     if [ "$version" = "$DVM_DENO_VERSION" ]
     then
-      dvm_print_with_color "32m" "-> $version"
+      dvm_print_with_color "32" "-> $version"
     else
       dvm_print "   $version"
     fi
