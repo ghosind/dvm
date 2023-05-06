@@ -55,6 +55,9 @@ dvm_print_with_color() {
   fi
 }
 
+# Print messages without quiet mode.
+# Parameters:
+# - $1...: the message to print.
 dvm_print() {
   if [ "$DVM_QUIET_MODE" = true ]
   then
@@ -64,6 +67,9 @@ dvm_print() {
   echo -e "$@"
 }
 
+# Print debug message in the verbose mode.
+# Parameters:
+# - $1...: the message to print.
 dvm_debug() {
   if [ "$DVM_VERBOSE_MODE" = true ]
   then
@@ -139,6 +145,9 @@ dvm_download_file() {
   fi
 }
 
+# Get remote package name by host os and architecture.
+# Parameters:
+# - $1: the deno version to install.
 dvm_get_package_data() {
   local target_version
 
@@ -389,8 +398,8 @@ dvm_read_dvmrc_file() {
   return 1
 }
 
-# Try to read version from .dvmrc file in the current working directory or the user
-# home directory.
+# Try to read version from .dvmrc file in the current working directory or the
+# user home directory.
 dvm_get_version_from_dvmrc() {
   if dvm_read_dvmrc_file "$PWD"
   then
@@ -405,6 +414,9 @@ dvm_get_version_from_dvmrc() {
   return 1
 }
 
+# Set the alias 'default' to the specific version.
+# Parameters:
+# - $1: the Deno version to set to default.
 dvm_set_default_alias() {
   local version="$1"
 
@@ -625,6 +637,7 @@ dvm_set_default_env() {
   DVM_TARGET_VERSION=""
 }
 
+# Clean downloading caches in the disk.
 dvm_clean_download_cache() {
   if [ ! -d "$DVM_DIR/download" ]
   then
@@ -698,9 +711,10 @@ dvm_strip_path() {
   echo "$PATH" | tr ":" "\n" | grep -v "$DVM_DIR" | tr "\n" ":"
 }
 
-# dvm_use_version
 # Create a symbolic link file to make the specified deno version as active
 # version, the symbolic link is linking to the specified deno executable file.
+# Parameters:
+# - $1: deno version or alias name to use.
 dvm_use_version() {
   # deno executable file version
   local deno_version
@@ -742,6 +756,8 @@ dvm_use_version() {
   fi
 }
 
+# Try to getting the active Deno version, and set it to `DVM_DENO_VERSION`
+# variable.
 dvm_get_current_version() {
   local deno_path
   local deno_dir
@@ -1070,6 +1086,7 @@ dvm_scan_and_fix_versions() {
   fi
 }
 
+# Gets user profile file path by the shell.
 dvm_get_profile_file() {
   case ${SHELL##*/} in
   bash)
@@ -1117,11 +1134,14 @@ dvm_confirm_with_prompt() {
   done
 }
 
+# Remove all components of DVM from the host.
 dvm_purge_dvm() {
   local content
 
+  # remove DVM directory, all installed versions will also removed.
   rm -rf "$DVM_DIR"
 
+  # get profile file and remove DVM configs.
   dvm_get_profile_file
 
   content=$(sed "/Deno Version Manager/d;/DVM_DIR/d;/DVM_BIN/d" "$DVM_PROFILE_FILE")
@@ -1154,6 +1174,7 @@ dvm_purge_dvm() {
   echo "DVM has been removed from your computer."
 }
 
+# Check all parameters and try to match available options.
 dvm_parse_options() {
   while [ "$#" -gt "0" ]
   do
@@ -1175,6 +1196,7 @@ dvm_parse_options() {
   done
 }
 
+# Print help messages.
 dvm_print_help() {
   printf "
 Deno Version Manager
