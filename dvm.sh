@@ -6,20 +6,28 @@
 
 export DVM_VERSION="v0.7.1"
 
+# Set return status to true.
 dvm_success() {
   # execute true to set as success
   true
 }
 
+# Set return status to false.
 dvm_failure() {
   # execute false to set as fail
   false
 }
 
+# Compare two version number.
+# Parameters:
+# $1, $2: the version number to compare.
 dvm_compare_version() {
   test "$(printf '%s\n' "$@" | sort -V | head -n 1)" != "$2"
 }
 
+# Check whether a command exists or not.
+# Parameters:
+# $1: command to check.
 dvm_has() {
   command -v "$1" > /dev/null
 }
@@ -77,6 +85,10 @@ dvm_debug() {
   fi
 }
 
+# Send a GET request to the specific url, and save response to the
+# `DVM_REQUEST_RESPONSE` variable.
+# Parameters:
+# - $1: request url.
 dvm_request() {
   local url
 
@@ -110,6 +122,10 @@ dvm_request() {
   dvm_debug "request response: $DVM_REQUEST_RESPONSE"
 }
 
+# Download file from the specific url, and save the file to the specific path.
+# Parameters:
+# - $1: downloading url.
+# - $2: the path of downloaded file.
 dvm_download_file() {
   local url
   local file
@@ -241,6 +257,11 @@ dvm_get_latest_version() {
   DVM_INSTALL_SKIP_VALIDATION=true
 }
 
+# Download Deno with the specific version from GitHub or the specific registry
+# (specify by `DVM_INSTALL_REGISTRY` variable). It will download Deno to the
+# cache directory, and move it to versions directory after completed.
+# Parameters:
+# - $1: the Deno version to download.
 dvm_download_deno() {
   local version
   local url
@@ -284,6 +305,8 @@ dvm_download_deno() {
   dvm_failure
 }
 
+# Extract the Deno compressed file, and add execute permission to the binary
+# file.
 dvm_extract_file() {
   local target_dir
 
@@ -431,6 +454,11 @@ dvm_set_default_alias() {
   dvm_print "Creating default alias: default -> $version"
 }
 
+# Install Deno with the specific version, it'll try to get version from the
+# parameter, .dvmrc file (current directory and home directory), or the latest
+# Deno version.
+# Parameters:
+# - $1: the Deno version to install. (Optional)
 dvm_install_version() {
   local version
 
@@ -493,6 +521,10 @@ dvm_install_version() {
   dvm_set_default_alias "$version"
 }
 
+# Uninstall the specific version of Deno from the computer. It cannot uninstall
+# the active Deno version or installing from another source.
+# Parameters:
+# - $1: the Deno version to uninstall.
 dvm_uninstall_version() {
   local input_version
 
@@ -522,6 +554,7 @@ dvm_uninstall_version() {
   fi
 }
 
+# List all aliases and get the version that aliased.
 dvm_list_aliases() {
   local aliased_version
 
@@ -555,6 +588,7 @@ dvm_list_aliases() {
   done
 }
 
+# List all Deno versions that has been installed.
 dvm_list_local_versions() {
   local version
 
@@ -668,6 +702,9 @@ dvm_clean_download_cache() {
   done
 }
 
+# Try to get a valid and installed Deno version from the parameters.
+# Parameters:
+# $1...: the Deno version.
 dvm_get_version_by_param() {
   DVM_TARGET_VERSION=""
 
@@ -694,6 +731,10 @@ dvm_get_version_by_param() {
   fi
 }
 
+# Try to get a Deno version from the parameters or the .dvmrc file (the current
+# directory or the user home directory).
+# Parameters:
+# $1...: the Deno version.
 dvm_get_version() {
   local version
 
@@ -707,6 +748,8 @@ dvm_get_version() {
   dvm_get_version_from_dvmrc
 }
 
+# Remove Deno path from the global environment variable `PATH` that added by
+# DVM.
 dvm_strip_path() {
   echo "$PATH" | tr ":" "\n" | grep -v "$DVM_DIR" | tr "\n" ":"
 }
@@ -779,6 +822,8 @@ dvm_get_current_version() {
   dvm_debug "active deno version: $DVM_DENO_VERSION"
 }
 
+# Deactivate the active Deno version that added into the global environment
+# variable `PATH` by DVM
 dvm_deactivate() {
   local path_without_dvm
 
@@ -798,6 +843,7 @@ dvm_deactivate() {
   unset DVM_DENO_VERSION
 }
 
+# Check aliases directory, and try to create it if is not existed.
 dvm_check_alias_dir() {
   if [ ! -d "$DVM_DIR/aliases" ]
   then
@@ -805,6 +851,11 @@ dvm_check_alias_dir() {
   fi
 }
 
+# Set an alias to the specific Deno version, and it will overwrite if the alias
+# was created.
+# Parameters:
+# $1: the alias name to be set.
+# $2: the Deno version to alias.
 dvm_set_alias() {
   local alias_name
   local version
@@ -848,6 +899,9 @@ dvm_set_alias() {
   dvm_print "$alias_name -> $version"
 }
 
+# Remove an alias name of a Deno version.
+# Parameters:
+# $1: the alias name to be remove.
 dvm_rm_alias() {
   local alias_name
   local aliased_version
@@ -884,6 +938,10 @@ dvm_rm_alias() {
   dvm_print "Restore it with 'dvm alias $alias_name $aliased_version'."
 }
 
+# Run the Deno of the specific version without activate.
+# Parameters:
+# $1: the version of Deno to be run.
+# $2...: the parameters that passing to the Deno.
 dvm_run_with_version() {
   if [ ! -f "$DVM_DIR/versions/$DVM_TARGET_VERSION/deno" ]
   then
@@ -900,6 +958,9 @@ dvm_run_with_version() {
   "$DVM_DIR/versions/$DVM_TARGET_VERSION/deno" "$@"
 }
 
+# Get the path of the active version or the specific version of Deno.
+# Parameters:
+# $1: the version of Deno, or 'current'.
 dvm_locate_version() {
   local target_version
 
@@ -954,6 +1015,7 @@ dvm_get_dvm_latest_version() {
   fi
 }
 
+# Upgrade the DVM itself to the specific version.
 dvm_update_dvm() {
   if ! cd "$DVM_DIR" 2>/dev/null
   then
@@ -970,6 +1032,8 @@ dvm_update_dvm() {
   dvm_print "DVM has upgrade to latest version."
 }
 
+# Try to moving the Deno files to the correct path, and remove it if the
+# version was existed.
 dvm_fix_invalid_versions() {
   local version
 
@@ -995,6 +1059,11 @@ dvm_fix_invalid_versions() {
   dvm_print "Invalid version(s) has been fixed."
 }
 
+# Print the invalid (versions from file and path are not same) and the
+# corrupted (unable to run) versions.
+# Parameters:
+# $1: invalid versions list.
+# $2: corrupted versions list.
 dvm_print_doctor_message() {
   local invalid_message
   local corrupted_message
@@ -1023,6 +1092,9 @@ dvm_print_doctor_message() {
   dvm_print "You can run \"dvm doctor --fix\" to fix these errors."
 }
 
+# Scan the installed versions, and try to finding the invalid versions (the versions from path and Deno `-v` option are not same). It'll try to fix the invalid versions if it run in the `fix` mode.
+# Parameters:
+# $1: the mode of the doctor command.
 dvm_scan_and_fix_versions() {
   local mode
   local raw_output
@@ -1103,6 +1175,9 @@ dvm_get_profile_file() {
   dvm_debug "profile file: $DVM_PROFILE_FILE"
 }
 
+# Print a prompt message, and get the comfirm (yes or no) from the user input.
+# Parameters:
+# $1: the prompt message.
 dvm_confirm_with_prompt() {
   local confirm
   local prompt
@@ -1241,6 +1316,7 @@ Examples:
 "
 }
 
+# The entry of DVM, it will handle options and try to execute commands.
 dvm() {
   local version=""
 
@@ -1480,6 +1556,8 @@ dvm() {
   esac
 }
 
+# Activate the default version when a new terminal session was created. It
+# need to run in the quiet mode to avoid printing any messages.
 if [ -f "$DVM_DIR/aliases/default" ]
 then
   DVM_QUIET_MODE=true
