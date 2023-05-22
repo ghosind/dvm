@@ -89,6 +89,7 @@ dvm_debug() {
 # `DVM_REQUEST_RESPONSE` variable.
 # Parameters:
 # - $1: request url.
+# - $2...: options for curl.
 dvm_request() {
   local url
 
@@ -103,7 +104,9 @@ dvm_request() {
   fi
 
   url="$1"
-  cmd="curl -s $url"
+  shift
+
+  cmd="curl -s '$url' $@"
 
   if [ "$DVM_VERBOSE_MODE" = true ]
   then
@@ -623,21 +626,17 @@ dvm_list_local_versions() {
 # Call GitHub API to getting all versions (release tag names) from the
 # Deno repo.
 dvm_list_remote_versions() {
-  local releases_url
+  local request_url
   local all_versions
-  local page
   local size
-  local num
   local tmp_versions
 
-  page=1
   size=100
-  num="$size"
-  releases_url="https://api.github.com/repos/denoland/deno/releases\?per_page=$size"
+  request_url="https://api.github.com/repos/denoland/deno/releases?per_page=$size&page=1"
 
-  while [ "$num" -eq "$size" ]
+  while [ "$request_url" != "" ]
   do
-    if ! dvm_request "$releases_url\&page=$page"
+    if ! dvm_request "$request_url" "--include"
     then
       dvm_print_error "failed to list remote versions."
       dvm_failure
@@ -645,10 +644,11 @@ dvm_list_remote_versions() {
     fi
 
     tmp_versions=$(echo "$DVM_REQUEST_RESPONSE" | sed 's/"/\n/g' | grep tag_name -A 2 | grep v)
-    num=$(echo "$tmp_versions" | wc -l)
-    page=$((page + 1))
-
     all_versions="$all_versions\n$tmp_versions"
+
+    request_url=$(echo "$DVM_REQUEST_RESPONSE" | grep "link:" | sed 's/,/\n/g' | grep "rel=\"next\"" \
+      | sed 's/[<>]/\n/g' | grep "http")
+    dvm_debug "list releases next page url: $request_url"
   done
 
   echo -e "$all_versions" | sed '/^$/d' | sed 'x;1!H;$!d;x'
