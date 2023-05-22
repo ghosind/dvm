@@ -17,3 +17,4 @@ jobs:
         ./test/test_install_version.sh
         ./test/test_alias.sh
         ./test/test_uninstall_version.sh
+        ./test/test_ls_remote.sh
