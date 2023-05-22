@@ -106,7 +106,7 @@ dvm_request() {
   url="$1"
   shift
 
-  cmd="curl -s '$url' $@"
+  cmd="curl -s '$url' $*"
 
   if [ "$DVM_VERBOSE_MODE" = true ]
   then
