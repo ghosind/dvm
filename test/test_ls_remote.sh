@@ -1,3 +1,5 @@
+#!/bin/bash
+
 dvm_test_error() {
   echo "[ERR]" "$@"
   exit 1
