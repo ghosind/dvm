@@ -625,7 +625,7 @@ dvm_list_local_versions() {
 
 # Call GitHub API to getting all versions (release tag names) from the
 # Deno repo.
-dvm_list_remote_versions() {
+dvm_get_versions_from_network() {
   local request_url
   local all_versions
   local size
@@ -651,7 +651,30 @@ dvm_list_remote_versions() {
     dvm_debug "list releases next page url: $request_url"
   done
 
-  echo -e "$all_versions" | sed '/^$/d' | sed 'x;1!H;$!d;x'
+  DVM_REMOTE_VERSIONS=$(echo -e "$all_versions" | sed '/^$/d' | sed 'x;1!H;$!d;x')
+}
+
+# Get all available versions from network, and list them with installation status.
+dvm_list_remote_versions() {
+  if ! dvm_get_versions_from_network
+  then
+    return
+  fi
+
+  dvm_get_current_version
+
+  while read -r version
+  do
+    if [ "$DVM_DENO_VERSION" = "$version" ]
+    then
+      dvm_print_with_color "32" "-> $version"
+    elif [ -f "$DVM_DIR/versions/$version/deno" ]
+    then
+      dvm_print_with_color "34" "   $version"
+    else
+      dvm_print "   $version"
+    fi
+  done <<< "$DVM_REMOTE_VERSIONS"
 }
 
 # Set the environment variables to the default values.
@@ -1225,8 +1248,8 @@ dvm_purge_dvm() {
   # unset global variables
   unset -v DVM_COLOR_MODE DVM_DENO_VERSION DVM_DIR DVM_FILE_TYPE DVM_INSTALL_REGISTRY \
     DVM_INSTALL_SKIP_VALIDATION DVM_LATEST_VERSION DVM_PROFILE_FILE DVM_QUIET_MODE \
-    DVM_REQUEST_RESPONSE DVM_SOURCE DVM_TARGET_ARCH DVM_TARGET_NAME DVM_TARGET_OS DVM_TARGET_TYPE \
-    DVM_TARGET_VERSION DVM_VERBOSE_MODE DVM_VERSION
+    DVM_REMOTE_VERSIONS DVM_REQUEST_RESPONSE DVM_SOURCE DVM_TARGET_ARCH DVM_TARGET_NAME \
+    DVM_TARGET_OS DVM_TARGET_TYPE DVM_TARGET_VERSION DVM_VERBOSE_MODE DVM_VERSION
   # unset dvm itself
   unset -f dvm
   # unset dvm functions
@@ -1234,14 +1257,14 @@ dvm_purge_dvm() {
     dvm_confirm_with_prompt dvm_deactivate dvm_debug dvm_download_deno dvm_download_file \
     dvm_extract_file dvm_failure dvm_fix_invalid_versions dvm_get_current_version \
     dvm_get_dvm_latest_version dvm_get_latest_version dvm_get_package_data dvm_get_profile_file \
-    dvm_get_version dvm_get_version_from_dvmrc dvm_get_version_by_param dvm_has \
-    dvm_install_version dvm_list_aliases dvm_list_local_versions dvm_list_remote_versions \
-    dvm_locate_version dvm_parse_options dvm_print dvm_print_doctor_message \
-    dvm_print_error dvm_print_help dvm_print_warning dvm_print_with_color dvm_purge_dvm \
-    dvm_read_dvmrc_file dvm_request dvm_rm_alias dvm_run_with_version \
-    dvm_scan_and_fix_versions dvm_set_alias dvm_set_default_alias dvm_set_default_env \
-    dvm_strip_path dvm_success dvm_uninstall_version dvm_update_dvm dvm_use_version \
-    dvm_validate_remote_version
+    dvm_get_version dvm_get_version_from_dvmrc dvm_get_version_by_param \
+    dvm_get_versions_from_network dvm_has dvm_install_version dvm_list_aliases \
+    dvm_list_local_versions dvm_list_remote_versions dvm_locate_version dvm_parse_options \
+    dvm_print dvm_print_doctor_message dvm_print_error dvm_print_help dvm_print_warning \
+    dvm_print_with_color dvm_purge_dvm dvm_read_dvmrc_file dvm_request dvm_rm_alias \
+    dvm_run_with_version dvm_scan_and_fix_versions dvm_set_alias dvm_set_default_alias \
+    dvm_set_default_env dvm_strip_path dvm_success dvm_uninstall_version dvm_update_dvm \
+    dvm_use_version dvm_validate_remote_version
   # unset dvm shell completion functions
   unset -f _dvm_add_aliases_to_opts _dvm_add_versions_to_opts _dvm_has_active_version \
     _dvm_add_options_to_opts _dvm_completion
