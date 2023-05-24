@@ -5,7 +5,7 @@ dvm_test_error() {
   exit 1
 }
 
-if [ "$(uname -s)" = "Linux" ]
+if [ "$(uname -s)" != "Linux" ]
 then
   # Just run this test case on Linux.
   exit 0
