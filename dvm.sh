@@ -667,10 +667,10 @@ dvm_list_remote_versions() {
   do
     if [ "$DVM_DENO_VERSION" = "$version" ]
     then
-      dvm_print_with_color "32" "-> $version"
+      dvm_print_with_color "32" "-> $version *"
     elif [ -f "$DVM_DIR/versions/$version/deno" ]
     then
-      dvm_print_with_color "34" "   $version"
+      dvm_print_with_color "34" "   $version *"
     else
       dvm_print "   $version"
     fi
