@@ -4,7 +4,7 @@
 # A lightweight, and powerful Deno version manager for MacOS, Linux, WSL, and
 # Windows with Bash.
 
-export DVM_VERSION="v0.7.1"
+export DVM_VERSION="v0.7.2"
 
 # Set return status to true.
 dvm_success() {
