@@ -1040,6 +1040,12 @@ dvm_get_dvm_latest_version() {
 
 # Upgrade the DVM itself to the specific version.
 dvm_update_dvm() {
+  local cwd
+
+  cwd=$(pwd)
+
+  dvm_get_profile_file
+
   if ! cd "$DVM_DIR" 2>/dev/null
   then
     dvm_print_error "failed to update dvm."
@@ -1052,7 +1058,9 @@ dvm_update_dvm() {
   git fetch
   git checkout "$DVM_LATEST_VERSION"
 
-  dvm_print "DVM has upgrade to latest version."
+  dvm_print "DVM has upgrade to latest version, please restart your terminal or run \`source $DVM_PROFILE_FILE\` to apply changes."
+
+  cd "$cwd" || dvm_failure
 }
 
 # Try to moving the Deno files to the correct path, and remove it if the
