@@ -688,9 +688,17 @@ dvm_set_default_env() {
   DVM_VERBOSE_MODE=false
 
   # Set global variables to default values
+  DVM_DENO_VERSION=""
+  DVM_FILE_TYPE=""
   DVM_INSTALL_REGISTRY=""
   DVM_INSTALL_SKIP_VALIDATION=false
+  DVM_LATEST_VERSION=""
+  DVM_PROFILE_FILE=""
+  DVM_REMOTE_VERSIONS=""
   DVM_REQUEST_RESPONSE=""
+  DVM_SOURCE=""
+  DVM_TARGET_NAME=""
+  DVM_TARGET_TYPE=""
   DVM_TARGET_VERSION=""
 }
 
