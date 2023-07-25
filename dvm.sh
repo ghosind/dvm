@@ -853,6 +853,28 @@ dvm_get_current_version() {
   dvm_debug "active deno version: $DVM_DENO_VERSION"
 }
 
+# Gets the current Deno version and prints. It will print `system (vX.X.X)` if Deno doesn't install
+# by DVM.
+dvm_print_current_version() {
+  local deno_version
+
+  if ! dvm_has deno
+  then
+    dvm_print "none"
+    return
+  fi
+
+  dvm_get_current_version
+
+  if [ -n "$DVM_DENO_VERSION" ]
+  then
+    dvm_print "$DVM_DENO_VERSION"
+  else
+    deno_version=$(deno --version | grep "deno" | cut -d " " -f 2)
+    dvm_print "system (v$deno_version)"
+  fi
+}
+
 # Deactivate the active Deno version that added into the global environment
 # variable `PATH` by DVM
 dvm_deactivate() {
@@ -1276,11 +1298,11 @@ dvm_purge_dvm() {
     dvm_get_version dvm_get_version_from_dvmrc dvm_get_version_by_param \
     dvm_get_versions_from_network dvm_has dvm_install_version dvm_list_aliases \
     dvm_list_local_versions dvm_list_remote_versions dvm_locate_version dvm_parse_options \
-    dvm_print dvm_print_doctor_message dvm_print_error dvm_print_help dvm_print_warning \
-    dvm_print_with_color dvm_purge_dvm dvm_read_dvmrc_file dvm_request dvm_rm_alias \
-    dvm_run_with_version dvm_scan_and_fix_versions dvm_set_alias dvm_set_default_alias \
-    dvm_set_default_env dvm_strip_path dvm_success dvm_uninstall_version dvm_update_dvm \
-    dvm_use_version dvm_validate_remote_version
+    dvm_print dvm_print_doctor_message dvm_print_current_version dvm_print_error dvm_print_help \
+    dvm_print_warning dvm_print_with_color dvm_purge_dvm dvm_read_dvmrc_file dvm_request \
+    dvm_rm_alias dvm_run_with_version dvm_scan_and_fix_versions dvm_set_alias \
+    dvm_set_default_alias dvm_set_default_env dvm_strip_path dvm_success dvm_uninstall_version \
+    dvm_update_dvm dvm_use_version dvm_validate_remote_version
   # unset dvm shell completion functions
   unset -f _dvm_add_aliases_to_opts _dvm_add_versions_to_opts _dvm_has_active_version \
     _dvm_add_options_to_opts _dvm_completion
@@ -1384,22 +1406,7 @@ dvm() {
     ;;
   current)
     # get the current version
-
-    if ! dvm_has deno
-    then
-      dvm_print "none"
-      return
-    fi
-
-    dvm_get_current_version
-
-    if [ -n "$DVM_DENO_VERSION" ]
-    then
-      dvm_print "$DVM_DENO_VERSION"
-    else
-      version=$(deno --version | grep "deno" | cut -d " " -f 2)
-      dvm_print "system (v$version)"
-    fi
+    dvm_print_current_version
 
     ;;
   deactivate)
