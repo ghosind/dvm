@@ -132,10 +132,10 @@ export DVM_VERSION="v0.7.2"
         read -r confirm
 
         case "$confirm" in
-        y|Y)
+        [yY]*)
           return 0
           ;;
-        n|N)
+        [nN]*)
           return 1
           ;;
         *)
