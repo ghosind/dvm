@@ -140,18 +140,17 @@ dvm_set_default() {
 }
 
 dvm_print_help() {
-  printf "DVM install script
-
-Usage: install.sh [-r <github|gitee>] [-d <dvm_dir>]
-
-Options:
-  -r <github|gitee>   Set the repository server, default github.
-  -d dir              Set the dvm install directory, default ~/.dvm.
-  -h                  Print help.
-
-Example:
-  install.sh -r github -d ~/.dvm
-"
+  echo "DVM installation script"
+  echo
+  echo "Usage: install.sh [-r <github|gitee>] [-d <dvm_dir>]"
+  echo
+  echo "Options:"
+  echo "  -r <github|gitee>   Set the repository server, default github."
+  echo "  -d dir              Set the dvm install directory, default ~/.dvm."
+  echo "  -h                  Print help."
+  echo
+  echo "Example:"
+  echo "  install.sh -r github -d ~/.dvm"
 }
 
 dvm_set_default
