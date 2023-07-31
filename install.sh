@@ -5,28 +5,6 @@
 # Ensure the script is downloaded completely
 {
 
-dvm_compare_version() {
-  test "$(printf '%s\n' "$@" | sort -V | head -n 1)" != "$2"
-}
-
-dvm_has() {
-  command -v "$1" > /dev/null
-}
-
-dvm_get_profile_file() {
-  case ${SHELL##*/} in
-  bash)
-    DVM_PROFILE_FILE="$HOME/.bashrc"
-    ;;
-  zsh)
-    DVM_PROFILE_FILE="$HOME/.zshrc"
-    ;;
-  *)
-    DVM_PROFILE_FILE="$HOME/.profile"
-    ;;
-  esac
-}
-
 dvm_add_into_profile_file() {
   local is_dvm_defined
 
@@ -45,6 +23,20 @@ export DVM_DIR=\"\$HOME/.dvm\"
 [ -f \"\$DVM_DIR/dvm.sh\" ] && . \"\$DVM_DIR/dvm.sh\"
 [ -f \"\$DVM_DIR/bash_completion\" ] && . \"\$DVM_DIR/bash_completion\"
 " >> "$DVM_PROFILE_FILE"
+}
+
+dvm_check_dir() {
+  if [ ! -d "$DVM_DIR" ]
+  then
+    mkdir -p "$DVM_DIR"
+  else
+    echo "directory $DVM_DIR already exists."
+    exit 1
+  fi
+}
+
+dvm_compare_version() {
+  test "$(printf '%s\n' "$@" | sort -V | head -n 1)" != "$2"
 }
 
 dvm_get_latest_version() {
@@ -75,6 +67,45 @@ dvm_get_latest_version() {
   DVM_LATEST_VERSION=$(echo "$response" | sed 's/"/\n/g' | grep tag_name -A 2 | grep v)
 }
 
+dvm_get_profile_file() {
+  case ${SHELL##*/} in
+  bash)
+    DVM_PROFILE_FILE="$HOME/.bashrc"
+    ;;
+  zsh)
+    DVM_PROFILE_FILE="$HOME/.zshrc"
+    ;;
+  *)
+    DVM_PROFILE_FILE="$HOME/.profile"
+    ;;
+  esac
+}
+
+dvm_has() {
+  command -v "$1" > /dev/null
+}
+
+dvm_install() {
+  dvm_check_dir
+
+  DVM_SCRIPT_DIR=${0%/*}
+
+  if [ -f "$DVM_SCRIPT_DIR/dvm.sh" ] &&
+    [ -d "$DVM_SCRIPT_DIR/.git" ] &&
+    [ -f "$DVM_SCRIPT_DIR/bash_completion" ]
+  then
+    # Copy all files to DVM_DIR
+    cp -R "$DVM_SCRIPT_DIR/". "$DVM_DIR"
+  else
+    dvm_get_latest_version
+    dvm_install_latest_version
+  fi
+
+  dvm_add_into_profile_file
+
+  echo "DVM has been installed, please restart your terminal or run \`source $DVM_PROFILE_FILE\` to apply changes."
+}
+
 dvm_install_latest_version() {
   local git_url
   local cmd
@@ -103,42 +134,6 @@ dvm_install_latest_version() {
   fi
 }
 
-dvm_check_dir() {
-  if [ ! -d "$DVM_DIR" ]
-  then
-    mkdir -p "$DVM_DIR"
-  else
-    echo "directory $DVM_DIR already exists."
-    exit 1
-  fi
-}
-
-dvm_install() {
-  dvm_check_dir
-
-  DVM_SCRIPT_DIR=${0%/*}
-
-  if [ -f "$DVM_SCRIPT_DIR/dvm.sh" ] &&
-    [ -d "$DVM_SCRIPT_DIR/.git" ] &&
-    [ -f "$DVM_SCRIPT_DIR/bash_completion" ]
-  then
-    # Copy all files to DVM_DIR
-    cp -R "$DVM_SCRIPT_DIR/". "$DVM_DIR"
-  else
-    dvm_get_latest_version
-    dvm_install_latest_version
-  fi
-
-  dvm_add_into_profile_file
-
-  echo "DVM has been installed, please restart your terminal or run \`source $DVM_PROFILE_FILE\` to apply changes."
-}
-
-dvm_set_default() {
-  DVM_DIR=${DVM_DIR:-$HOME/.dvm}
-  DVM_SOURCE=${DVM_SOURCE:-github}
-}
-
 dvm_print_help() {
   echo "DVM installation script"
   echo
@@ -151,6 +146,11 @@ dvm_print_help() {
   echo
   echo "Example:"
   echo "  install.sh -r github -d ~/.dvm"
+}
+
+dvm_set_default() {
+  DVM_DIR=${DVM_DIR:-$HOME/.dvm}
+  DVM_SOURCE=${DVM_SOURCE:-github}
 }
 
 dvm_set_default
