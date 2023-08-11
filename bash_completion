@@ -7,32 +7,7 @@ then
   return
 fi
 
-_dvm_has_active_version() {
-  echo "$PATH" | grep -q "$DVM_DIR/versions"
-}
-
-_dvm_add_versions_to_opts() {
-  if [ ! -d "$DVM_DIR/versions" ]
-  then
-    return
-  fi
-
-  if [ -z "$(ls -A "$DVM_DIR/versions")" ]
-  then
-    return 0
-  fi
-
-  for path in "$DVM_DIR/versions"/*
-  do
-    if [ -f "$path/deno" ]
-    then
-      version=${path##*/}
-
-      opts="$opts $version"
-    fi
-  done
-}
-
+# Add available aliases into auto-completion options list.
 _dvm_add_aliases_to_opts() {
   if [ ! -d "$DVM_DIR/aliases" ]
   then
@@ -56,6 +31,7 @@ _dvm_add_aliases_to_opts() {
   done
 }
 
+# Add common options into auto-completion options list.
 _dvm_add_options_to_opts() {
   if [ "$prev" == "run" ]
   then
@@ -68,6 +44,30 @@ _dvm_add_options_to_opts() {
   fi
 }
 
+# Add available installed versions into auto-completion options list.
+_dvm_add_versions_to_opts() {
+  if [ ! -d "$DVM_DIR/versions" ]
+  then
+    return
+  fi
+
+  if [ -z "$(ls -A "$DVM_DIR/versions")" ]
+  then
+    return 0
+  fi
+
+  for path in "$DVM_DIR/versions"/*
+  do
+    if [ -f "$path/deno" ]
+    then
+      version=${path##*/}
+
+      opts="$opts $version"
+    fi
+  done
+}
+
+# Set auto-completion with specific command.
 _dvm_completion() {
   local cur
   local prev
@@ -117,6 +117,11 @@ _dvm_completion() {
 
   # shellcheck disable=SC2207
   COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+}
+
+# Check if any Deno version has been activated that installed by DVM.
+_dvm_has_active_version() {
+  echo "$PATH" | grep -q "$DVM_DIR/versions"
 }
 
 if [ -n "$ZSH_NAME" ]
