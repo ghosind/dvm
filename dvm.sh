@@ -61,6 +61,7 @@ export DVM_VERSION="v0.7.3"
       # Set global variables to default values
       DVM_DENO_VERSION=""
       DVM_FILE_TYPE=""
+      DVM_INSTALL_FROM_SOURCE_ONLY=false
       DVM_INSTALL_REGISTRY=""
       DVM_INSTALL_SKIP_VALIDATION=false
       DVM_LATEST_VERSION=""
@@ -991,6 +992,51 @@ export DVM_VERSION="v0.7.3"
       version="v$version"
     fi
 
+    if ! dvm_install_deno "$version"
+    then
+      return
+    fi
+
+    dvm_print "Deno $version has installed."
+
+    dvm_use_version "$version"
+    dvm_set_default_alias_after_install "$version"
+  }
+
+  # Try to install Deno from the network with the binary file, or try to build
+  # Deno from the source code if failed to download the precompiled binary
+  # file. It'll skip downloading the binary file if the value of variable
+  # `DVM_INSTALL_FROM_SOURCE_ONLY` is true, and skip downloading and building
+  # from the source code if the value of variable
+  # `DVM_INSTALL_FROM_BINARY_ONLY` is true.
+  # Parameters:
+  # - $1: The Deno version to install.
+  dvm_install_deno() {
+    local version
+
+    version="$1"
+
+    if [ "$DVM_INSTALL_FROM_SOURCE_ONLY" = false ]
+    then
+      if dvm_install_deno_by_binary "$version"
+      then
+        return
+      fi
+    fi
+
+    # TODO: Download Deno source code and build
+
+    dvm_failure
+  }
+
+  # Download and install the pre-compiled Deno binary file from the network.
+  # Parameters:
+  # - $1: The Deno version to install.
+  dvm_install_deno_by_binary() {
+    local version
+
+    version="$1"
+
     if ! dvm_get_package_data "$version"
     then
       return
@@ -1007,15 +1053,7 @@ export DVM_VERSION="v0.7.3"
       dvm_print "Installing deno $version from cache..."
     fi
 
-    if ! dvm_extract_file "$version"
-    then
-      return
-    fi
-
-    dvm_print "Deno $version has installed."
-
-    dvm_use_version "$version"
-    dvm_set_default_alias_after_install "$version"
+    ! dvm_extract_file "$version"
   }
 
   # Try to set the installed version as the alias 'default' if no default set.
@@ -1229,7 +1267,8 @@ export DVM_VERSION="v0.7.3"
 
     # unset global variables
     unset -v DVM_COLOR_MODE DVM_DENO_VERSION DVM_DIR DVM_FILE_TYPE \
-      DVM_INSTALL_REGISTRY DVM_INSTALL_SKIP_VALIDATION DVM_LATEST_VERSION \
+      DVM_INSTALL_FROM_SOURCE_ONLY DVM_INSTALL_REGISTRY \
+      DVM_INSTALL_SKIP_VALIDATION DVM_LATEST_VERSION \
       DVM_PROFILE_FILE DVM_QUIET_MODE DVM_REMOTE_VERSIONS \
       DVM_REQUEST_RESPONSE DVM_SOURCE DVM_TARGET_ARCH DVM_TARGET_NAME \
       DVM_TARGET_OS DVM_TARGET_TYPE DVM_TARGET_VERSION DVM_VERBOSE_MODE \
@@ -1243,9 +1282,10 @@ export DVM_VERSION="v0.7.3"
       dvm_get_current_version dvm_get_dvm_latest_version \
       dvm_get_latest_version dvm_get_package_data dvm_get_profile_file \
       dvm_get_version dvm_get_version_from_dvmrc dvm_get_version_by_param \
-      dvm_get_versions_from_network dvm_has dvm_install_version \
-      dvm_list_aliases dvm_list_local_versions dvm_list_remote_versions \
-      dvm_locate_version dvm_parse_options dvm_print dvm_print_doctor_message \
+      dvm_get_versions_from_network dvm_has dvm_install_deno \
+      dvm_install_deno_by_binary dvm_install_version dvm_list_aliases \
+      dvm_list_local_versions dvm_list_remote_versions dvm_locate_version \
+      dvm_parse_options dvm_print dvm_print_doctor_message \
       dvm_print_current_version dvm_print_error dvm_print_help \
       dvm_print_warning dvm_print_with_color dvm_purge_dvm \
       dvm_read_dvmrc_file dvm_request dvm_rm_alias dvm_run_with_version \
@@ -1588,6 +1628,9 @@ dvm() {
         ;;
       "--skip-validation")
         DVM_INSTALL_SKIP_VALIDATION=true
+        ;;
+      "--from-source")
+        DVM_INSTALL_FROM_SOURCE_ONLY=true
         ;;
       "-"*)
         ;;

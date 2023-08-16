@@ -81,7 +81,7 @@ _dvm_completion() {
   install)
     if [[ ${cur} == -* ]]
     then
-      opts="--registry= --skip-validation"
+      opts="--registry= --skip-validation --from-source"
     fi
     ;;
   use|uninstall|run|which)
