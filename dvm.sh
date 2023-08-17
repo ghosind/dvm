@@ -803,7 +803,7 @@ export DVM_VERSION="v0.7.3"
       return
     fi
 
-    if ! dvm_has rust
+    if ! dvm_has rustc
     then
       dvm_print_error "rust is required"
       dvm_failure
@@ -853,13 +853,6 @@ export DVM_VERSION="v0.7.3"
       then
         return
       fi
-    fi
-
-    if ! dvm_has
-    then
-      dvm_print_error "git is required"
-      dvm_failure
-      return
     fi
 
     git clone --recurse-submodules https://github.com/denoland/deno.git "$DVM_DIR/deno_code"
@@ -1189,11 +1182,13 @@ export DVM_VERSION="v0.7.3"
 
     if ! dvm_check_build_dependencies
     then
+      dvm_failure
       return
     fi
 
     if ! dvm_clone_deno_source
     then
+      dvm_failure
       return
     fi
 
