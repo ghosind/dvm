@@ -3,6 +3,7 @@ aliases/
 versions/
 coverage/
 download/
+deno_code/
 
 # Editors
 .vscode

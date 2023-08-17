@@ -61,6 +61,7 @@ export DVM_VERSION="v0.7.3"
       # Set global variables to default values
       DVM_DENO_VERSION=""
       DVM_FILE_TYPE=""
+      DVM_INSTALL_FROM_BINARY_ONLY=false
       DVM_INSTALL_FROM_SOURCE_ONLY=false
       DVM_INSTALL_REGISTRY=""
       DVM_INSTALL_SKIP_VALIDATION=false
@@ -763,6 +764,117 @@ export DVM_VERSION="v0.7.3"
 ## Command install ##
 #####################
 {
+  # Try to build the binary file of Deno with the specified version, and move
+  # the build target file to the versions directory.
+  # Parameters:
+  # - $1: The Deno version to building.
+  dvm_build_deno() {
+    local version
+    version="$1"
+
+    old_dir=$(pwd)
+    cd "$DVM_DIR/deno_code" || return
+
+    git checkout "$version"
+
+    cargo clean
+    cargo build --release
+
+    if ! dvm_validate_build_target
+    then
+      cd "$old_dir" || return
+      dvm_failure
+    elif ! dvm_copy_build_target_to_versions_dir
+    then
+      cd "$old_dir" || return
+      dvm_failure
+    else
+      cargo clean
+      cd "$old_dir" || return
+    fi
+  }
+
+  # Check the dependencies for building Deno from the source code.
+  dvm_check_build_dependencies() {
+    if ! dvm_has git
+    then
+      dvm_print_error "git is required"
+      dvm_failure
+      return
+    fi
+
+    if ! dvm_has rust
+    then
+      dvm_print_error "rust is required"
+      dvm_failure
+      return
+    fi
+
+    if ! dvm_has cargo
+    then
+      dvm_print_error "rust is required"
+      dvm_failure
+      return
+    fi
+  }
+
+  # Try to check the local clone of the source code, and fetch the latest data
+  # if the local clone is valid. It will delete the source code directory and
+  # clone it again later if the directory is not the repo of the Deno source
+  # code.
+  dvm_check_local_deno_clone() {
+    local old_dir
+
+    old_dir=$(pwd)
+    cd "$DVM_DIR/deno_code" || return
+
+    ret=$(git remote -v | grep "deno.git")
+    if [ -z "$ret" ]
+    then
+      dvm_print_warning "The local clone of Deno source is invalid, trying to reclone..."
+      rm -rf "$DVM_DIR/deno_code"
+
+      cd "$old_dir" || return
+      dvm_failure
+    else
+      # update repo
+      git fetch
+
+      cd "$old_dir" || return
+    fi
+  }
+
+  # Clone the source code of Deno into the local directory, and update the
+  # local clone if it was cloned.
+  dvm_clone_deno_source() {
+    if [ -d "$DVM_DIR/deno_code" ]
+    then
+      if dvm_check_local_deno_clone
+      then
+        return
+      fi
+    fi
+
+    if ! dvm_has
+    then
+      dvm_print_error "git is required"
+      dvm_failure
+      return
+    fi
+
+    git clone --recurse-submodules https://github.com/denoland/deno.git "$DVM_DIR/deno_code"
+  }
+
+  # Move the build output file to the versions file.
+  dvm_copy_build_target_to_versions_dir() {
+    if ! [ -d "$DVM_DIR/versions/$DVM_DENO_VERSION" ]
+    then
+      mkdir -p "$DVM_DIR/versions/$DVM_DENO_VERSION"
+    fi
+
+    cp "$DVM_DIR/deno_code/target/release/deno" "$DVM_DIR/versions/$DVM_DENO_VERSION"
+  }
+
   # Download Deno with the specific version from GitHub or the specific
   # registry (specify by `DVM_INSTALL_REGISTRY` variable). It will download
   # Deno to the cache directory, and move it to versions directory after
@@ -1024,7 +1136,18 @@ export DVM_VERSION="v0.7.3"
       fi
     fi
 
-    # TODO: Download Deno source code and build
+    if [ "$DVM_INSTALL_FROM_BINARY_ONLY" = false ]
+    then
+      if [ "$DVM_INSTALL_FROM_SOURCE_ONLY" = false ]
+      then
+        dvm_print_warning "Failed to downloading Deno binary file, fallback to build from source."
+      fi
+
+      if dvm_install_deno_by_source "$version"
+      then
+        return
+      fi
+    fi
 
     dvm_failure
   }
@@ -1056,6 +1179,27 @@ export DVM_VERSION="v0.7.3"
     ! dvm_extract_file "$version"
   }
 
+  # Download the source code of Deno from the network, and try to building the
+  # binary file.
+  # Parameters:
+  # - $1: The Deno version to install.
+  dvm_install_deno_by_source() {
+    local version
+    version="$1"
+
+    if ! dvm_check_build_dependencies
+    then
+      return
+    fi
+
+    if ! dvm_clone_deno_source
+    then
+      return
+    fi
+
+    dvm_build_deno "$version"
+  }
+
   # Try to set the installed version as the alias 'default' if no default set.
   # Parameters:
   # - $1: the Deno version to set to default.
@@ -1071,6 +1215,26 @@ export DVM_VERSION="v0.7.3"
 
     echo "$version" > "$DVM_DIR/aliases/default"
     dvm_print "Creating default alias: default -> $version"
+  }
+
+  # Try to validate the build output file.
+  dvm_validate_build_target() {
+    local version
+
+    if ! [ -f "$DVM_DIR/deno_code/target/release/deno" ]
+    then
+      dvm_print_error "no output found."
+      dvm_failure
+      return
+    fi
+
+    version=$("$DVM_DIR/deno_code/target/release/deno" --version | grep deno | cut -d " " -f 2)
+    if [ "v$version" != "$DVM_DENO_VERSION" ]
+    then
+      dvm_print_error "unmatched build target version v$version"
+      dvm_failure
+      return
+    fi
   }
 
   # Get remote data by GitHub api (Get a release by tag name) to validate the
@@ -1267,8 +1431,8 @@ export DVM_VERSION="v0.7.3"
 
     # unset global variables
     unset -v DVM_COLOR_MODE DVM_DENO_VERSION DVM_DIR DVM_FILE_TYPE \
-      DVM_INSTALL_FROM_SOURCE_ONLY DVM_INSTALL_REGISTRY \
-      DVM_INSTALL_SKIP_VALIDATION DVM_LATEST_VERSION \
+      DVM_INSTALL_FROM_BINARY_ONLY DVM_INSTALL_FROM_SOURCE_ONLY \
+      DVM_INSTALL_REGISTRY DVM_INSTALL_SKIP_VALIDATION DVM_LATEST_VERSION \
       DVM_PROFILE_FILE DVM_QUIET_MODE DVM_REMOTE_VERSIONS \
       DVM_REQUEST_RESPONSE DVM_SOURCE DVM_TARGET_ARCH DVM_TARGET_NAME \
       DVM_TARGET_OS DVM_TARGET_TYPE DVM_TARGET_VERSION DVM_VERBOSE_MODE \
@@ -1276,23 +1440,25 @@ export DVM_VERSION="v0.7.3"
     # unset dvm itself
     unset -f dvm
     # unset dvm functions
-    unset -f dvm_check_alias_dir dvm_clean_download_cache dvm_compare_version \
-      dvm_confirm_with_prompt dvm_deactivate dvm_debug dvm_download_deno \
-      dvm_download_file dvm_extract_file dvm_failure dvm_fix_invalid_versions \
-      dvm_get_current_version dvm_get_dvm_latest_version \
-      dvm_get_latest_version dvm_get_package_data dvm_get_profile_file \
-      dvm_get_version dvm_get_version_from_dvmrc dvm_get_version_by_param \
-      dvm_get_versions_from_network dvm_has dvm_install_deno \
-      dvm_install_deno_by_binary dvm_install_version dvm_list_aliases \
-      dvm_list_local_versions dvm_list_remote_versions dvm_locate_version \
-      dvm_parse_options dvm_print dvm_print_doctor_message \
-      dvm_print_current_version dvm_print_error dvm_print_help \
-      dvm_print_warning dvm_print_with_color dvm_purge_dvm \
+    unset -f dvm_build_deno dvm_check_alias_dir dvm_check_build_dependencies \
+      dvm_check_local_deno_clone dvm_clean_download_cache \
+      dvm_clone_deno_source dvm_compare_version dvm_confirm_with_prompt \
+      dvm_copy_build_target_to_versions_dir dvm_deactivate dvm_debug \
+      dvm_download_deno dvm_download_file dvm_extract_file dvm_failure \
+      dvm_fix_invalid_versions dvm_get_current_version \
+      dvm_get_dvm_latest_version dvm_get_latest_version dvm_get_package_data \
+      dvm_get_profile_file dvm_get_version dvm_get_version_from_dvmrc \
+      dvm_get_version_by_param dvm_get_versions_from_network dvm_has \
+      dvm_install_deno dvm_install_deno_by_binary dvm_install_deno_by_source \
+      dvm_install_version dvm_list_aliases dvm_list_local_versions \
+      dvm_list_remote_versions dvm_locate_version dvm_parse_options dvm_print \
+      dvm_print_doctor_message dvm_print_current_version dvm_print_error \
+      dvm_print_help dvm_print_warning dvm_print_with_color dvm_purge_dvm \
       dvm_read_dvmrc_file dvm_request dvm_rm_alias dvm_run_with_version \
       dvm_scan_and_fix_versions dvm_set_alias \
       dvm_set_default_alias_after_install dvm_set_default_env dvm_strip_path \
       dvm_success dvm_uninstall_version dvm_update_dvm dvm_use_version \
-      dvm_validate_remote_version
+      dvm_validate_build_target dvm_validate_remote_version
     # unset dvm shell completion functions
     unset -f _dvm_add_aliases_to_opts _dvm_add_versions_to_opts \
       _dvm_has_active_version _dvm_add_options_to_opts _dvm_completion
@@ -1628,6 +1794,9 @@ dvm() {
         ;;
       "--skip-validation")
         DVM_INSTALL_SKIP_VALIDATION=true
+        ;;
+      "--from-binary")
+        DVM_INSTALL_FROM_BINARY_ONLY=true
         ;;
       "--from-source")
         DVM_INSTALL_FROM_SOURCE_ONLY=true
