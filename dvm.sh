@@ -780,11 +780,11 @@ export DVM_VERSION="v0.7.3"
     cargo clean
     cargo build --release
 
-    if ! dvm_validate_build_target
+    if ! dvm_validate_build_target "$version"
     then
       cd "$old_dir" || return
       dvm_failure
-    elif ! dvm_copy_build_target_to_versions_dir
+    elif ! dvm_copy_build_target_to_versions_dir "$version"
     then
       cd "$old_dir" || return
       dvm_failure
@@ -859,13 +859,19 @@ export DVM_VERSION="v0.7.3"
   }
 
   # Move the build output file to the versions file.
+  # Parameters:
+  # - $1: The Deno version to install.
   dvm_copy_build_target_to_versions_dir() {
-    if ! [ -d "$DVM_DIR/versions/$DVM_DENO_VERSION" ]
+    local version
+
+    version="$1"
+
+    if ! [ -d "$DVM_DIR/versions/$version" ]
     then
-      mkdir -p "$DVM_DIR/versions/$DVM_DENO_VERSION"
+      mkdir -p "$DVM_DIR/versions/$version"
     fi
 
-    cp "$DVM_DIR/deno_code/target/release/deno" "$DVM_DIR/versions/$DVM_DENO_VERSION"
+    cp "$DVM_DIR/deno_code/target/release/deno" "$DVM_DIR/versions/$version"
   }
 
   # Download Deno with the specific version from GitHub or the specific
@@ -1213,8 +1219,13 @@ export DVM_VERSION="v0.7.3"
   }
 
   # Try to validate the build output file.
+  # Parameters:
+  # - $1: The Deno version to install.
   dvm_validate_build_target() {
     local version
+    local target_version
+
+    target_version="$1"
 
     if ! [ -f "$DVM_DIR/deno_code/target/release/deno" ]
     then
@@ -1224,9 +1235,11 @@ export DVM_VERSION="v0.7.3"
     fi
 
     version=$("$DVM_DIR/deno_code/target/release/deno" --version | grep deno | cut -d " " -f 2)
-    if [ "v$version" != "$DVM_DENO_VERSION" ]
+    if [ "v$version" != "$target_version" ]
     then
       dvm_print_error "unmatched build target version v$version"
+      dvm_debug "build file version: v$version"
+      dvm_debug "target version: $version"
       dvm_failure
       return
     fi
