@@ -16,7 +16,7 @@ dvm uninstall default --verbose || dvm_test_error "run 'dvm uninstall default' f
 [ ! -f "$DVM_DIR/versions/v1.14.0/deno" ] || dvm_test_error "deno v1.14.0 should be uninstalled"
 
 # Install deno v1.14.0 again
-dvm install v1.14.0 --verbose
+dvm install v1.14.0 --verbose --from-binary
 
 dvm deactivate
 
