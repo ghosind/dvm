@@ -776,7 +776,11 @@ export DVM_VERSION="v0.7.3"
     cd "$DVM_DIR/deno_code" || return
 
     git reset --hard HEAD
-    git checkout "$version" --recurse-submodules
+    if ! git checkout "$version" --recurse-submodules
+    then
+      dvm_failure
+      return
+    fi
 
     cargo clean
     cargo build --release
