@@ -783,16 +783,25 @@ export DVM_VERSION="v0.7.3"
     fi
 
     cargo clean
-    cargo build --release
+    
+    if ! cargo build --release
+    then
+      dvm_print_error "failed to build deno"
+      cd "$old_dir" || return
+      dvm_failure
+      return
+    fi
 
     if ! dvm_validate_build_target "$version"
     then
       cd "$old_dir" || return
       dvm_failure
+      return
     elif ! dvm_copy_build_target_to_versions_dir "$version"
     then
       cd "$old_dir" || return
       dvm_failure
+      return
     else
       cargo clean
       cd "$old_dir" || return
