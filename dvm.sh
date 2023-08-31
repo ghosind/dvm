@@ -801,26 +801,15 @@ export DVM_VERSION="v0.7.3"
 
   # Check the dependencies for building Deno from the source code.
   dvm_check_build_dependencies() {
-    if ! dvm_has git
-    then
-      dvm_print_error "git is required"
-      dvm_failure
-      return
-    fi
-
-    if ! dvm_has rustc
-    then
-      dvm_print_error "rust is required"
-      dvm_failure
-      return
-    fi
-
-    if ! dvm_has cargo
-    then
-      dvm_print_error "rust is required"
-      dvm_failure
-      return
-    fi
+    for command in git rustc cargo cc cmake
+    do
+      if ! dvm_has "$command"
+      then
+        dvm_print_error "$command is required"
+        dvm_failure
+        return
+      fi
+    done
   }
 
   # Try to check the local clone of the source code, and fetch the latest data
