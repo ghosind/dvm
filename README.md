@@ -18,7 +18,7 @@ For Windows users, you must install DVM v0.7.0 or later versions, and also need 
    - [Installation](#installation)
    - [Upgrade DVM](#upgrade-dvm)
 - [Prerequirement](#prerequirement)
-- [Getting Start](#getting-start)
+- [Getting Started](#getting-started)
   - [List available versions](#list-available-versions)
   - [List installed versions](#list-installed-versions)
   - [Install Deno](#install-deno)
@@ -89,7 +89,14 @@ Please make sure you have required dependencies installed:
 - unzip (for Deno v0.36.0 and newer versions)
 - gunzip (for Deno v0.35.0 and lower versions)
 
-## Getting Start
+For installing Deno from source, please make sure you have required dependencies installed:
+
+- rustc
+- cargo
+- cc
+- cmake
+
+## Getting Started
 
 After installed dvm, you can use it to manage multiple version Deno environments.
 
@@ -127,6 +134,14 @@ dvm install v1.0.0
 dvm install v0.42.0
 # deno v0.42.0 has installed.
 # Using deno v1.0.0 now.
+```
+
+### Install Deno from source
+
+Since DVM v0.8.0, you can install Deno from source with `--from-source` option.
+
+```sh
+dvm install --from-source v1.35.0
 ```
 
 ### Uninstall Deno
@@ -219,6 +234,7 @@ DVM supported the following commands:
 | | `dvm install <version>` | Download and install the specified version from source. |
 | | `dvm install <version> --registry=<registry>` | Download and install deno with the specified registry. |
 | | `dvm install <version> --skip-validation` | Do not validate deno version before trying to download it. |
+| | `dvm install <version> --from-source` | Build and install Deno from source code. |
 | `uninstall` | `dvm uninstall <version>` | Uninstall the specified version. |
 | `use` | `dvm use` | Use the specified version read from .dvmrc. |
 | | `dvm use <version>` | Use the specified version that passed by argument. |

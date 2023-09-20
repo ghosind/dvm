@@ -89,6 +89,13 @@ dvm upgrade
 - unzip (Deno v0.36.0及更新的版本)
 - gunzip (Deno v0.35.0及更旧的版本)
 
+若需要从源码安装Deno，请确保以下依赖软件已经安装：
+
+- rustc
+- cargo
+- cc
+- cmake
+
 ## DVM入门
 
 ### 列出已安装的版本
@@ -116,6 +123,14 @@ dvm ls-remote
 ```sh
 dvm install v1.0.0
 dvn install v0.42.0
+```
+
+### 源码安装
+
+DVM v0.8.0及以上版本支持从源码安装Deno：
+
+```sh
+dvm install --from-source v1.35.0
 ```
 
 ### 删除版本
@@ -179,6 +194,7 @@ DVM支持的命令包括有：
 | | `dvm install <version>` | 下载并安装指定的版本 |
 | | `dvm install <version> --registry=<registry>` | 通过指定的镜像下载deno |
 | | `dvm install <version> --skip-validation` | 下载deno前不对版本进行校验 |
+| | `dvm install <version> --from-source` | 编译源码并安装Deno |
 | `uninstall` | `dvm uninstall <version>` | 卸载指定的版本 |
 | `use` | `dvm use` | 将指定的版本设置为当前使用的版本，未指定版本将从当前目录下的`.dvmrc`文件中读取 |
 | | `dvm use <version>` | 将指定的版本设置为当前使用的版本 |
