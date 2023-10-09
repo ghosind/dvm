@@ -31,17 +31,61 @@ _dvm_add_aliases_to_opts() {
   done
 }
 
+# Add commands and top-level option (--help and --version) to options.
+_dvm_add_command_and_top_option() {
+  if [[ ${cur} == -* ]]
+  then
+    opts="-h --help --version"
+  else
+    opts="alias clean current deactivate doctor help install list list-remote
+      ls ls-remote run upgrade unalias uninstall use which"
+  fi
+}
+
+# Add the specified options into the options list if no one was inputted.
+_dvm_add_exclusive_option() {
+  if _dvm_no_option_input "${@}"
+  then
+    opts="$opts $*"
+  fi
+}
+
+# Add options for command install.
+_dvm_add_install_option() {
+  _dvm_add_exclusive_option "--from-binary" "--from-source"
+  _dvm_add_options "--registry=" "--skip-validation"
+}
+
+# Add the specified option to the options list.
+_dvm_add_options() {
+  for opt in "${@}"
+  do
+    if ! [[ ${COMP_WORDS[*]} =~ $opt ]]
+    then
+      opts="$opts $opt"
+    fi
+  done
+}
+
 # Add common options into auto-completion options list.
 _dvm_add_options_to_opts() {
+  local prev
+
+  prev="$1"
+  
   if [ "$prev" == "run" ]
   then
     return
   fi
 
-  if [[ ${cur} == -* ]]
+  if [[ ${cur} != -* ]]
   then
-    opts="$opts -q --color --no-color --quiet --verbose"
+    return
   fi
+
+  _dvm_add_exclusive_option "-q" "--quiet"
+  _dvm_add_exclusive_option "--color" "--no-color"
+  _dvm_add_options "--verbose"
 }
 
 # Add available installed versions into auto-completion options list.
@@ -69,59 +113,68 @@ _dvm_add_versions_to_opts() {
 
 # Set auto-completion with specific command.
 _dvm_completion() {
+  local command
   local cur
-  local prev
 
   COMPREPLY=()
   cur="${COMP_WORDS[COMP_CWORD]}"
-  prev="${COMP_WORDS[COMP_CWORD-1]}"
-  opts=""
 
-  case "$prev" in
-  install)
-    if [[ ${cur} == -* ]]
-    then
-      opts="--registry= --skip-validation --from-binary --from-source"
-    fi
-    ;;
-  use|uninstall|run|which)
-    if [ "$prev" = "which" ] && _dvm_has_active_version
-    then
-      opts="current"
-    fi
+  if [ "$COMP_CWORD" = "1" ]
+  then
+    _dvm_add_command_and_top_option
+  else
+    command="${COMP_WORDS[1]}"
 
-    _dvm_add_versions_to_opts
-    _dvm_add_aliases_to_opts
-    ;;
-  unalias)
-    _dvm_add_aliases_to_opts
-    ;;
-  doctor)
-    opts="--fix"
-    ;;
-  dvm|"$DVM_DIR/dvm.sh")
-    if [[ ${cur} == -* ]]
-    then
-      opts="-h --help --version"
-    else
-      opts="alias clean current deactivate doctor help install list list-remote
-        ls ls-remote run upgrade unalias uninstall use which"
-    fi
-    ;;
-  *)
-    opts=""
-    ;;
-  esac
+    case "$command" in
+    install)
+      if [[ ${cur} == -* ]]
+      then
+        _dvm_add_install_option
+      fi
+      ;;
+    use|uninstall|run|which)
+      if [ "$prev" = "which" ] && _dvm_has_active_version
+      then
+        opts="current"
+      fi
 
-  _dvm_add_options_to_opts
+      _dvm_add_versions_to_opts
+      _dvm_add_aliases_to_opts
+      ;;
+    unalias)
+      _dvm_add_aliases_to_opts
+      ;;
+    doctor)
+      _dvm_add_exclusive_option "--fix"
+      ;;
+    *)
+      opts=""
+      ;;
+    esac
 
-  # shellcheck disable=SC2207
-  COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+    _dvm_add_options_to_opts "$prev"
+  fi
+
+  COMPREPLY=( "$(compgen -W "${opts}" -- "${cur}")" )
 }
 
 # Check if any Deno version has been activated that installed by DVM.
 _dvm_has_active_version() {
   echo "$PATH" | grep -q "$DVM_DIR/versions"
+}
+
+# Check whether the specified options are inputted or not
+_dvm_no_option_input() {
+  for opt in "${@}"
+  do
+    if [[ ${COMP_WORDS[*]} =~ $opt ]]
+    then
+      false
+      return
+    fi
+  done
+
+  true
 }
 
 if [ -n "$ZSH_NAME" ]
