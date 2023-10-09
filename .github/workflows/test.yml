@@ -18,3 +18,4 @@ jobs:
         ./test/test_alias.sh
         ./test/test_uninstall_version.sh
         ./test/test_ls_remote.sh
+        ./test/test_install_from_source.sh
