@@ -72,7 +72,7 @@ _dvm_add_options_to_opts() {
   local prev
 
   prev="$1"
-  
+
   if [ "$prev" == "run" ]
   then
     return
@@ -126,13 +126,16 @@ _dvm_completion() {
     command="${COMP_WORDS[1]}"
 
     case "$command" in
+    doctor)
+      _dvm_add_exclusive_option "--fix"
+      ;;
     install)
       if [[ ${cur} == -* ]]
       then
         _dvm_add_install_option
       fi
       ;;
-    use|uninstall|run|which)
+    use|uninstall|which)
       if [ "$prev" = "which" ] && _dvm_has_active_version
       then
         opts="current"
@@ -141,11 +144,21 @@ _dvm_completion() {
       _dvm_add_versions_to_opts
       _dvm_add_aliases_to_opts
       ;;
-    unalias)
+    run)
+      if _dvm_has_non_option_parameter
+      then
+        COMPREPLY=( "$(compgen -W "${opts}" -- "${cur}")" )
+        return
+      fi
+
+      _dvm_add_versions_to_opts
       _dvm_add_aliases_to_opts
       ;;
-    doctor)
-      _dvm_add_exclusive_option "--fix"
+    unalias)
+      if [ "$COMP_CWORD" == 2 ] || ! _dvm_has_non_option_parameter
+      then
+        _dvm_add_aliases_to_opts
+      fi
       ;;
     *)
       opts=""
@@ -161,6 +174,20 @@ _dvm_completion() {
 # Check if any Deno version has been activated that installed by DVM.
 _dvm_has_active_version() {
   echo "$PATH" | grep -q "$DVM_DIR/versions"
+}
+
+# Checks whether the parameters list have non-option parameter or not.
+_dvm_has_non_option_parameter() {
+  for word in ${COMP_WORDS[*]:2}
+  do
+    if [[ "$word" != -* ]]
+    then
+      true
+      return
+    fi
+  done
+
+  false
 }
 
 # Check whether the specified options are inputted or not
