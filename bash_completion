@@ -178,7 +178,7 @@ _dvm_has_active_version() {
 
 # Checks whether the parameters list have non-option parameter or not.
 _dvm_has_non_option_parameter() {
-  for word in ${COMP_WORDS[*]:2}
+  for word in "${COMP_WORDS[@]:2}"
   do
     if [[ "$word" != -* ]]
     then
