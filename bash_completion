@@ -136,13 +136,16 @@ _dvm_completion() {
       fi
       ;;
     use|uninstall|which)
-      if [ "$prev" = "which" ] && _dvm_has_active_version
+      if ! _dvm_has_non_option_parameter
       then
-        opts="current"
-      fi
+        if [ "$command" = "which" ] && _dvm_has_active_version
+        then
+          opts="current"
+        fi
 
-      _dvm_add_versions_to_opts
-      _dvm_add_aliases_to_opts
+        _dvm_add_versions_to_opts
+        _dvm_add_aliases_to_opts
+      fi
       ;;
     run)
       if _dvm_has_non_option_parameter
