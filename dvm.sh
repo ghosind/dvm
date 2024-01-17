@@ -1178,7 +1178,7 @@ export DVM_VERSION="v0.8.1"
       dvm_print "Installing deno $version from cache..."
     fi
 
-    ! dvm_extract_file "$version"
+    dvm_extract_file "$version"
   }
 
   # Download the source code of Deno from the network, and try to building the
