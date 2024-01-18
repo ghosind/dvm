@@ -61,8 +61,7 @@ export DVM_VERSION="v0.8.1"
       # Set global variables to default values
       DVM_DENO_VERSION=""
       DVM_FILE_TYPE=""
-      DVM_INSTALL_FROM_BINARY_ONLY=false
-      DVM_INSTALL_FROM_SOURCE_ONLY=false
+      DVM_INSTALL_MODE="binary"
       DVM_INSTALL_REGISTRY=""
       DVM_INSTALL_SKIP_VALIDATION=false
       DVM_LATEST_VERSION=""
@@ -783,7 +782,7 @@ export DVM_VERSION="v0.8.1"
     fi
 
     cargo clean
-    
+
     if ! cargo build --release
     then
       dvm_print_error "failed to build deno"
@@ -1118,11 +1117,7 @@ export DVM_VERSION="v0.8.1"
   }
 
   # Try to install Deno from the network with the binary file, or try to build
-  # Deno from the source code if failed to download the precompiled binary
-  # file. It'll skip downloading the binary file if the value of variable
-  # `DVM_INSTALL_FROM_SOURCE_ONLY` is true, and skip downloading and building
-  # from the source code if the value of variable
-  # `DVM_INSTALL_FROM_BINARY_ONLY` is true.
+  # Deno from the source code.
   # Parameters:
   # - $1: The Deno version to install.
   dvm_install_deno() {
@@ -1130,28 +1125,18 @@ export DVM_VERSION="v0.8.1"
 
     version="$1"
 
-    if [ "$DVM_INSTALL_FROM_SOURCE_ONLY" = false ]
-    then
-      if dvm_install_deno_by_binary "$version"
-      then
-        return
-      fi
-    fi
-
-    if [ "$DVM_INSTALL_FROM_BINARY_ONLY" = false ]
-    then
-      if [ "$DVM_INSTALL_FROM_SOURCE_ONLY" = false ]
-      then
-        dvm_print_warning "Failed to downloading Deno binary file, fallback to build from source."
-      fi
-
-      if dvm_install_deno_by_source "$version"
-      then
-        return
-      fi
-    fi
-
-    dvm_failure
+    case "$DVM_INSTALL_MODE" in
+      "binary")
+        dvm_install_deno_by_binary "$version"
+        ;;
+      "source")
+        dvm_install_deno_by_source "$version"
+        ;;
+      *)
+        dvm_print_error "Unknown install mode: $DVM_INSTALL_MODE"
+        dvm_failure
+        ;;
+    esac
   }
 
   # Download and install the pre-compiled Deno binary file from the network.
@@ -1442,9 +1427,8 @@ export DVM_VERSION="v0.8.1"
 
     # unset global variables
     unset -v DVM_COLOR_MODE DVM_DENO_VERSION DVM_DIR DVM_FILE_TYPE \
-      DVM_INSTALL_FROM_BINARY_ONLY DVM_INSTALL_FROM_SOURCE_ONLY \
-      DVM_INSTALL_REGISTRY DVM_INSTALL_SKIP_VALIDATION DVM_LATEST_VERSION \
-      DVM_PROFILE_FILE DVM_QUIET_MODE DVM_REMOTE_VERSIONS \
+      DVM_INSTALL_MODE DVM_INSTALL_REGISTRY DVM_INSTALL_SKIP_VALIDATION \
+      DVM_LATEST_VERSION DVM_PROFILE_FILE DVM_QUIET_MODE DVM_REMOTE_VERSIONS \
       DVM_REQUEST_RESPONSE DVM_SOURCE DVM_TARGET_ARCH DVM_TARGET_NAME \
       DVM_TARGET_OS DVM_TARGET_TYPE DVM_TARGET_VERSION DVM_VERBOSE_MODE \
       DVM_VERSION
@@ -1807,10 +1791,10 @@ dvm() {
         DVM_INSTALL_SKIP_VALIDATION=true
         ;;
       "--from-binary")
-        DVM_INSTALL_FROM_BINARY_ONLY=true
+        DVM_INSTALL_MODE="binary"
         ;;
       "--from-source")
-        DVM_INSTALL_FROM_SOURCE_ONLY=true
+        DVM_INSTALL_MODE="source"
         ;;
       "-"*)
         ;;
