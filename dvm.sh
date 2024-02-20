@@ -1777,7 +1777,7 @@ dvm() {
     dvm_scan_and_fix_versions "$mode"
 
     ;;
-  install)
+  install | i)
     # install the specified version
     shift
 

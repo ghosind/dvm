@@ -18,6 +18,9 @@ dvm install "v$TARGET_VERSION" --verbose || dvm_test_error "run 'dvm install v$T
 # Install another deno
 dvm install v1.14.0 --verbose
 
+# Install deno by shortcut
+dvm i v1.15.0 --verbose
+
 # Check deno version
 dvm run "v$TARGET_VERSION" --version | grep "deno $TARGET_VERSION" || dvm_test_error "deno is invalid"
 
