@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Shell completion for Deno Version Manager
-# Copyright (C) 2020 ~ 2023, Chen Su and all contributors.
+# Copyright (C) 2020 ~ 2024, Chen Su and all contributors.
 
 if ! type dvm &> /dev/null
 then
