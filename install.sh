@@ -44,10 +44,10 @@ dvm_get_latest_version() {
   local response
 
   case "$DVM_SOURCE" in
-  gitee)
+  "gitee")
     request_url="https://gitee.com/api/v5/repos/ghosind/dvm/releases/latest"
     ;;
-  github|*)
+  "github"|*)
     request_url="https://api.github.com/repos/ghosind/dvm/releases/latest"
     ;;
   esac
@@ -68,11 +68,11 @@ dvm_get_latest_version() {
 }
 
 dvm_get_profile_file() {
-  case ${SHELL##*/} in
-  bash)
+  case "${SHELL##*/}" in
+  "bash")
     DVM_PROFILE_FILE="$HOME/.bashrc"
     ;;
-  zsh)
+  "zsh")
     DVM_PROFILE_FILE="$HOME/.zshrc"
     ;;
   *)
@@ -111,10 +111,10 @@ dvm_install_latest_version() {
   local cmd
 
   case "$DVM_SOURCE" in
-  gitee)
+  "gitee")
     git_url="https://gitee.com/ghosind/dvm.git"
     ;;
-  github|*)
+  "github"|*)
     git_url="https://github.com/ghosind/dvm.git"
     ;;
   esac
@@ -158,11 +158,11 @@ dvm_set_default
 while getopts "hr:d:" opt
 do
   case "$opt" in
-  h)
+  "h")
     dvm_print_help
     exit 0
     ;;
-  r)
+  "r")
     if [ "$OPTARG" != "github" ] && [ "$OPTARG" != "gitee" ]
     then
       dvm_print_help
@@ -170,7 +170,7 @@ do
     fi
     DVM_SOURCE="$OPTARG"
     ;;
-  d)
+  "d")
     if [ -z "$OPTARG" ]
     then
       dvm_print_help

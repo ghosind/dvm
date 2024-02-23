@@ -26,11 +26,11 @@ export DVM_VERSION="v0.8.2"
 
     # Gets user profile file path by the shell.
     dvm_get_profile_file() {
-      case ${SHELL##*/} in
-      bash)
+      case "${SHELL##*/}" in
+      "bash")
         DVM_PROFILE_FILE="$HOME/.bashrc"
         ;;
-      zsh)
+      "zsh")
         DVM_PROFILE_FILE="$HOME/.zshrc"
         ;;
       *)
@@ -90,17 +90,20 @@ export DVM_VERSION="v0.8.2"
       while [ "$#" -gt "0" ]
       do
         case "$1" in
-          -q|--quiet)
+          "-q"|"--quiet")
             DVM_QUIET_MODE=true
             ;;
-          --color)
+          "--color")
             DVM_COLOR_MODE=true
             ;;
-          --no-color)
+          "--no-color")
             DVM_COLOR_MODE=false
             ;;
-          --verbose)
+          "--verbose")
             DVM_VERBOSE_MODE=true
+            ;;
+          *)
+            ;;
         esac
 
         shift
@@ -1608,10 +1611,10 @@ export DVM_VERSION="v0.8.2"
     local request_url
 
     case "$DVM_SOURCE" in
-    gitee)
+    "gitee")
       request_url="https://gitee.com/api/v5/repos/ghosind/dvm/releases/latest"
       ;;
-    github|*)
+    "github"|*)
       request_url="https://api.github.com/repos/ghosind/dvm/releases/latest"
       ;;
     esac
@@ -1727,28 +1730,28 @@ dvm() {
 
   dvm_parse_options "$@"
 
-  case $1 in
-  alias)
+  case "$1" in
+  "alias")
     shift
 
     dvm_set_alias "$@"
 
     ;;
-  clean)
+  "clean")
     # remove all download packages.
     dvm_clean_download_cache
 
     ;;
-  current)
+  "current")
     # get the current version
     dvm_print_current_version
 
     ;;
-  deactivate)
+  "deactivate")
     dvm_deactivate
 
     ;;
-  doctor)
+  "doctor")
     local mode
 
     shift
@@ -1777,7 +1780,7 @@ dvm() {
     dvm_scan_and_fix_versions "$mode"
 
     ;;
-  install | i)
+  "install"|"i")
     # install the specified version
     shift
 
@@ -1809,7 +1812,7 @@ dvm() {
     dvm_install_version "$version"
 
     ;;
-  list | ls)
+  "list"|"ls")
     # list all local versions
     dvm_get_current_version
 
@@ -1818,12 +1821,12 @@ dvm() {
     dvm_list_aliases
 
     ;;
-  list-remote | ls-remote)
+  "list-remote"|"ls-remote")
     # list all remote versions
     dvm_list_remote_versions
 
     ;;
-  purge)
+  "purge")
     if ! dvm_confirm_with_prompt "Do you want to remove DVM from your computer?"
     then
       return
@@ -1837,7 +1840,7 @@ dvm() {
     dvm_purge_dvm
 
     ;;
-  run)
+  "run")
     shift
 
     dvm_get_version "$@"
@@ -1865,7 +1868,7 @@ dvm() {
     dvm_run_with_version "$@"
 
     ;;
-  which)
+  "which")
     shift
 
     dvm_get_version "$@"
@@ -1880,13 +1883,13 @@ dvm() {
     dvm_locate_version "$@"
 
     ;;
-  unalias)
+  "unalias")
     shift
 
     dvm_rm_alias "$@"
 
     ;;
-  uninstall)
+  "uninstall")
     # uninstall the specified version
     shift
 
@@ -1901,7 +1904,7 @@ dvm() {
     dvm_uninstall_version "$DVM_TARGET_VERSION"
 
     ;;
-  upgrade)
+  "upgrade")
     if ! dvm_get_dvm_latest_version
     then
       return
@@ -1917,19 +1920,19 @@ dvm() {
     dvm_update_dvm
 
     ;;
-  use)
+  "use")
     # change current version to specified version
     shift
 
     dvm_use_version "$@"
 
     ;;
-  help|--help|-h)
+  "help"|"--help"|"-h")
     # print help
     dvm_print_help
 
     ;;
-  --version)
+  "--version")
     # print dvm version
     dvm_print "$DVM_VERSION"
 

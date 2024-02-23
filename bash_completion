@@ -126,16 +126,16 @@ _dvm_completion() {
     command="${COMP_WORDS[1]}"
 
     case "$command" in
-    doctor)
+    "doctor")
       _dvm_add_exclusive_option "--fix"
       ;;
-    install)
+    "install")
       if [[ ${cur} == -* ]]
       then
         _dvm_add_install_option
       fi
       ;;
-    use|uninstall|which)
+    "use"|"uninstall"|"which")
       if ! _dvm_has_non_option_parameter
       then
         if [ "$command" = "which" ] && _dvm_has_active_version
@@ -147,7 +147,7 @@ _dvm_completion() {
         _dvm_add_aliases_to_opts
       fi
       ;;
-    run)
+    "run")
       if _dvm_has_non_option_parameter
       then
         COMPREPLY=( "$(compgen -W "${opts}" -- "${cur}")" )
@@ -157,7 +157,7 @@ _dvm_completion() {
       _dvm_add_versions_to_opts
       _dvm_add_aliases_to_opts
       ;;
-    unalias)
+    "unalias")
       if [ "$COMP_CWORD" == 2 ] || ! _dvm_has_non_option_parameter
       then
         _dvm_add_aliases_to_opts
