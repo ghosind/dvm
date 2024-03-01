@@ -1028,6 +1028,15 @@ export DVM_VERSION="v0.8.2"
       return
     fi
 
+    if [ "$DVM_TARGET_OS" = "Linux" ] &&
+      [ "$DVM_TARGET_ARCH" = 'arm64' ] &&
+      dvm_compare_version "$target_version" "v1.40.3"
+    then
+      dvm_print_error "Linux with ARM64 chips (aarch64-linux) support deno v1.40.3 and above versions only."
+      dvm_failure
+      return
+    fi
+
     if dvm_compare_version "$target_version" "v0.36.0"
     then
       DVM_TARGET_TYPE="gz"
@@ -1054,6 +1063,9 @@ export DVM_VERSION="v0.8.2"
         ;;
       "Linux:x86_64:zip")
         DVM_TARGET_NAME='deno-x86_64-unknown-linux-gnu.zip'
+        ;;
+      "Linux:arm64:zip")
+        DVM_TARGET_NAME='deno-aarch64-unknown-linux-gnu.zip'
         ;;
       *"NT"*":x86_64:zip")
         DVM_TARGET_NAME='deno-x86_64-pc-windows-msvc.zip'
