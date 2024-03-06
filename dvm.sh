@@ -1064,7 +1064,7 @@ export DVM_VERSION="v0.8.2"
       "Linux:x86_64:zip")
         DVM_TARGET_NAME='deno-x86_64-unknown-linux-gnu.zip'
         ;;
-      "Linux:arm64:zip")
+      "Linux:aarch64:zip")
         DVM_TARGET_NAME='deno-aarch64-unknown-linux-gnu.zip'
         ;;
       *"NT"*":x86_64:zip")
