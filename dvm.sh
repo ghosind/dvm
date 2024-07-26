@@ -1264,7 +1264,7 @@ export DVM_VERSION="v0.8.3"
       version="v$version"
     fi
 
-    result=$(echo "$version" | grep -E "^v\d+\.\d+\.\d+")
+    result=$(echo "$version" | grep -E "^v[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+")
     if [ -z "$result" ]
     then
       dvm_get_remote_version_by_prefix "$version"
