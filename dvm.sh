@@ -1080,6 +1080,52 @@ export DVM_VERSION="v0.8.3"
     dvm_debug "target file name: $DVM_TARGET_NAME"
   }
 
+  # Gets the latest version with the prefix.
+  # Parameters:
+  # - $1: the version prefix to search.
+  dvm_get_remote_version_by_prefix() {
+    local search_text
+    local version_prefix
+    local tmp_versions
+
+    search_text="$1"
+    version_prefix="$search_text"
+
+    if [[ "$version_prefix" == *"." ]]
+    then
+      version_prefix="${version_prefix%%.}"
+    fi
+    version_prefix="$version_prefix\."
+
+    dvm_debug "searching version starts with $version_prefix"
+
+    size=100
+    request_url="https://api.github.com/repos/denoland/deno/releases?per_page=$size&page=1"
+
+    while [ "$request_url" != "" ]
+    do
+      if ! dvm_request "$request_url" "--include"
+      then
+        dvm_print_error "failed to get remote versions."
+        dvm_failure
+        return
+      fi
+
+      tmp_versions=$(echo "$DVM_REQUEST_RESPONSE" | sed 's/"/\n/g' | grep tag_name -A 2 | grep v | grep "$version_prefix" | head -n 1)
+      if [ -n "$tmp_versions" ]
+      then
+        DVM_TARGET_VERSION="$tmp_versions"
+        return
+      fi
+
+      request_url=$(echo "$DVM_REQUEST_RESPONSE" | grep "link:" | sed 's/,/\n/g' | grep "rel=\"next\"" \
+        | sed 's/[<>]/\n/g' | grep "http")
+      dvm_debug "list releases next page url: $request_url"
+    done
+
+    dvm_print_error "no version found by $search_text"
+  }
+
   # Install Deno with the specific version, it'll try to get version from the
   # parameter, .dvmrc file (current directory and home directory), or the
   # latest Deno version.
@@ -1096,9 +1142,10 @@ export DVM_VERSION="v0.8.3"
       then
         return
       fi
-
-      version="$DVM_TARGET_VERSION"
+    else
+      dvm_is_version_prefix "$version"
     fi
+    version="$DVM_TARGET_VERSION"
 
     if [ -f "$DVM_DIR/versions/$version/deno" ]
     then
@@ -1202,6 +1249,28 @@ export DVM_VERSION="v0.8.3"
     fi
 
     dvm_build_deno "$version"
+  }
+
+  # Check the version string whether it is a prefix or not.
+  # Parameters:
+  # - $1: the string to check.
+  dvm_is_version_prefix() {
+    local result
+    local version
+
+    version="$1"
+    if [[ "$version" != "v"* ]]
+    then
+      version="v$version"
+    fi
+
+    result=$(echo "$version" | grep -E "^v\d+\.\d+\.\d+")
+    if [ -z "$result" ]
+    then
+      dvm_get_remote_version_by_prefix "$version"
+    else
+      DVM_TARGET_VERSION="$version"
+    fi
   }
 
   # Try to set the installed version as the alias 'default' if no default set.
