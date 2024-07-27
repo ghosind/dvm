@@ -1124,6 +1124,7 @@ export DVM_VERSION="v0.8.3"
     done
 
     dvm_print_error "no version found by $search_text"
+    dvm_failure
   }
 
   # Install Deno with the specific version, it'll try to get version from the
@@ -1143,7 +1144,10 @@ export DVM_VERSION="v0.8.3"
         return
       fi
     else
-      dvm_is_version_prefix "$version"
+      if ! dvm_is_version_prefix "$version"
+      then
+        return
+      fi
     fi
     version="$DVM_TARGET_VERSION"
 
@@ -1267,7 +1271,10 @@ export DVM_VERSION="v0.8.3"
     result=$(echo "$version" | grep -E "^v[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+")
     if [ -z "$result" ]
     then
-      dvm_get_remote_version_by_prefix "$version"
+      if ! dvm_get_remote_version_by_prefix "$version"
+      then
+        return
+      fi
     else
       DVM_TARGET_VERSION="$version"
     fi
@@ -1526,10 +1533,10 @@ export DVM_VERSION="v0.8.3"
       dvm_download_deno dvm_download_file dvm_extract_file dvm_failure \
       dvm_fix_invalid_versions dvm_get_current_version \
       dvm_get_dvm_latest_version dvm_get_latest_version dvm_get_package_data \
-      dvm_get_profile_file dvm_get_version dvm_get_version_from_dvmrc \
-      dvm_get_version_by_param dvm_get_versions_from_network dvm_has \
+      dvm_get_profile_file dvm_get_remote_version_by_prefix dvm_get_version \
+      dvm_get_version_from_dvmrc dvm_get_version_by_param dvm_get_versions_from_network dvm_has \
       dvm_install_deno dvm_install_deno_by_binary dvm_install_deno_by_source \
-      dvm_install_version dvm_list_aliases dvm_list_local_versions \
+      dvm_install_version dvm_is_version_prefix dvm_list_aliases dvm_list_local_versions \
       dvm_list_remote_versions dvm_locate_version dvm_parse_options dvm_print \
       dvm_print_doctor_message dvm_print_current_version dvm_print_error \
       dvm_print_help dvm_print_warning dvm_print_with_color dvm_purge_dvm \
