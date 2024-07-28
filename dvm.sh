@@ -1273,6 +1273,7 @@ export DVM_VERSION="v0.8.3"
     then
       if ! dvm_get_remote_version_by_prefix "$version"
       then
+        dvm_failure
         return
       fi
     else
