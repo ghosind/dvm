@@ -15,6 +15,7 @@ jobs:
     - name: Run test cases
       run: |
         ./test/test_install_version.sh
+        ./test/test_install_version_by_prefix.sh
         ./test/test_alias.sh
         ./test/test_uninstall_version.sh
         ./test/test_ls_remote.sh

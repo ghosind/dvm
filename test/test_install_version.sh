@@ -32,7 +32,3 @@ dvm use "v$TARGET_VERSION" --verbose || dvm_test_error "run 'dvm use v$TARGET_VE
 
 # Check with ls command
 dvm ls | grep "\-> v$TARGET_VERSION" || dvm_test_error "run 'dvm ls' failed"
-
-# Install deno by prefix
-dvm install 1.44 || dvm_test_error "run 'dvm install 1.44' failed"
-dvm ls | grep "v1.44.4" || dvm_test_error "run 'dvm ls' failed"
