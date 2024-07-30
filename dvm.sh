@@ -1114,13 +1114,14 @@ export DVM_VERSION="v0.8.3"
       tmp_versions=$(echo "$DVM_REQUEST_RESPONSE" | sed 's/"/\n/g' | grep tag_name -A 2 | grep v | grep "$version_prefix" | head -n 1)
       if [ -n "$tmp_versions" ]
       then
+        dvm_debug "matched version found $tmp_versions"
         DVM_TARGET_VERSION="$tmp_versions"
         return
       fi
 
       request_url=$(echo "$DVM_REQUEST_RESPONSE" | grep "link:" | sed 's/,/\n/g' | grep "rel=\"next\"" \
         | sed 's/[<>]/\n/g' | grep "http")
-      dvm_debug "list releases next page url: $request_url"
+      dvm_debug "get releases by prefix next page url: $request_url"
     done
 
     dvm_print_error "no version found by $search_text"
@@ -1271,12 +1272,14 @@ export DVM_VERSION="v0.8.3"
     result=$(echo "$version" | grep -E "^v[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+")
     if [ -z "$result" ]
     then
+      dvm_debug "$version is a version prefix"
       if ! dvm_get_remote_version_by_prefix "$version"
       then
         dvm_failure
         return
       fi
     else
+      dvm_debug "$version is not a version prefix"
       DVM_TARGET_VERSION="$version"
     fi
   }
