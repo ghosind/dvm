@@ -64,6 +64,7 @@ export DVM_VERSION="v0.8.3"
       DVM_INSTALL_MODE="binary"
       DVM_INSTALL_REGISTRY=""
       DVM_INSTALL_SKIP_VALIDATION=false
+      DVM_INSTALL_SKIP_CACHE=false
       DVM_LATEST_VERSION=""
       DVM_PROFILE_FILE=""
       DVM_REMOTE_VERSIONS=""
@@ -726,6 +727,7 @@ export DVM_VERSION="v0.8.3"
     dvm_print "  dvm install [version]             Download and install by version. Install latest or use .dvmrc file if version is omitted."
     dvm_print "    --registry=<registry>           Download and install deno with the specified registry."
     dvm_print "    --skip-validation               Skip version validation before download."
+    dvm_print "    --skip-download-cache           Don't use downloaded cache file."
     dvm_print "  dvm uninstall [name|version]      Uninstall a specified version."
     dvm_print "  dvm use [name|version]            Use the specified version that passed by argument or read from .dvmrc."
     dvm_print "  dvm run <name|version> [args]     Run deno on the specified version with arguments."
@@ -1219,7 +1221,7 @@ export DVM_VERSION="v0.8.3"
       return
     fi
 
-    if [ ! -f "$DVM_DIR/download/$version/deno.$DVM_TARGET_TYPE" ]
+    if [ "$DVM_INSTALL_SKIP_CACHE" = true ] || [ ! -f "$DVM_DIR/download/$version/deno.$DVM_TARGET_TYPE" ]
     then
       dvm_print "Downloading and installing deno $version..."
       if ! dvm_download_deno "$version"
@@ -1521,12 +1523,11 @@ export DVM_VERSION="v0.8.3"
     echo "$content" > "$DVM_PROFILE_FILE"
 
     # unset global variables
-    unset -v DVM_COLOR_MODE DVM_DENO_VERSION DVM_DIR DVM_FILE_TYPE \
-      DVM_INSTALL_MODE DVM_INSTALL_REGISTRY DVM_INSTALL_SKIP_VALIDATION \
-      DVM_LATEST_VERSION DVM_PROFILE_FILE DVM_QUIET_MODE DVM_REMOTE_VERSIONS \
-      DVM_REQUEST_RESPONSE DVM_SOURCE DVM_TARGET_ARCH DVM_TARGET_NAME \
-      DVM_TARGET_OS DVM_TARGET_TYPE DVM_TARGET_VERSION DVM_VERBOSE_MODE \
-      DVM_VERSION
+    unset -v DVM_COLOR_MODE DVM_DENO_VERSION DVM_DIR DVM_FILE_TYPE DVM_INSTALL_MODE \
+      DVM_INSTALL_REGISTRY DVM_INSTALL_SKIP_CACHE DVM_INSTALL_SKIP_VALIDATION DVM_LATEST_VERSION \
+      DVM_PROFILE_FILE DVM_QUIET_MODE DVM_REMOTE_VERSIONS DVM_REQUEST_RESPONSE DVM_SOURCE \
+      DVM_TARGET_ARCH DVM_TARGET_NAME DVM_TARGET_OS DVM_TARGET_TYPE DVM_TARGET_VERSION \
+      DVM_VERBOSE_MODE DVM_VERSION
     # unset dvm itself
     unset -f dvm
     # unset dvm functions
@@ -1884,6 +1885,9 @@ dvm() {
         ;;
       "--skip-validation")
         DVM_INSTALL_SKIP_VALIDATION=true
+        ;;
+      "--skip-download-cache")
+        DVM_INSTALL_SKIP_CACHE=true
         ;;
       "--from-binary")
         DVM_INSTALL_MODE="binary"

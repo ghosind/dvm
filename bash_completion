@@ -53,7 +53,7 @@ _dvm_add_exclusive_option() {
 # Add options for command install.
 _dvm_add_install_option() {
   _dvm_add_exclusive_option "--from-binary" "--from-source"
-  _dvm_add_options "--registry=" "--skip-validation"
+  _dvm_add_options "--registry=" "--skip-validation" "--skip-download-cache"
 }
 
 # Add the specified option to the options list.
