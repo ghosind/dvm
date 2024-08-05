@@ -4,6 +4,7 @@ versions/
 coverage/
 download/
 deno_code/
+cache/
 
 # Editors
 .vscode
