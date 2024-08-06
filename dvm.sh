@@ -1094,7 +1094,7 @@ export DVM_VERSION="v0.8.3"
     version_prefix="$search_text"
 
     dvm_debug "searching version starts with $version_prefix"
-    
+
     if [[ "$version_prefix" == *"." ]]
     then
       version_prefix="${version_prefix%%.}"
@@ -1118,6 +1118,7 @@ export DVM_VERSION="v0.8.3"
 
     dvm_debug "matched version found $tmp_versions"
     DVM_TARGET_VERSION="$tmp_versions"
+    DVM_INSTALL_SKIP_VALIDATION=true
   }
 
   # Install Deno with the specific version, it'll try to get version from the
