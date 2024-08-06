@@ -1093,41 +1093,31 @@ export DVM_VERSION="v0.8.3"
     search_text="$1"
     version_prefix="$search_text"
 
+    dvm_debug "searching version starts with $version_prefix"
+    
     if [[ "$version_prefix" == *"." ]]
     then
       version_prefix="${version_prefix%%.}"
     fi
     version_prefix="$version_prefix\."
 
-    dvm_debug "searching version starts with $version_prefix"
 
-    size=100
-    request_url="https://api.github.com/repos/denoland/deno/releases?per_page=$size&page=1"
+    if ! dvm_get_remote_versions
+    then
+      dvm_failure
+      return
+    fi
 
-    while [ "$request_url" != "" ]
-    do
-      if ! dvm_request "$request_url" "--include"
-      then
-        dvm_print_error "failed to get remote versions."
-        dvm_failure
-        return
-      fi
+    tmp_versions=$(echo "$DVM_REMOTE_VERSIONS" | grep "$version_prefix" | tail -n 1)
+    if [ -z "$tmp_versions" ]
+    then
+      dvm_print_error "no version found by $search_text"
+      dvm_failure
+      return
+    fi
 
-      tmp_versions=$(echo "$DVM_REQUEST_RESPONSE" | sed 's/"/\n/g' | grep tag_name -A 2 | grep v | grep "$version_prefix" | head -n 1)
-      if [ -n "$tmp_versions" ]
-      then
-        dvm_debug "matched version found $tmp_versions"
-        DVM_TARGET_VERSION="$tmp_versions"
-        return
-      fi
-
-      request_url=$(echo "$DVM_REQUEST_RESPONSE" | grep "link:" | sed 's/,/\n/g' | grep "rel=\"next\"" \
-        | sed 's/[<>]/\n/g' | grep "http")
-      dvm_debug "get releases by prefix next page url: $request_url"
-    done
-
-    dvm_print_error "no version found by $search_text"
-    dvm_failure
+    dvm_debug "matched version found $tmp_versions"
+    DVM_TARGET_VERSION="$tmp_versions"
   }
 
   # Install Deno with the specific version, it'll try to get version from the
