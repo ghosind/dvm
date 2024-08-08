@@ -1093,41 +1093,32 @@ export DVM_VERSION="v0.8.3"
     search_text="$1"
     version_prefix="$search_text"
 
+    dvm_debug "searching version starts with $version_prefix"
+
     if [[ "$version_prefix" == *"." ]]
     then
       version_prefix="${version_prefix%%.}"
     fi
     version_prefix="$version_prefix\."
 
-    dvm_debug "searching version starts with $version_prefix"
 
-    size=100
-    request_url="https://api.github.com/repos/denoland/deno/releases?per_page=$size&page=1"
+    if ! dvm_get_remote_versions
+    then
+      dvm_failure
+      return
+    fi
 
-    while [ "$request_url" != "" ]
-    do
-      if ! dvm_request "$request_url" "--include"
-      then
-        dvm_print_error "failed to get remote versions."
-        dvm_failure
-        return
-      fi
+    tmp_versions=$(echo "$DVM_REMOTE_VERSIONS" | grep "$version_prefix" | tail -n 1)
+    if [ -z "$tmp_versions" ]
+    then
+      dvm_print_error "no version found by $search_text"
+      dvm_failure
+      return
+    fi
 
-      tmp_versions=$(echo "$DVM_REQUEST_RESPONSE" | sed 's/"/\n/g' | grep tag_name -A 2 | grep v | grep "$version_prefix" | head -n 1)
-      if [ -n "$tmp_versions" ]
-      then
-        dvm_debug "matched version found $tmp_versions"
-        DVM_TARGET_VERSION="$tmp_versions"
-        return
-      fi
-
-      request_url=$(echo "$DVM_REQUEST_RESPONSE" | grep "link:" | sed 's/,/\n/g' | grep "rel=\"next\"" \
-        | sed 's/[<>]/\n/g' | grep "http")
-      dvm_debug "get releases by prefix next page url: $request_url"
-    done
-
-    dvm_print_error "no version found by $search_text"
-    dvm_failure
+    dvm_debug "matched version found $tmp_versions"
+    DVM_TARGET_VERSION="$tmp_versions"
+    DVM_INSTALL_SKIP_VALIDATION=true
   }
 
   # Install Deno with the specific version, it'll try to get version from the
@@ -1449,6 +1440,28 @@ export DVM_VERSION="v0.8.3"
 ## Command ls-remote ##
 #######################
 {
+  # Try to get all remote version from the local cache or the remote server.
+  dvm_get_remote_versions() {
+    if [ ! -d "$DVM_DIR/cache" ]
+    then
+      mkdir "$DVM_DIR/cache"
+    fi
+
+    if [ "$(find "$DVM_DIR/cache/remote-versions" -mmin -15 2>/dev/null)" ]
+    then
+      DVM_REMOTE_VERSIONS="$(cat "$DVM_DIR/cache/remote-versions")"
+      return
+    fi
+
+    if ! dvm_get_versions_from_network
+    then
+      dvm_failure
+      return
+    fi
+
+    echo "$DVM_REMOTE_VERSIONS" >> "$DVM_DIR/cache/remote-versions"
+  }
+
   # Call GitHub API to getting all versions (release tag names) from the
   # Deno repo.
   dvm_get_versions_from_network() {
@@ -1483,7 +1496,7 @@ export DVM_VERSION="v0.8.3"
   # Get all available versions from network, and list them with installation
   # status.
   dvm_list_remote_versions() {
-    if ! dvm_get_versions_from_network
+    if ! dvm_get_remote_versions
     then
       return
     fi
@@ -1538,12 +1551,12 @@ export DVM_VERSION="v0.8.3"
       dvm_download_deno dvm_download_file dvm_extract_file dvm_failure \
       dvm_fix_invalid_versions dvm_get_current_version \
       dvm_get_dvm_latest_version dvm_get_latest_version dvm_get_package_data \
-      dvm_get_profile_file dvm_get_remote_version_by_prefix dvm_get_version \
-      dvm_get_version_from_dvmrc dvm_get_version_by_param dvm_get_versions_from_network dvm_has \
-      dvm_install_deno dvm_install_deno_by_binary dvm_install_deno_by_source \
-      dvm_install_version dvm_is_version_prefix dvm_list_aliases dvm_list_local_versions \
-      dvm_list_remote_versions dvm_locate_version dvm_parse_options dvm_print \
-      dvm_print_doctor_message dvm_print_current_version dvm_print_error \
+      dvm_get_profile_file dvm_get_remote_version_by_prefix dvm_get_remote_versions \
+      dvm_get_version dvm_get_version_from_dvmrc dvm_get_version_by_param \
+      dvm_get_versions_from_network dvm_has dvm_install_deno dvm_install_deno_by_binary \
+      dvm_install_deno_by_source dvm_install_version dvm_is_version_prefix dvm_list_aliases \
+      dvm_list_local_versions dvm_list_remote_versions dvm_locate_version dvm_parse_options \
+      dvm_print dvm_print_doctor_message dvm_print_current_version dvm_print_error \
       dvm_print_help dvm_print_warning dvm_print_with_color dvm_purge_dvm \
       dvm_read_dvmrc_file dvm_request dvm_rm_alias dvm_run_with_version \
       dvm_scan_and_fix_versions dvm_set_alias \
