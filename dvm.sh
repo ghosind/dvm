@@ -423,6 +423,7 @@ export DVM_VERSION="v0.8.3"
         version=$(head -n 1 "$file")
       else
         dvm_debug "no .dvmrc found in $file_dir"
+        return 1
       fi
 
       if [ -n "$version" ]
