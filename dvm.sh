@@ -1343,6 +1343,17 @@ export DVM_VERSION="v0.8.3"
 
     dvm_debug "validation target deno version: $version"
 
+    if [ -f "$DVM_DIR/cache/remote-versions" ]
+    then
+      dvm_debug "remote versions cache found, try to validate version $version"
+      if grep "$target_version" < "$DVM_DIR/cache/remote-versions" > /dev/null
+      then
+        dvm_debug "version $version found in cache"
+        return
+      fi
+      dvm_debug "no version $version found in cache, try to validate from network"
+    fi
+
     tag_url="https://api.github.com/repos/denoland/deno/releases/tags/$target_version"
 
     if ! dvm_request "$tag_url"
