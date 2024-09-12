@@ -1443,6 +1443,8 @@ export DVM_VERSION="v0.8.3"
 {
   # Try to get all remote version from the local cache or the remote server.
   dvm_get_remote_versions() {
+    local last_version
+
     if [ ! -d "$DVM_DIR/cache" ]
     then
       mkdir "$DVM_DIR/cache"
@@ -1452,24 +1454,38 @@ export DVM_VERSION="v0.8.3"
     then
       DVM_REMOTE_VERSIONS="$(cat "$DVM_DIR/cache/remote-versions")"
       return
+    elif [ -f "$DVM_DIR/cache/remote-versions" ]
+    then
+      last_version=$(tail -n 1 "$DVM_DIR/cache/remote-versions")
     fi
 
-    if ! dvm_get_versions_from_network
+    if ! dvm_get_versions_from_network "$last_version"
     then
       dvm_failure
       return
     fi
 
     echo "$DVM_REMOTE_VERSIONS" >> "$DVM_DIR/cache/remote-versions"
+
+    # re-read the full remote versions
+    DVM_REMOTE_VERSIONS="$(cat "$DVM_DIR/cache/remote-versions")"
   }
 
   # Call GitHub API to getting all versions (release tag names) from the
   # Deno repo.
+  # Parameters:
+  # - $1: the last version that already fetched (optional).
   dvm_get_versions_from_network() {
     local request_url
     local all_versions
     local size
     local tmp_versions
+    local expect_version
+
+    if [ "$#" != "0" ] && [ -n "$1" ]
+    then
+      expect_version="$1"
+    fi
 
     size=100
     request_url="https://api.github.com/repos/denoland/deno/releases?per_page=$size&page=1"
@@ -1485,6 +1501,12 @@ export DVM_VERSION="v0.8.3"
 
       tmp_versions=$(echo "$DVM_REQUEST_RESPONSE" | sed 's/"/\n/g' | grep tag_name -A 2 | grep v)
       all_versions="$all_versions\n$tmp_versions"
+
+      if [ -n "$expect_version" ] && echo "$tmp_versions" | grep "$expect_version" > /dev/null
+      then
+        all_versions=${all_versions%"${expect_version}"*}
+        break
+      fi
 
       request_url=$(echo "$DVM_REQUEST_RESPONSE" | grep "link:" | sed 's/,/\n/g' | grep "rel=\"next\"" \
         | sed 's/[<>]/\n/g' | grep "http")
