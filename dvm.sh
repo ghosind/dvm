@@ -892,6 +892,7 @@ export DVM_VERSION="v0.8.3"
     local version
     local url
     local temp_file
+    local registry
 
     version="$1"
 
@@ -902,12 +903,19 @@ export DVM_VERSION="v0.8.3"
 
     if [ -z "$DVM_INSTALL_REGISTRY" ]
     then
-      DVM_INSTALL_REGISTRY="https://github.com/denoland/deno/releases/download"
+      if ! [[ "$version" < "v1.0.1" ]] || [[ "$version" = "v1.0.0" ]]
+      then
+        registry="https://dl.deno.land/release"
+      else
+        registry="https://github.com/denoland/deno/releases/download"
+      fi
+    else
+      registry="$DVM_INSTALL_REGISTRY"
     fi
 
-    dvm_debug "regitry url: $DVM_INSTALL_REGISTRY"
+    dvm_debug "regitry url: $registry"
 
-    url="$DVM_INSTALL_REGISTRY/$version/$DVM_TARGET_NAME"
+    url="$registry/$version/$DVM_TARGET_NAME"
     temp_file="$DVM_DIR/download/$version/deno-downloading.$DVM_TARGET_TYPE"
 
     if dvm_download_file "$url" "$temp_file"
