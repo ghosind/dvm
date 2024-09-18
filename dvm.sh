@@ -992,7 +992,7 @@ export DVM_VERSION="v0.8.3"
 
     dvm_print "\ntry to getting deno latest version ..."
 
-    latest_url="https://api.github.com/repos/denoland/deno/releases/latest"
+    latest_url="https://dl.deno.land/release-latest.txt"
 
     if ! dvm_request "$latest_url"
     then
@@ -1001,7 +1001,7 @@ export DVM_VERSION="v0.8.3"
       return
     fi
 
-    tag_name=$(echo "$DVM_REQUEST_RESPONSE" | sed 's/"/\n/g' | grep tag_name -A 2 | grep v)
+    tag_name="$DVM_REQUEST_RESPONSE"
 
     if [ -z "$tag_name" ]
     then
