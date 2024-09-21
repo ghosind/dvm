@@ -224,7 +224,7 @@ export DVM_VERSION="v0.8.3"
         cmd="$cmd -v"
       fi
 
-      if [ -n "$GITHUB_API_TOKEN" ]
+      if [ -n "$GITHUB_API_TOKEN" ] && [[ "$url" = "https://api.github.com/"* ]]
       then
         cmd="$cmd -H \"Authorization: Bearer $GITHUB_API_TOKEN\""
       fi
