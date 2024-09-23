@@ -1477,10 +1477,12 @@ export DVM_VERSION="v0.8.3"
     if [ "$(find "$DVM_DIR/cache/remote-versions" -mmin -15 2>/dev/null)" ]
     then
       DVM_REMOTE_VERSIONS="$(cat "$DVM_DIR/cache/remote-versions")"
+      dvm_debug "remote versions cache found"
       return
     elif [ -f "$DVM_DIR/cache/remote-versions" ]
     then
       last_version=$(tail -n 1 "$DVM_DIR/cache/remote-versions")
+      dvm_debug "last version in cache: $last_version"
     fi
 
     if ! dvm_get_versions_from_network "$last_version"
@@ -1492,7 +1494,7 @@ export DVM_VERSION="v0.8.3"
     echo "$DVM_REMOTE_VERSIONS" >> "$DVM_DIR/cache/remote-versions"
 
     # re-read the full remote versions
-    DVM_REMOTE_VERSIONS="$(cat "$DVM_DIR/cache/remote-versions")"
+    DVM_REMOTE_VERSIONS=$(cat "$DVM_DIR/cache/remote-versions")
   }
 
   # Call GitHub API to getting all versions (release tag names) from the
