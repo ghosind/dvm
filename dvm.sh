@@ -321,6 +321,13 @@ export DVM_VERSION="v0.8.3"
   ## Version Handle ##
   ####################
   {
+    # Compare two version number.
+    # Parameters:
+    # $1, $2: the version number to compare.
+    dvm_compare_version() {
+      test "$(printf '%s\n' "$@" | sort -V | head -n 1)" != "$2"
+    }
+
     # Try to getting the active Deno version, and set it to `DVM_DENO_VERSION`
     # variable.
     dvm_get_current_version() {
@@ -1030,7 +1037,7 @@ export DVM_VERSION="v0.8.3"
 
     if [ "$DVM_TARGET_OS" = "Darwin" ] &&
       [ "$DVM_TARGET_ARCH" = 'arm64' ] &&
-      [[ "$target_version" < "v1.6.0" ]]
+      dvm_compare_version "$target_version" "v1.6.0"
     then
       dvm_print_error "Mac with M-series chips (aarch64-darwin) support deno v1.6.0 and above versions only."
       dvm_failure
@@ -1039,14 +1046,14 @@ export DVM_VERSION="v0.8.3"
 
     if [ "$DVM_TARGET_OS" = "Linux" ] &&
       [ "$DVM_TARGET_ARCH" = 'arm64' ] &&
-      [[ "$target_version" < "v1.40.3" ]]
+      dvm_compare_version "$target_version" "v1.40.3"
     then
       dvm_print_error "Linux with ARM64 chips (aarch64-linux) support deno v1.40.3 and above versions only."
       dvm_failure
       return
     fi
 
-    if [[ "$target_version" < "v0.36.0" ]]
+    if dvm_compare_version "$target_version" "v0.36.0"
     then
       DVM_TARGET_TYPE="gz"
       DVM_FILE_TYPE="gzip compressed data"
@@ -1588,7 +1595,7 @@ export DVM_VERSION="v0.8.3"
     # unset dvm functions
     unset -f dvm_build_deno dvm_check_alias_dir dvm_check_build_dependencies \
       dvm_check_local_deno_clone dvm_clean_download_cache \
-      dvm_clone_deno_source dvm_confirm_with_prompt \
+      dvm_clone_deno_source dvm_compare_version dvm_confirm_with_prompt \
       dvm_copy_build_target_to_versions_dir dvm_deactivate dvm_debug \
       dvm_download_deno dvm_download_file dvm_extract_file dvm_failure \
       dvm_fix_invalid_versions dvm_get_current_version \
