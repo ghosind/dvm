@@ -1201,10 +1201,16 @@ export DVM_VERSION="v0.8.3"
 
     case "$DVM_INSTALL_MODE" in
       "binary")
-        dvm_install_deno_by_binary "$version"
+        if ! dvm_install_deno_by_binary "$version"
+        then
+          return
+        fi
         ;;
       "source")
-        dvm_install_deno_by_source "$version"
+        if ! dvm_install_deno_by_source "$version"
+        then
+          return
+        fi
         ;;
       *)
         dvm_print_error "Unknown install mode: $DVM_INSTALL_MODE"
