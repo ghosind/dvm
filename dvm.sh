@@ -1115,7 +1115,6 @@ export DVM_VERSION="v0.8.3"
     fi
     version_prefix="$version_prefix\."
 
-
     if ! dvm_get_remote_versions
     then
       dvm_failure
@@ -1488,7 +1487,22 @@ export DVM_VERSION="v0.8.3"
     elif [ -f "$DVM_DIR/cache/remote-versions" ]
     then
       last_version=$(tail -n 1 "$DVM_DIR/cache/remote-versions")
-      dvm_debug "last version in cache: $last_version"
+      if [ -n "$last_version" ]
+      then
+        if ! dvm_get_latest_version
+        then
+          return
+        fi
+
+        dvm_debug "last version in cache: $last_version"
+        dvm_debug "latest version from network: $DVM_TARGET_VERSION"
+
+        if [ "$last_version" = "$DVM_TARGET_VERSION" ]
+        then
+          DVM_REMOTE_VERSIONS="$(cat "$DVM_DIR/cache/remote-versions")"
+          return
+        fi
+      fi
     fi
 
     if ! dvm_get_versions_from_network "$last_version"
