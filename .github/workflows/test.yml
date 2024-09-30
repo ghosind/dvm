@@ -19,6 +19,16 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Create dvm directory
+      run: mkdir -p $HOME/.dvm
+
+    - name: Read version caches
+      id: read_version_caches
+      uses: actions/cache@v4
+      with:
+        key: ${{ runner.os }}-version-caches
+        path: $HOME/.dvm/cache
+
     - name: Run test cases
       run: |
         ./test/test_install_version.sh
@@ -26,3 +36,10 @@ jobs:
         ./test/test_alias.sh
         ./test/test_uninstall_version.sh
         ./test/test_ls_remote.sh
+
+    - name: Save version caches
+      id: store_version_caches
+      uses: actions/cache@v4
+      with:
+        key: ${{ runner.os }}-version-caches
+        path: $HOME/.dvm/cache
