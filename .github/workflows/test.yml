@@ -20,14 +20,14 @@ jobs:
     - uses: actions/checkout@v4
 
     - name: Create dvm directory
-      run: mkdir -p $HOME/.dvm
+      run: mkdir -p ~/.dvm
 
     - name: Read version caches
       id: read_version_caches
       uses: actions/cache@v4
       with:
         key: ${{ runner.os }}-version-caches
-        path: $HOME/.dvm/cache
+        path: ~/.dvm/cache
 
     - name: Run test cases
       run: |
@@ -42,4 +42,4 @@ jobs:
       uses: actions/cache@v4
       with:
         key: ${{ runner.os }}-version-caches
-        path: $HOME/.dvm/cache
+        path: ~/.dvm/cache
