@@ -1123,6 +1123,8 @@ export DVM_VERSION="v0.8.3"
       return
     fi
 
+    dvm_debug "remote versions: $DVM_REMOTE_VERSIONS"
+
     tmp_versions=$(echo "$DVM_REMOTE_VERSIONS" | grep -E "$version_prefix")
     dvm_debug "filtered versions: $tmp_versions"
 
