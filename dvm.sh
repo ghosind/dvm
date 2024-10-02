@@ -1489,7 +1489,7 @@ export DVM_VERSION="v0.8.3"
       mkdir "$DVM_DIR/cache"
     fi
 
-    if [ "$(find "$DVM_DIR/cache/remote-versions" -mmin -15 2>/dev/null)" ]
+    if [ "$(find "$DVM_DIR/cache/remote-versions" -mmin -15 2>/dev/null)" ] && [ -s "$DVM_DIR/cache/remote-versions" ]
     then
       DVM_REMOTE_VERSIONS="$(cat "$DVM_DIR/cache/remote-versions")"
       dvm_debug "remote versions cache found"
