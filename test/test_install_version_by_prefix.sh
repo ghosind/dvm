@@ -20,6 +20,6 @@ then
     dvm_test_error "Deno v1.2 should not be installed on MacOS with m-chip"
   fi
 else
-  dvm install 1.2 || dvm_test_error "run 'dvm install 1.2' failed"
+  dvm install 1.2 --verbose || dvm_test_error "run 'dvm install 1.2' failed"
   dvm ls | grep "v1.2.3" || dvm_test_error "run 'dvm ls' failed"
 fi
