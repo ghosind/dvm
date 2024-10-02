@@ -1123,7 +1123,10 @@ export DVM_VERSION="v0.8.3"
       return
     fi
 
-    tmp_versions=$(echo "$DVM_REMOTE_VERSIONS" | grep -E "$version_prefix" | tail -n 1)
+    tmp_versions=$(echo "$DVM_REMOTE_VERSIONS" | grep -E "$version_prefix")
+    dvm_debug "filtered versions: $tmp_versions"
+
+    tmp_versions=$(echo "$tmp_versions" | tail -n 1)
     if [ -z "$tmp_versions" ]
     then
       dvm_print_error "no version found by $search_text"
