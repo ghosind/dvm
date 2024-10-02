@@ -1180,6 +1180,7 @@ export DVM_VERSION="v0.8.3"
 
     if ! dvm_install_deno "$version"
     then
+      dvm_failure
       return
     fi
 
@@ -1202,12 +1203,14 @@ export DVM_VERSION="v0.8.3"
       "binary")
         if ! dvm_install_deno_by_binary "$version"
         then
+          dvm_failure
           return
         fi
         ;;
       "source")
         if ! dvm_install_deno_by_source "$version"
         then
+          dvm_failure
           return
         fi
         ;;
@@ -1228,6 +1231,7 @@ export DVM_VERSION="v0.8.3"
 
     if ! dvm_get_package_data "$version"
     then
+      dvm_failure
       return
     fi
 
@@ -1236,6 +1240,7 @@ export DVM_VERSION="v0.8.3"
       dvm_print "Downloading and installing deno $version..."
       if ! dvm_download_deno "$version"
       then
+        dvm_failure
         return
       fi
     else
