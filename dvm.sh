@@ -1480,36 +1480,43 @@ export DVM_VERSION="v0.8.3"
   # Try to get all remote version from the local cache or the remote server.
   dvm_get_remote_versions() {
     local last_version
+    local cache_file
+
+    cache_file="$DVM_DIR/cache/remote-versions"
 
     if [ ! -d "$DVM_DIR/cache" ]
     then
       mkdir "$DVM_DIR/cache"
     fi
 
-    if [ "$(find "$DVM_DIR/cache/remote-versions" -mmin -15 2>/dev/null)" ]
+    if [ -f "$cache_file" ] && [ "$(head "$cache_file" -n 1)" = "v0.1.0" ]
     then
-      DVM_REMOTE_VERSIONS="$(cat "$DVM_DIR/cache/remote-versions")"
-      dvm_debug "remote versions cache found"
-      return
-    elif [ -f "$DVM_DIR/cache/remote-versions" ]
-    then
-      last_version=$(tail -n 1 "$DVM_DIR/cache/remote-versions")
-      if [ -n "$last_version" ]
+      if [ "$(find "$cache_file" -mmin -15 2>/dev/null)" ]
       then
-        if ! dvm_get_latest_version
+        DVM_REMOTE_VERSIONS="$(cat "$cache_file")"
+        dvm_debug "remote versions cache found"
+        return
+      else
+        last_version="$(tail -n 1 "$cache_file")"
+        if [ -n "$last_version" ]
         then
-          return
-        fi
+          if ! dvm_get_latest_version
+          then
+            return
+          fi
 
-        dvm_debug "last version in cache: $last_version"
-        dvm_debug "latest version from network: $DVM_TARGET_VERSION"
+          dvm_debug "last version in cache: $last_version"
+          dvm_debug "latest version from network: $DVM_TARGET_VERSION"
 
-        if [ "$last_version" = "$DVM_TARGET_VERSION" ]
-        then
-          DVM_REMOTE_VERSIONS="$(cat "$DVM_DIR/cache/remote-versions")"
-          return
+          if [ "$last_version" = "$DVM_TARGET_VERSION" ]
+          then
+            DVM_REMOTE_VERSIONS="$(cat "$cache_file")"
+            return
+          fi
         fi
       fi
+    else
+      dvm_debug "remote versions cache not found or it's invalid"
     fi
 
     if ! dvm_get_versions_from_network "$last_version"
@@ -1518,10 +1525,10 @@ export DVM_VERSION="v0.8.3"
       return
     fi
 
-    echo "$DVM_REMOTE_VERSIONS" >> "$DVM_DIR/cache/remote-versions"
+    echo "$DVM_REMOTE_VERSIONS" >> "$cache_file"
 
     # re-read the full remote versions
-    DVM_REMOTE_VERSIONS=$(cat "$DVM_DIR/cache/remote-versions")
+    DVM_REMOTE_VERSIONS=$(cat "$cache_file")
   }
 
   # Call GitHub API to getting all versions (release tag names) from the
