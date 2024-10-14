@@ -1561,7 +1561,7 @@ export DVM_VERSION="v0.8.3"
         break
       fi
 
-      request_url=$(echo "$DVM_REQUEST_RESPONSE" | grep "link:" | sed 's/,/\n/g' | grep "rel=\"next\"" \
+      request_url=$(echo "$DVM_REQUEST_RESPONSE" | grep -i "link:" | sed 's/,/\n/g' | grep "rel=\"next\"" \
         | sed 's/[<>]/\n/g' | grep "http")
       dvm_debug "list releases next page url: $request_url"
     done
