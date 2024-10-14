@@ -1115,13 +1115,15 @@ export DVM_VERSION="v0.8.3"
     fi
     version_prefix="$version_prefix\."
 
+    dvm_debug "searching version prefix: $version_prefix"
+
     if ! dvm_get_remote_versions
     then
       dvm_failure
       return
     fi
 
-    tmp_versions=$(echo "$DVM_REMOTE_VERSIONS" | grep "$version_prefix" | tail -n 1)
+    tmp_versions=$(echo "$DVM_REMOTE_VERSIONS" | grep -E "$version_prefix" | tail -n 1)
     if [ -z "$tmp_versions" ]
     then
       dvm_print_error "no version found by $search_text"
@@ -1559,7 +1561,7 @@ export DVM_VERSION="v0.8.3"
         break
       fi
 
-      request_url=$(echo "$DVM_REQUEST_RESPONSE" | grep "link:" | sed 's/,/\n/g' | grep "rel=\"next\"" \
+      request_url=$(echo "$DVM_REQUEST_RESPONSE" | grep -i "link:" | sed 's/,/\n/g' | grep "rel=\"next\"" \
         | sed 's/[<>]/\n/g' | grep "http")
       dvm_debug "list releases next page url: $request_url"
     done
