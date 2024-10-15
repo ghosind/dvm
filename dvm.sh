@@ -502,6 +502,16 @@ export DVM_VERSION="v0.8.3"
 ## Command clean ##
 ###################
 {
+  # Remove version and download caches.
+  dvm_clean_caches() {
+    if [ -d "$DVM_DIR/cache" ]
+    then
+      rm -rf "$DVM_DIR/cache"
+    fi
+
+    dvm_clean_download_cache
+  }
+
   # Clean downloading caches in the disk.
   dvm_clean_download_cache() {
     if [ ! -d "$DVM_DIR/download" ]
@@ -532,11 +542,6 @@ export DVM_VERSION="v0.8.3"
       rmdir "$cache_path"
     done
   }
-
-  if [ -d "$DVM_DIR/cache" ]
-  then
-    rm -rf "$DVM_DIR/cache"
-  fi
 }
 
 #####################
@@ -1633,7 +1638,7 @@ export DVM_VERSION="v0.8.3"
     unset -f dvm
     # unset dvm functions
     unset -f dvm_build_deno dvm_check_alias_dir dvm_check_build_dependencies \
-      dvm_check_local_deno_clone dvm_clean_download_cache \
+      dvm_check_local_deno_clone dvm_clean_caches dvm_clean_download_cache \
       dvm_clone_deno_source dvm_compare_version dvm_confirm_with_prompt \
       dvm_copy_build_target_to_versions_dir dvm_deactivate dvm_debug \
       dvm_download_deno dvm_download_file dvm_extract_file dvm_failure \
@@ -1932,8 +1937,7 @@ dvm() {
 
     ;;
   "clean")
-    # remove all download packages.
-    dvm_clean_download_cache
+    dvm_clean_caches
 
     ;;
   "current")
