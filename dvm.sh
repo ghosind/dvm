@@ -532,6 +532,11 @@ export DVM_VERSION="v0.8.3"
       rmdir "$cache_path"
     done
   }
+
+  if [ -d "$DVM_DIR/cache" ]
+  then
+    rm -rf "$DVM_DIR/cache"
+  fi
 }
 
 #####################
