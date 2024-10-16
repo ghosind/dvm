@@ -191,10 +191,11 @@ DVM支持的命令包括有：
 | 命令 | 使用方法 | 描述 |
 |:-------:|:-----:|:------------|
 | `install` | `dvm install` | 下载并安装从`.dvmrc`读取的指定版本或最新deno版本 |
-| | `dvm install <version>` | 下载并安装指定的版本 |
+| | `dvm install <version \| prefix>` | 下载并安装指定的版本，或安装满足指定前缀的最新版本 |
 | | `dvm install <version> --registry=<registry>` | 通过指定的镜像下载deno |
 | | `dvm install <version> --skip-validation` | 下载deno前不对版本进行校验 |
 | | `dvm install <version> --from-source` | 编译源码并安装Deno |
+| | `dvm install <version> --skip-download-cache` | 不使用已下载的文件，重新下载并安装 |
 | `uninstall` | `dvm uninstall <version>` | 卸载指定的版本 |
 | `use` | `dvm use` | 将指定的版本设置为当前使用的版本，未指定版本将从当前目录下的`.dvmrc`文件中读取 |
 | | `dvm use <version>` | 将指定的版本设置为当前使用的版本 |
@@ -210,7 +211,7 @@ DVM支持的命令包括有：
 | `which` | `dvm which` | 显示指定版本Deno安装的目录，未指定版本将从当前目录下的`.dvmrc`文件中读取 |
 | | `dvm which current` | 显示当前使用的版本Deno安装的目录 |
 | | `dvm which <version>` | 显示指定版本Deno安装的目录 |
-| `clean` | `dvm clean` | 清除下载缓存 |
+| `clean` | `dvm clean` | 清除下载及版本信息缓存 |
 | `deactivate` | `dvm deactivate` | 取消当前shell中活跃的Deno |
 | `doctor` | `dvm doctor` | 列出存在问题的版本（未安装成功/版本号错误） |
 | | `dvm doctor --fix` | 扫描并修复存在问题的版本 |
