@@ -231,10 +231,11 @@ DVM supported the following commands:
 | Command | Usage | Description |
 |:-------:|:-----:|:------------|
 | `install` | `dvm install` | Download and install the latest version or the version reading from `.dvmrc` file. |
-| | `dvm install <version>` | Download and install the specified version from source. |
+| | `dvm install <version \| prefix>` | Download and install the specified version, or the latest version with the specified prefix. |
 | | `dvm install <version> --registry=<registry>` | Download and install deno with the specified registry. |
 | | `dvm install <version> --skip-validation` | Do not validate deno version before trying to download it. |
 | | `dvm install <version> --from-source` | Build and install Deno from source code. |
+| | `dvm install <version> --skip-download-cache` | Download and install Deno without using downloaded cache. |
 | `uninstall` | `dvm uninstall <version>` | Uninstall the specified version. |
 | `use` | `dvm use` | Use the specified version read from .dvmrc. |
 | | `dvm use <version>` | Use the specified version that passed by argument. |
@@ -250,7 +251,7 @@ DVM supported the following commands:
 | `which` | `dvm which` | Display the path of the version that specified in .dvmrc. |
 | | `dvm which current` | Display the path of the current version. |
 | | `dvm which <version>` | Display the path of specified version. |
-| `clean` | `dvm clean` | Remove all downloaded packages. |
+| `clean` | `dvm clean` | Remove all downloaded packages and the cached versions. |
 | `deactivate` | `dvm deactivate` | Deactivate Deno on current shell. |
 | `doctor` | `dvm doctor` | Find invalid / corrupted versions. |
 | | `dvm doctor --fix` | Find and fix invalid / corrupted versions. |
