@@ -13,7 +13,7 @@ export DVM_VERSION="v0.9.1"
 ######################
 {
   ################
-  ## Environent ##
+  ## Environment ##
   ################
   {
     # Check aliases directory, and try to create it if is not existed.
