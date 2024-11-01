@@ -1531,6 +1531,7 @@ export DVM_VERSION="v0.9.0"
       fi
     else
       dvm_debug "remote versions cache not found or it's invalid"
+      rm -rf "$cache_file"
     fi
 
     if ! dvm_get_versions_from_network "$last_version"
