@@ -1503,7 +1503,7 @@ export DVM_VERSION="v0.9.0"
       mkdir "$DVM_DIR/cache"
     fi
 
-    if [ -f "$cache_file" ] && [ "$(head "$cache_file" -n 1)" = "v0.1.0" ]
+    if [ -f "$cache_file" ] && [ "$(head -n 1 "$cache_file")" = "v0.1.0" ]
     then
       if [ "$(find "$cache_file" -mmin -15 2>/dev/null)" ]
       then
