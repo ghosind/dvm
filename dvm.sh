@@ -1503,7 +1503,7 @@ export DVM_VERSION="v0.9.0"
       mkdir "$DVM_DIR/cache"
     fi
 
-    if [ -f "$cache_file" ] && [ "$(head "$cache_file" -n 1)" = "v0.1.0" ]
+    if [ -f "$cache_file" ] && [ "$(head -n 1 "$cache_file")" = "v0.1.0" ]
     then
       if [ "$(find "$cache_file" -mmin -15 2>/dev/null)" ]
       then
@@ -1531,6 +1531,7 @@ export DVM_VERSION="v0.9.0"
       fi
     else
       dvm_debug "remote versions cache not found or it's invalid"
+      rm -rf "$cache_file"
     fi
 
     if ! dvm_get_versions_from_network "$last_version"
