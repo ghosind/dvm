@@ -374,7 +374,7 @@ export DVM_VERSION="v0.9.0"
         DVM_TARGET_VERSION="v$DVM_TARGET_VERSION"
       fi
 
-      result=$(echo "$version" | grep -E "^v[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+")
+      result=$(echo "$DVM_TARGET_VERSION" | grep -E "^v[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+")
       if [ -n "$result" ]
       then
         return
@@ -403,6 +403,8 @@ export DVM_VERSION="v0.9.0"
       then
         return 1
       fi
+
+      dvm_debug "try to get version by param: $1"
 
       if [ -f "$DVM_DIR/aliases/$1" ]
       then
