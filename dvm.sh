@@ -384,8 +384,25 @@ export DVM_VERSION="v0.9.0"
       dvm_debug "try to get the latest version with the prefix $DVM_TARGET_VERSION"
 
       prefix="$DVM_TARGET_VERSION"\.
+      DVM_TARGET_VERSION=""
 
-      DVM_TARGET_VERSION=$(ls "$DVM_DIR/versions" | grep -E "$prefix" | tail -n 1)
+      for version in "$DVM_DIR/versions"/*
+      do
+        if [[ "$version" == *"$prefix"* ]]
+        then
+          result=${version##*/}
+          dvm_debug "version $result matched to the prefix $DVM_TARGET_VERSION"
+        fi
+      done
+
+      if [ -z "$result" ]
+      then
+        dvm_print_error "no version found with the prefix $DVM_TARGET_VERSION"
+        dvm_failure
+      else
+        dvm_debug "found the latest version $result with the prefix $DVM_TARGET_VERSION"
+        DVM_TARGET_VERSION="$result"
+      fi
     }
 
     # Try to get a valid and installed Deno version from the parameters.
