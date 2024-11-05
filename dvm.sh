@@ -356,16 +356,53 @@ export DVM_VERSION="v0.9.1"
     # Parameters:
     # $1...: the Deno version.
     dvm_get_version() {
-      local version
+      local result
+      local prefix
 
-      dvm_get_version_by_param "$@"
+      if ! dvm_get_version_by_param "$@"
+      then
+        dvm_get_version_from_dvmrc
+      fi
 
-      if [ -n "$DVM_TARGET_VERSION" ]
+      if [ -z "$DVM_TARGET_VERSION" ]
+      then
+        return
+      fi
+      
+      if [[ "$DVM_TARGET_VERSION" != "v"* ]]
+      then
+        DVM_TARGET_VERSION="v$DVM_TARGET_VERSION"
+      fi
+
+      result=$(echo "$DVM_TARGET_VERSION" | grep -E "^v[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+")
+      if [ -n "$result" ]
       then
         return
       fi
 
-      dvm_get_version_from_dvmrc
+      dvm_debug "$DVM_TARGET_VERSION is a prefix"
+      dvm_debug "try to get the latest version with the prefix $DVM_TARGET_VERSION"
+
+      prefix="$DVM_TARGET_VERSION"\.
+      DVM_TARGET_VERSION=""
+
+      for version in "$DVM_DIR/versions"/*
+      do
+        if [[ "$version" == *"$prefix"* ]]
+        then
+          result=${version##*/}
+          dvm_debug "version $result matched to the prefix $DVM_TARGET_VERSION"
+        fi
+      done
+
+      if [ -z "$result" ]
+      then
+        dvm_print_error "no version found with the prefix $DVM_TARGET_VERSION"
+        dvm_failure
+      else
+        dvm_debug "found the latest version $result with the prefix $DVM_TARGET_VERSION"
+        DVM_TARGET_VERSION="$result"
+      fi
     }
 
     # Try to get a valid and installed Deno version from the parameters.
@@ -381,8 +418,10 @@ export DVM_VERSION="v0.9.1"
 
       if [ "$#" = "0" ]
       then
-        return
+        return 1
       fi
+
+      dvm_debug "try to get version by param: $1"
 
       if [ -f "$DVM_DIR/aliases/$1" ]
       then
