@@ -1534,6 +1534,14 @@ export DVM_VERSION="v0.9.1"
   dvm_get_remote_versions() {
     local last_version
     local cache_file
+    local unstables
+
+    if [ -f "$DVM_DIR/unstable-versions" ] && dvm_get_versions_from_deno_versions_json
+    then
+      unstables=$(cat "$DVM_DIR/unstable-versions")
+      DVM_REMOTE_VERSIONS="$unstables\n$DVM_REMOTE_VERSIONS"
+      return
+    fi
 
     cache_file="$DVM_DIR/cache/remote-versions"
 
@@ -1583,6 +1591,23 @@ export DVM_VERSION="v0.9.1"
 
     # re-read the full remote versions
     DVM_REMOTE_VERSIONS=$(cat "$cache_file")
+  }
+
+  # Call https://deno.com/versions.json to getting all stable versions.
+  dvm_get_versions_from_deno_versions_json() {
+    local versions
+
+    dvm_debug "getting versions from deno.com/versions.json"
+
+    if ! dvm_request "https://deno.com/versions.json"
+    then
+      dvm_print_error "failed to list remote versions from deno.com."
+      dvm_failure
+      return
+    fi
+
+    versions=${DVM_REQUEST_RESPONSE#*cli}
+    DVM_REMOTE_VERSIONS=$(echo "$versions" | sed 's/"/\n/g' | grep -E "v[0-9]+\.[0-9]+\.[0-9]+" | sort -V)
   }
 
   # Call GitHub API to getting all versions (release tag names) from the
@@ -1690,7 +1715,8 @@ export DVM_VERSION="v0.9.1"
       dvm_get_dvm_latest_version dvm_get_latest_version dvm_get_package_data \
       dvm_get_profile_file dvm_get_remote_version_by_prefix dvm_get_remote_versions \
       dvm_get_version dvm_get_version_from_dvmrc dvm_get_version_by_param \
-      dvm_get_versions_from_network dvm_has dvm_install_deno dvm_install_deno_by_binary \
+      dvm_get_versions_from_deno_versions_json dvm_get_versions_from_network dvm_has \
+      dvm_install_deno dvm_install_deno_by_binary \
       dvm_install_deno_by_source dvm_install_version dvm_is_version_prefix dvm_list_aliases \
       dvm_list_local_versions dvm_list_remote_versions dvm_locate_version dvm_parse_options \
       dvm_print dvm_print_doctor_message dvm_print_current_version dvm_print_error \
