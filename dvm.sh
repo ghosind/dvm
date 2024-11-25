@@ -116,7 +116,7 @@ export DVM_VERSION="v0.9.1"
   ## Input ##
   ###########
   {
-    # Print a prompt message, and get the comfirm (yes or no) from the user
+    # Print a prompt message, and get the confirm (yes or no) from the user
     # input.
     # Parameters:
     # $1: the prompt message.
@@ -811,7 +811,7 @@ export DVM_VERSION="v0.9.1"
     dvm_print "  --verbose                         Run in verbose mode, it'll print debug messages."
     dvm_print
     dvm_print "Note:"
-    dvm_print "  <param> is required paramter, [param] is optional paramter."
+    dvm_print "  <param> is required parameter, [param] is optional parameter."
     dvm_print
     dvm_print "Examples:"
     dvm_print "  dvm install v1.0.0"
@@ -897,7 +897,7 @@ export DVM_VERSION="v0.9.1"
     ret=$(git remote -v | grep "deno.git")
     if [ -z "$ret" ]
     then
-      dvm_print_warning "The local clone of Deno source is invalid, trying to reclone..."
+      dvm_print_warning "The local clone of Deno source is invalid, trying to re-clone..."
       rm -rf "$DVM_DIR/deno_code"
 
       cd "$old_dir" || return
@@ -971,7 +971,7 @@ export DVM_VERSION="v0.9.1"
       registry="$DVM_INSTALL_REGISTRY"
     fi
 
-    dvm_debug "regitry url: $registry"
+    dvm_debug "registry url: $registry"
 
     url="$registry/$version/$DVM_TARGET_NAME"
     temp_file="$DVM_DIR/download/$version/deno-downloading.$DVM_TARGET_TYPE"
@@ -1942,7 +1942,7 @@ export DVM_VERSION="v0.9.1"
 
       if [ -n "$deno_version" ] && [ "$DVM_TARGET_VERSION" != "v$deno_version" ]
       then
-        # print warnning message when deno version is different with parameter.
+        # print warning message when deno version is different with parameter.
         dvm_print_warning "You may had upgraded this version, it is v$deno_version now."
       fi
 
