@@ -1534,14 +1534,16 @@ export DVM_VERSION="v0.9.1"
   dvm_get_remote_versions() {
     local last_version
     local cache_file
-    local unstables
+    local unstable_versions
 
     if [ -f "$DVM_DIR/unstable-versions" ] && dvm_get_versions_from_deno_versions_json
     then
-      unstables=$(cat "$DVM_DIR/unstable-versions")
-      DVM_REMOTE_VERSIONS="$unstables\n$DVM_REMOTE_VERSIONS"
+      unstable_versions=$(cat "$DVM_DIR/unstable-versions")
+      DVM_REMOTE_VERSIONS=$(echo -e "$unstable_versions\n$DVM_REMOTE_VERSIONS")
       return
     fi
+
+    dvm_debug "Failed to get unstable versions from deno.com/versions.json, fallback to GitHub API"
 
     cache_file="$DVM_DIR/cache/remote-versions"
 
@@ -1607,7 +1609,7 @@ export DVM_VERSION="v0.9.1"
     fi
 
     versions=${DVM_REQUEST_RESPONSE#*cli}
-    DVM_REMOTE_VERSIONS=$(echo "$versions" | sed 's/"/\n/g' | grep -E "v[0-9]+\.[0-9]+\.[0-9]+" | sort -V)
+    DVM_REMOTE_VERSIONS=$(echo "$versions" | sed 's/"/\n/g' | grep -E "^v[0-9]+\.[0-9]+\.[0-9]+$" | sort -V)
   }
 
   # Call GitHub API to getting all versions (release tag names) from the
