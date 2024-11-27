@@ -974,16 +974,15 @@ export DVM_VERSION="v0.9.1"
     dvm_debug "registry url: $registry"
 
     url="$registry/$version/$DVM_TARGET_NAME"
-    temp_file="$DVM_DIR/download/$version/deno-downloading.$DVM_TARGET_TYPE"
+    temp_file="$DVM_DIR/download/$version/$DVM_TARGET_NAME.downloading"
 
     if dvm_download_file "$url" "$temp_file"
     then
       local file_type
       file_type=$(file "$temp_file")
 
-      if [[ $file_type == *"$DVM_FILE_TYPE"* ]]
+      if dvm_validate_download_file "$version"
       then
-        mv "$temp_file" "$DVM_DIR/download/$version/deno.$DVM_TARGET_TYPE"
         return
       fi
     fi
@@ -1400,6 +1399,27 @@ export DVM_VERSION="v0.9.1"
     fi
   }
 
+  # Validate the downloaded file, and move it to the versions directory if the
+  # file is valid.
+  # Parameters:
+  # - $1: The Deno version to install.
+  dvm_validate_download_file() {
+    local version
+    local download_file
+
+    version="$1"
+    download_file="$DVM_DIR/download/$version/$DVM_TARGET_NAME.downloading"
+
+    if [[ $file_type == *"$DVM_FILE_TYPE"* ]]
+    then
+      mv "$download_file" "$DVM_DIR/download/$version/deno.$DVM_TARGET_TYPE"
+      return
+    else
+      dvm_print_error "Unmatched file type: $file_type"
+      dvm_failure
+    fi
+  }
+
   # Get remote data by GitHub api (Get a release by tag name) to validate the
   # version from the parameter.
   # Parameters:
@@ -1727,7 +1747,7 @@ export DVM_VERSION="v0.9.1"
       dvm_scan_and_fix_versions dvm_set_alias \
       dvm_set_default_alias_after_install dvm_set_default_env dvm_strip_path \
       dvm_success dvm_uninstall_version dvm_update_dvm dvm_use_version \
-      dvm_validate_build_target dvm_validate_remote_version
+      dvm_validate_build_target dvm_validate_download_file dvm_validate_remote_version
     # unset dvm shell completion functions
     unset -f _dvm_add_aliases_to_opts _dvm_add_versions_to_opts \
       _dvm_has_active_version _dvm_add_options_to_opts _dvm_completion
