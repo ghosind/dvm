@@ -165,16 +165,18 @@ export DVM_VERSION="v0.9.1"
       local url
       local file
       local cmd
+      local downloading_file
 
       url="$1"
       file="$2"
+      downloading_file="$file.downloading"
 
       dvm_debug "downloading url: $url"
       dvm_debug "download destination file: $file"
 
       if dvm_has curl
       then
-        cmd="curl -LJ $url -o $file"
+        cmd="curl -LJ $url -o $downloading_file"
         if [ "$DVM_QUIET_MODE" = true ]
         then
           cmd="$cmd -s"
@@ -192,8 +194,14 @@ export DVM_VERSION="v0.9.1"
 
       if ! eval "$cmd"
       then
+        # remove failed download file
+        rm -f "$downloading_file"
         dvm_failure
+        return
       fi
+
+      # rename the downloading file to the target file
+      mv "$downloading_file" "$file"
     }
 
     # Send a GET request to the specific url, and save response to the
@@ -974,7 +982,7 @@ export DVM_VERSION="v0.9.1"
     dvm_debug "registry url: $registry"
 
     url="$registry/$version/$DVM_TARGET_NAME"
-    temp_file="$DVM_DIR/download/$version/$DVM_TARGET_NAME.downloading"
+    temp_file="$DVM_DIR/download/$version/$DVM_TARGET_NAME"
 
     if dvm_download_file "$url" "$temp_file"
     then
