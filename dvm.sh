@@ -1416,7 +1416,7 @@ export DVM_VERSION="v0.9.1"
     local download_file
 
     version="$1"
-    download_file="$DVM_DIR/download/$version/$DVM_TARGET_NAME.downloading"
+    download_file="$DVM_DIR/download/$version/$DVM_TARGET_NAME"
 
     if [[ $file_type == *"$DVM_FILE_TYPE"* ]]
     then
