@@ -1534,16 +1534,18 @@ export DVM_VERSION="v0.9.1"
   dvm_get_remote_versions() {
     local last_version
     local cache_file
-    local unstable_versions
+    local legacy_versions
 
-    if [ -f "$DVM_DIR/unstable-versions" ] && dvm_get_versions_from_deno_versions_json
+    # deno.com/versions.json does not provide the versions before v1.0.0, so we put these version
+    # into the static legacy versions file.
+    if [ -f "$DVM_DIR/legacy-versions" ] && dvm_get_versions_from_deno_versions_json
     then
-      unstable_versions=$(cat "$DVM_DIR/unstable-versions")
-      DVM_REMOTE_VERSIONS=$(echo -e "$unstable_versions\n$DVM_REMOTE_VERSIONS")
+      legacy_versions=$(cat "$DVM_DIR/legacy-versions")
+      DVM_REMOTE_VERSIONS=$(echo -e "$legacy_versions\n$DVM_REMOTE_VERSIONS")
       return
     fi
 
-    dvm_debug "Failed to get unstable versions from deno.com/versions.json, fallback to GitHub API"
+    dvm_debug "Failed to get Deno versions from deno.com/versions.json, fallback to GitHub API"
 
     cache_file="$DVM_DIR/cache/remote-versions"
 
