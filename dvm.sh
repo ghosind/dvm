@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Deno Version Manager
-# Copyright (C) 2020 ~ 2024, Chen Su and all contributors.
+# Copyright (C) 2020 ~ 2025, Chen Su and all contributors.
 # A lightweight, and powerful Deno version manager for MacOS, Linux, WSL, and
 # Windows with Bash.
 

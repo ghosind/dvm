@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Installation script for Deno Version Manager
-# Copyright (C) 2020 ~ 2024, Chen Su and all contributors.
+# Copyright (C) 2020 ~ 2025, Chen Su and all contributors.
 
 # Ensure the script is downloaded completely
 {
