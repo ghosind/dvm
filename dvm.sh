@@ -60,7 +60,6 @@ export DVM_VERSION="v0.9.1"
 
       # Set global variables to default values
       DVM_DENO_VERSION=""
-      DVM_FILE_TYPE=""
       DVM_INSTALL_MODE="binary"
       DVM_INSTALL_REGISTRY=""
       DVM_INSTALL_SKIP_VALIDATION=false
@@ -987,9 +986,6 @@ export DVM_VERSION="v0.9.1"
 
     if dvm_download_file "$url" "$temp_file"
     then
-      local file_type
-      file_type=$(file "$temp_file")
-
       if dvm_validate_download_file "$version" "$url"
       then
         return
@@ -1117,10 +1113,8 @@ export DVM_VERSION="v0.9.1"
     if dvm_compare_version "$target_version" "v0.36.0"
     then
       DVM_TARGET_TYPE="gz"
-      DVM_FILE_TYPE="gzip compressed data"
     else
       DVM_TARGET_TYPE="zip"
-      DVM_FILE_TYPE="Zip archive data"
     fi
 
     dvm_debug "target file type: $DVM_TARGET_TYPE"
@@ -1424,13 +1418,6 @@ export DVM_VERSION="v0.9.1"
     download_file="$DVM_DIR/download/$version/$DVM_TARGET_NAME"
     sha256sum_url="$2.sha256sum"
     sha256sum_file="$download_file.sha256sum"
-
-    if [[ $file_type != *"$DVM_FILE_TYPE"* ]]
-    then
-      dvm_print_error "Unmatched file type: $file_type"
-      dvm_failure
-      return
-    fi
 
     if [ "$DVM_INSTALL_SHA256SUM" = true ] && dvm_has sha256sum
     then
@@ -1762,7 +1749,7 @@ export DVM_VERSION="v0.9.1"
     echo "$content" > "$DVM_PROFILE_FILE"
 
     # unset global variables
-    unset -v DVM_COLOR_MODE DVM_DENO_VERSION DVM_DIR DVM_FILE_TYPE DVM_INSTALL_MODE \
+    unset -v DVM_COLOR_MODE DVM_DENO_VERSION DVM_DIR DVM_INSTALL_MODE \
       DVM_INSTALL_REGISTRY DVM_INSTALL_SHA256SUM DVM_INSTALL_SKIP_CACHE \
       DVM_INSTALL_SKIP_VALIDATION DVM_LATEST_VERSION DVM_PROFILE_FILE DVM_QUIET_MODE \
       DVM_REMOTE_VERSIONS DVM_REQUEST_RESPONSE DVM_SOURCE DVM_TARGET_ARCH \
