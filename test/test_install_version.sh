@@ -10,7 +10,7 @@ dvm_test_error() {
 
 # Install deno v1.0.0
 TARGET_VERSION="1.45.0"
-dvm install "v$TARGET_VERSION" --skip-validation || dvm_test_error "run 'dvm install v$TARGET_VERSION' failed"
+dvm install "v$TARGET_VERSION" --skip-validation --sha256sum || dvm_test_error "run 'dvm install v$TARGET_VERSION' failed"
 
 # Check installed version directory
 [ -d "$DVM_DIR/versions/v$TARGET_VERSION" ] || dvm_test_error "'$DVM_DIR/versions/v$TARGET_VERSION' is not a directory"
