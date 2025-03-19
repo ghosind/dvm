@@ -196,6 +196,7 @@ DVM支持的命令包括有：
 | | `dvm install <version> --skip-validation` | 下载deno前不对版本进行校验 |
 | | `dvm install <version> --from-source` | 编译源码并安装Deno |
 | | `dvm install <version> --skip-download-cache` | 不使用已下载的文件，重新下载并安装 |
+| | `dvm install <version> --sha256sum` | 下载安装Deno，并进行sha256校验 |
 | `uninstall` | `dvm uninstall <version>` | 卸载指定的版本 |
 | `use` | `dvm use` | 将指定的版本设置为当前使用的版本，未指定版本将从当前目录下的`.dvmrc`文件中读取 |
 | | `dvm use <version>` | 将指定的版本设置为当前使用的版本 |

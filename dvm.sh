@@ -60,11 +60,11 @@ export DVM_VERSION="v0.9.1"
 
       # Set global variables to default values
       DVM_DENO_VERSION=""
-      DVM_FILE_TYPE=""
       DVM_INSTALL_MODE="binary"
       DVM_INSTALL_REGISTRY=""
       DVM_INSTALL_SKIP_VALIDATION=false
       DVM_INSTALL_SKIP_CACHE=false
+      DVM_INSTALL_SHA256SUM=false
       DVM_LATEST_VERSION=""
       DVM_PROFILE_FILE=""
       DVM_REMOTE_VERSIONS=""
@@ -165,16 +165,18 @@ export DVM_VERSION="v0.9.1"
       local url
       local file
       local cmd
+      local downloading_file
 
       url="$1"
       file="$2"
+      downloading_file="$file.downloading"
 
       dvm_debug "downloading url: $url"
       dvm_debug "download destination file: $file"
 
       if dvm_has curl
       then
-        cmd="curl -LJ $url -o $file"
+        cmd="curl -LJ $url -o $downloading_file"
         if [ "$DVM_QUIET_MODE" = true ]
         then
           cmd="$cmd -s"
@@ -192,8 +194,14 @@ export DVM_VERSION="v0.9.1"
 
       if ! eval "$cmd"
       then
+        # remove failed download file
+        rm -f "$downloading_file"
         dvm_failure
+        return
       fi
+
+      # rename the downloading file to the target file
+      mv "$downloading_file" "$file"
     }
 
     # Send a GET request to the specific url, and save response to the
@@ -368,7 +376,7 @@ export DVM_VERSION="v0.9.1"
       then
         return
       fi
-      
+
       if [[ "$DVM_TARGET_VERSION" != "v"* ]]
       then
         DVM_TARGET_VERSION="v$DVM_TARGET_VERSION"
@@ -574,15 +582,7 @@ export DVM_VERSION="v0.9.1"
         continue
       fi
 
-      [ -f "$cache_path/deno-downloading.zip" ] && rm "$cache_path/deno-downloading.zip"
-
-      [ -f "$cache_path/deno-downloading.gz" ] && rm "$cache_path/deno-downloading.gz"
-
-      [ -f "$cache_path/deno.zip" ] && rm "$cache_path/deno.zip"
-
-      [ -f "$cache_path/deno.gz" ] && rm "$cache_path/deno.gz"
-
-      rmdir "$cache_path"
+      rm -rf "$cache_path"
     done
   }
 }
@@ -974,16 +974,12 @@ export DVM_VERSION="v0.9.1"
     dvm_debug "registry url: $registry"
 
     url="$registry/$version/$DVM_TARGET_NAME"
-    temp_file="$DVM_DIR/download/$version/deno-downloading.$DVM_TARGET_TYPE"
+    temp_file="$DVM_DIR/download/$version/$DVM_TARGET_NAME"
 
     if dvm_download_file "$url" "$temp_file"
     then
-      local file_type
-      file_type=$(file "$temp_file")
-
-      if [[ $file_type == *"$DVM_FILE_TYPE"* ]]
+      if dvm_validate_download_file "$version" "$url"
       then
-        mv "$temp_file" "$DVM_DIR/download/$version/deno.$DVM_TARGET_TYPE"
         return
       fi
     fi
@@ -1109,10 +1105,8 @@ export DVM_VERSION="v0.9.1"
     if dvm_compare_version "$target_version" "v0.36.0"
     then
       DVM_TARGET_TYPE="gz"
-      DVM_FILE_TYPE="gzip compressed data"
     else
       DVM_TARGET_TYPE="zip"
-      DVM_FILE_TYPE="Zip archive data"
     fi
 
     dvm_debug "target file type: $DVM_TARGET_TYPE"
@@ -1398,6 +1392,58 @@ export DVM_VERSION="v0.9.1"
       dvm_failure
       return
     fi
+  }
+
+  # Validate the downloaded file, and move it to the versions directory if the
+  # file is valid.
+  # Parameters:
+  # - $1: The Deno version to install.
+  dvm_validate_download_file() {
+    local version
+    local download_url
+    local download_file
+    local sha256sum_url
+    local sha256sum_file
+    local checksum
+    local checksum_expected
+
+    version="$1"
+    download_url="$2"
+
+    download_file="$DVM_DIR/download/$version/$DVM_TARGET_NAME"
+    sha256sum_url="$download_url.sha256sum"
+    sha256sum_file="$download_file.sha256sum"
+
+    if [ "$DVM_INSTALL_SHA256SUM" = true ] &&
+      dvm_has shasum &&
+      ! dvm_compare_version "$version" "v2.0.1"
+    then
+      dvm_debug "downloading sha256sum file: $sha256sum_url"
+
+      if ! dvm_download_file "$sha256sum_url" "$sha256sum_file"
+      then
+        dvm_print_error "failed to download sha256 file."
+        dvm_failure
+        return
+      fi
+
+      dvm_print "Computing checksum with sha256sum..."
+      checksum=$(shasum -a 256 "$download_file" | cut -d " " -f 1)
+      checksum_expected=$(cut -d " " -f 1 < "$sha256sum_file" )
+      dvm_debug "checksum: $checksum, expected checksum: $checksum_expected"
+
+      if [ "$checksum" != "$checksum_expected" ]
+      then
+        dvm_print_error "Checksums failed."
+        dvm_failure
+        return
+      fi
+
+      dvm_print "Checksums matched!"
+      rm "$sha256sum_file"
+    fi
+
+    mv "$download_file" "$DVM_DIR/download/$version/deno.$DVM_TARGET_TYPE"
   }
 
   # Get remote data by GitHub api (Get a release by tag name) to validate the
@@ -1702,10 +1748,11 @@ export DVM_VERSION="v0.9.1"
     echo "$content" > "$DVM_PROFILE_FILE"
 
     # unset global variables
-    unset -v DVM_COLOR_MODE DVM_DENO_VERSION DVM_DIR DVM_FILE_TYPE DVM_INSTALL_MODE \
-      DVM_INSTALL_REGISTRY DVM_INSTALL_SKIP_CACHE DVM_INSTALL_SKIP_VALIDATION DVM_LATEST_VERSION \
-      DVM_PROFILE_FILE DVM_QUIET_MODE DVM_REMOTE_VERSIONS DVM_REQUEST_RESPONSE DVM_SOURCE \
-      DVM_TARGET_ARCH DVM_TARGET_NAME DVM_TARGET_OS DVM_TARGET_TYPE DVM_TARGET_VERSION \
+    unset -v DVM_COLOR_MODE DVM_DENO_VERSION DVM_DIR DVM_INSTALL_MODE \
+      DVM_INSTALL_REGISTRY DVM_INSTALL_SHA256SUM DVM_INSTALL_SKIP_CACHE \
+      DVM_INSTALL_SKIP_VALIDATION DVM_LATEST_VERSION DVM_PROFILE_FILE DVM_QUIET_MODE \
+      DVM_REMOTE_VERSIONS DVM_REQUEST_RESPONSE DVM_SOURCE DVM_TARGET_ARCH \
+      DVM_TARGET_NAME DVM_TARGET_OS DVM_TARGET_TYPE DVM_TARGET_VERSION \
       DVM_VERBOSE_MODE DVM_VERSION
     # unset dvm itself
     unset -f dvm
@@ -1729,7 +1776,7 @@ export DVM_VERSION="v0.9.1"
       dvm_scan_and_fix_versions dvm_set_alias \
       dvm_set_default_alias_after_install dvm_set_default_env dvm_strip_path \
       dvm_success dvm_uninstall_version dvm_update_dvm dvm_use_version \
-      dvm_validate_build_target dvm_validate_remote_version
+      dvm_validate_build_target dvm_validate_download_file dvm_validate_remote_version
     # unset dvm shell completion functions
     unset -f _dvm_add_aliases_to_opts _dvm_add_versions_to_opts \
       _dvm_has_active_version _dvm_add_options_to_opts _dvm_completion
@@ -2073,6 +2120,9 @@ dvm() {
         ;;
       "--from-source")
         DVM_INSTALL_MODE="source"
+        ;;
+      "--sha256sum")
+        DVM_INSTALL_SHA256SUM=true
         ;;
       "-"*)
         ;;

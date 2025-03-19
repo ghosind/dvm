@@ -236,6 +236,7 @@ DVM supported the following commands:
 | | `dvm install <version> --skip-validation` | Do not validate deno version before trying to download it. |
 | | `dvm install <version> --from-source` | Build and install Deno from source code. |
 | | `dvm install <version> --skip-download-cache` | Download and install Deno without using downloaded cache. |
+| | `dvm install <version> --sha256sum` | Download and install Deno with sha256sum check. |
 | `uninstall` | `dvm uninstall <version>` | Uninstall the specified version. |
 | `use` | `dvm use` | Use the specified version read from .dvmrc. |
 | | `dvm use <version>` | Use the specified version that passed by argument. |
