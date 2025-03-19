@@ -582,15 +582,7 @@ export DVM_VERSION="v0.9.1"
         continue
       fi
 
-      [ -f "$cache_path/deno-downloading.zip" ] && rm "$cache_path/deno-downloading.zip"
-
-      [ -f "$cache_path/deno-downloading.gz" ] && rm "$cache_path/deno-downloading.gz"
-
-      [ -f "$cache_path/deno.zip" ] && rm "$cache_path/deno.zip"
-
-      [ -f "$cache_path/deno.gz" ] && rm "$cache_path/deno.gz"
-
-      rmdir "$cache_path"
+      rm -rf "$cache_path"
     done
   }
 }
