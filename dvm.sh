@@ -1419,7 +1419,9 @@ export DVM_VERSION="v0.9.1"
     sha256sum_url="$2.sha256sum"
     sha256sum_file="$download_file.sha256sum"
 
-    if [ "$DVM_INSTALL_SHA256SUM" = true ] && dvm_has sha256sum
+    if [ "$DVM_INSTALL_SHA256SUM" = true ] &&
+      dvm_has shasum &&
+      ! dvm_compare_version "$version" "v2.0.0"
     then
       dvm_debug "downloading sha256sum file: $sha256sum_url"
 
@@ -1431,7 +1433,7 @@ export DVM_VERSION="v0.9.1"
       fi
 
       dvm_print "Computing checksum with sha256sum..."
-      checksum=$(sha256sum "$download_file" | cut -d " " -f 1)
+      checksum=$(shasum -a 256 "$download_file" | cut -d " " -f 1)
       checksum_expected=$(cut -d " " -f 1 < "$sha256sum_file" )
       dvm_debug "checksum: $checksum, expected checksum: $checksum_expected"
 
