@@ -1400,6 +1400,7 @@ export DVM_VERSION="v0.9.1"
   # - $1: The Deno version to install.
   dvm_validate_download_file() {
     local version
+    local download_url
     local download_file
     local sha256sum_url
     local sha256sum_file
@@ -1407,13 +1408,15 @@ export DVM_VERSION="v0.9.1"
     local checksum_expected
 
     version="$1"
+    download_url="$2"
+
     download_file="$DVM_DIR/download/$version/$DVM_TARGET_NAME"
-    sha256sum_url="$2.sha256sum"
+    sha256sum_url="$download_url.sha256sum"
     sha256sum_file="$download_file.sha256sum"
 
     if [ "$DVM_INSTALL_SHA256SUM" = true ] &&
       dvm_has shasum &&
-      ! dvm_compare_version "$version" "v2.0.0"
+      ! dvm_compare_version "$version" "v2.0.1"
     then
       dvm_debug "downloading sha256sum file: $sha256sum_url"
 
