@@ -136,7 +136,7 @@ _dvm_completion() {
       fi
       ;;
     "use"|"uninstall"|"which")
-      if ! _dvm_has_non_option_parameter
+      if ! _dvm_has_non_option_parameter  "$cur"
       then
         if [ "$command" = "which" ] && _dvm_has_active_version
         then
@@ -148,7 +148,7 @@ _dvm_completion() {
       fi
       ;;
     "run")
-      if _dvm_has_non_option_parameter
+      if _dvm_has_non_option_parameter "$cur"
       then
         COMPREPLY=( "$(compgen -W "${opts}" -- "${cur}")" )
         return
@@ -158,7 +158,7 @@ _dvm_completion() {
       _dvm_add_aliases_to_opts
       ;;
     "unalias")
-      if [ "$COMP_CWORD" == 2 ] || ! _dvm_has_non_option_parameter
+      if [ "$COMP_CWORD" == "2" ] || ! _dvm_has_non_option_parameter "$cur"
       then
         _dvm_add_aliases_to_opts
       fi
@@ -181,8 +181,16 @@ _dvm_has_active_version() {
 
 # Checks whether the parameters list have non-option parameter or not.
 _dvm_has_non_option_parameter() {
+  local cur
+  cur="$1"
+
   for word in "${COMP_WORDS[@]:2}"
   do
+    if [ "$word" == "" ] || [ "$word" == "$cur" ]
+    then
+      continue
+    fi
+
     if [[ "$word" != -* ]]
     then
       true
