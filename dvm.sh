@@ -2196,13 +2196,16 @@ dvm() {
   "which")
     shift
 
-    dvm_get_version "$@"
-
-    if [ -z "$DVM_TARGET_VERSION" ]
+    if [ "$#" = "0" ] || [ "$1" != "current" ]
     then
-      dvm_print_help
-      dvm_failure
-      return
+      dvm_get_version "$@"
+
+      if [ -z "$DVM_TARGET_VERSION" ]
+      then
+        dvm_print_help
+        dvm_failure
+        return
+      fi
     fi
 
     dvm_locate_version "$@"
