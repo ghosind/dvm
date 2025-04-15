@@ -2124,6 +2124,9 @@ dvm() {
       "--sha256sum")
         DVM_INSTALL_SHA256SUM=true
         ;;
+      "--no-sha256sum")
+        DVM_INSTALL_SHA256SUM=false
+        ;;
       "-"*)
         ;;
       *)
