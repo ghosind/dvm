@@ -1974,13 +1974,15 @@ export DVM_VERSION="v0.10.0"
     fi
 
     # reset changes if exists
-    git reset --hard HEAD
-    git fetch
-    git checkout "$DVM_LATEST_VERSION"
+    if git reset --hard HEAD && git fetch --all && git pull origin master --tag && git checkout "$DVM_LATEST_VERSION"
+    then
+      dvm_print "DVM has upgrade to latest version, please restart your terminal or run \`source $DVM_PROFILE_FILE\` to apply changes."
 
-    dvm_print "DVM has upgrade to latest version, please restart your terminal or run \`source $DVM_PROFILE_FILE\` to apply changes."
-
-    cd "$cwd" || dvm_failure
+      cd "$cwd" || dvm_failure
+    else
+      dvm_print_error "failed to update dvm."
+      cd "$cwd" && dvm_failure
+    fi
   }
 }
 
