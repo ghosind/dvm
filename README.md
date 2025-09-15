@@ -8,11 +8,12 @@
 
 English | [简体中文](./README-CN.md)
 
-Dvm is a lightweight, and powerful [Deno](https://deno.land/) version manager for MacOS, Linux, WSL, and Windows with Bash.
+DVM is a lightweight and powerful [Deno](https://deno.land/) version manager for macOS, Linux, WSL, and Windows with Bash.
 
-For Windows users, you must install DVM v0.7.0 or later versions, and also need to install a bash shell if you want to use this tool. For example, you can install WSL and execute `bash` command in PowerShell.
+**Note for Windows users:** You must install DVM v0.7.0 or later, and you also need a Bash shell to use this tool. For example, you can install WSL and run the `bash` command in PowerShell.
 
-***Please do not use `deno upgrade` command to upgrade Deno after you had installed Deno with DVM.***
+> [!Warning]
+> Do not use the `deno upgrade` command to upgrade Deno after you have installed Deno with DVM.
 
 - [Installing and Updating](#installing-and-updating)
    - [Installation](#installation)
@@ -39,19 +40,19 @@ For Windows users, you must install DVM v0.7.0 or later versions, and also need 
 
 There are two ways to install DVM.
 
-1. Install dvm from network by the following command:
+1. Install DVM from the network using the following command:
 
 ```sh
 curl -o- "https://raw.githubusercontent.com/ghosind/dvm/master/install.sh" | bash
 ```
 
-For Chinese user, you can also install it from Gitee by the following command:
+For users in China, you can install DVM from Gitee using the following command:
 
 ```sh
 curl -o- "https://gitee.com/ghosind/dvm/raw/master/install.sh" | DVM_SOURCE=gitee bash
 ```
 
-2. Clone this project and execute `install.sh` script:
+2. Clone this project and execute the `install.sh` script:
 
 ```sh
 git clone "https://github.com/ghosind/dvm.git"
@@ -61,9 +62,9 @@ cd dvm
 ./install.sh
 ```
 
-After installed dvm, please restart your terminal or use `source <your_rc_file>` to apply changes.
+After installing DVM, restart your terminal or run `source <your_profile_file>` to apply the changes.
 
-The default install location is `~/.dvm`, you can use `-d <dir>` option (for local install only) or `$DVM_DIR` environment variable to specify an inexistent directory as the install location.
+The default installation location is `~/.dvm`. You can use the `-d <dir>` option (for local installs only) or the `$DVM_DIR` environment variable to specify a different directory.
 
 ```sh
 curl -o- "https://raw.githubusercontent.com/ghosind/dvm/master/install.sh" | DVM_DIR=~/deno/dvm bash
@@ -72,24 +73,24 @@ curl -o- "https://raw.githubusercontent.com/ghosind/dvm/master/install.sh" | DVM
 
 ### Upgrade DVM
 
-Since DVM `v0.3.0`, we provided `upgrade` command to update your DVM to the latest version.
+Since DVM `v0.3.0`, the `upgrade` command is available to update DVM to the latest version.
 
 ```sh
 dvm upgrade
 ```
 
-If you want to update the DVM that less than `v0.3.0`, you may need to uninstall the current version and re-install the latest version. You can get the uninstall steps from [Manual uninstall](#manual-uninstall) section.
+If you are using a DVM version older than `v0.3.0`, you may need to uninstall the current version and reinstall the latest one. See the [Manual uninstall](#manual-uninstall) section for instructions.
 
-## Prerequirement
+## Prerequisites
 
-Please make sure you have required dependencies installed:
+Please ensure you have the following dependencies installed:
 
 - curl
 - git
 - unzip (for Deno v0.36.0 and newer versions)
 - gunzip (for Deno v0.35.0 and lower versions)
 
-For installing Deno from source, please make sure you have required dependencies installed:
+To install Deno from source, you will also need:
 
 - rustc
 - cargo
@@ -98,11 +99,11 @@ For installing Deno from source, please make sure you have required dependencies
 
 ## Getting Started
 
-After installed dvm, you can use it to manage multiple version Deno environments.
+After installing DVM, you can use it to manage multiple Deno versions and environments.
 
 ### List available versions
 
-Use `dvm list-remote` or `dvm ls-remote` to list all available versions from remote.
+Use `dvm list-remote` or `dvm ls-remote` to list all available Deno versions from the remote server.
 
 ```sh
 # list all available versions
@@ -113,7 +114,7 @@ dvm ls-remote
 
 ### List installed versions
 
-Use `dvm list` or `dvm ls` to list all installed versions.
+Use `dvm list` or `dvm ls` to list all installed Deno versions.
 
 ```sh
 # list all installed versions
@@ -124,21 +125,20 @@ dvm ls
 
 ### Install Deno
 
-Use `dvm install <version>` command to download and install a specified version from the source.
+Use the `dvm install <version>` command to download and install a specific Deno version.
 
 ```sh
 dvm install v1.0.0
-# deno v1.0.0 has installed.
-# Using deno v1.0.0 now.
-
+# Deno v1.0.0 has been installed.
+# Using Deno v1.0.0 now.
 dvm install v0.42.0
-# deno v0.42.0 has installed.
-# Using deno v1.0.0 now.
+# Deno v0.42.0 has been installed.
+# Using Deno v1.0.0 now.
 ```
 
 ### Install Deno from source
 
-Since DVM v0.8.0, you can install Deno from source with `--from-source` option.
+Since DVM v0.8.0, you can install Deno from source using the `--from-source` option.
 
 ```sh
 dvm install --from-source v1.35.0
@@ -146,42 +146,41 @@ dvm install --from-source v1.35.0
 
 ### Uninstall Deno
 
-Use `dvm uninstall <version|alias-name>` command to uninstall a specified version.
+Use the `dvm uninstall <version|alias-name>` command to uninstall a specific version or alias.
 
 ```sh
 dvm uninstall v0.39.0
-# uninstalled deno v0.39.0.
-
+# Uninstalled Deno v0.39.0.
 # default is an alias name
 dvm uninstall default
-# uninstalled deno default.
+# Uninstalled Deno default.
 ```
 
 ### Set active version
 
-Use `dvm use [version]` command to link `deno` to the specified installed version by parameter or `.dvmrc` file.
+Use the `dvm use [version]` command to link `deno` to the specified installed version, either by parameter or from a `.dvmrc` file.
 
 ```sh
-# use v1.0.0
+# Use v1.0.0
 dvm use v1.0.0
-# Using deno v1.0.0 now.
+# Using Deno v1.0.0 now.
 ```
 
-If you do not specify the active version, DVM will try to read `.dvmrc` file from the current working directory.
+If you do not specify a version, DVM will try to read the `.dvmrc` file from the current working directory.
 
 ```sh
 # cat .dvmrc
 # # v1.4.0
 dvm use
 # Found './dvmrc' with version v1.4.0
-# Using deno v1.4.0 now.
+# Using Deno v1.4.0 now.
 ```
 
-Set active version by `use` command is for a single terminal session only. If you want to set an active version for all terminal sessions, please set a `default` alias to a version. See [Set an alias](#set-active-version) section for more details.
+Setting the active version with the `use` command only affects the current terminal session. To set a default version for all terminal sessions, create a `default` alias. See the [Set an alias](#set-active-version) section for more details.
 
 ### Get current version
 
-Use `dvm current` command to display the current version of Deno.
+Use the `dvm current` command to display the currently active Deno version.
 
 ```sh
 dvm current
@@ -190,16 +189,14 @@ dvm current
 
 ### Set an alias
 
-Use `dvm alias` command to set alias name for a installed version of Deno.
+Use the `dvm alias` command to set an alias for an installed Deno version.
 
 ```sh
 dvm ls
 #    v1.0.0
-
-# Set an alias
+# Set the default alias
 dvm alias default v1.0.0
 # default -> v1.0.0
-
 dvm ls
 #    v1.0.0
 # default -> v1.0.0
@@ -207,7 +204,7 @@ dvm ls
 
 ### Run with a version
 
-Use `dvm run` command to run Deno on the specified version with arguments.
+Use the `dvm run` command to run Deno with the specified version and arguments.
 
 ```sh
 dvm run v1.0.0
@@ -217,7 +214,7 @@ dvm run v1.0.0
 # >
 ```
 
-You can also run a script file with the specified version.
+You can also run a script file with the specified Deno version.
 
 ```sh
 # Run app.ts with Deno v1.0.0
@@ -226,7 +223,7 @@ dvm run v1.0.0 app.ts
 
 ## Commands
 
-DVM supported the following commands:
+DVM supports the following commands:
 
 | Command | Usage | Description |
 |:-------:|:-----:|:------------|
@@ -260,7 +257,7 @@ DVM supported the following commands:
 | `purge` | `dvm purge` | Remove dvm from your computer. |
 | `help` | `dvm help` | Show dvm help message. |
 
-Please visit [dvm wiki](https://github.com/ghosind/dvm/wiki) for more details.
+For more details, please visit the [DVM Wiki](https://github.com/ghosind/dvm/wiki).
 
 ### Options
 
@@ -273,23 +270,23 @@ Please visit [dvm wiki](https://github.com/ghosind/dvm/wiki) for more details.
 
 ## Uninstalling DVM
 
-There are two ways to remove DVM from your computer.
+You can remove DVM from your computer in two ways:
 
 ### Use `purge` command
 
-You can execute `dvm purge` to remove dvm from your computer if your dvm version is `v0.3.2` and above. It will remove the `$DVM_DIR` and dvm configurations in shell config file.
+You can run `dvm purge` to remove DVM from your computer if your DVM version is `v0.3.2` or above. This will remove the `$DVM_DIR` and DVM configuration from your shell config file.
 
-If your dvm is less than `v0.3.2`, please following the next section ([Manual uninstall](#manual-uninstall)) to remove DVM.
+If your DVM version is older than `v0.3.2`, please follow the next section ([Manual uninstall](#manual-uninstall)) to remove DVM.
 
 ### Manual uninstall
 
-You can also execute following command to uninstall dvm:
+Alternatively, you can run the following command to uninstall DVM:
 
 ```sh
 rm -rf "$DVM_DIR"
 ```
 
-Edit shell config file (like `.bashrc` or `.zshrc`), and remove the following lines:
+Edit your shell config file (such as `.bashrc` or `.zshrc`) and remove the following lines:
 
 ```sh
 # Deno Version Manager
@@ -300,4 +297,4 @@ export DVM_DIR="$HOME/.dvm"
 
 ## License
 
-Distributed under the MIT License. See LICENSE file for more information.
+Distributed under the MIT License. See the LICENSE file for more information.
