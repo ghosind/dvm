@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
+
 # Deno Version Manager
 # Copyright (C) 2020 ~ 2025, Chen Su and all contributors.
-# A lightweight, and powerful Deno version manager for MacOS, Linux, WSL, and
-# Windows with Bash.
+# A lightweight and powerful Deno version manager for macOS, Linux, WSL, and Windows with Bash.
 
 { # Ensure the integrality of this script
 
@@ -12,11 +12,11 @@ export DVM_VERSION="v0.10.0"
 ## Helper Functions ##
 ######################
 {
-  ################
+  #################
   ## Environment ##
-  ################
+  #################
   {
-    # Check aliases directory, and try to create it if is not existed.
+    # Check if the aliases directory exists, and create it if it does not.
     dvm_check_alias_dir() {
       if [ ! -d "$DVM_DIR/aliases" ]
       then
@@ -24,7 +24,7 @@ export DVM_VERSION="v0.10.0"
       fi
     }
 
-    # Gets user profile file path by the shell.
+    # Get the user profile file path based on the current shell.
     dvm_get_profile_file() {
       case "${SHELL##*/}" in
       "bash")
@@ -41,14 +41,14 @@ export DVM_VERSION="v0.10.0"
       dvm_debug "profile file: $DVM_PROFILE_FILE"
     }
 
-    # Check whether a command exists or not.
+    # Check whether a command exists.
     # Parameters:
-    # $1: command to check.
+    # $1: The command to check.
     dvm_has() {
       command -v "$1" > /dev/null
     }
 
-    # Set the environment variables to the default values.
+    # Set environment variables to their default values.
     dvm_set_default_env() {
       # set default dvm directory
       DVM_DIR=${DVM_DIR:-$HOME/.dvm}
@@ -75,18 +75,17 @@ export DVM_VERSION="v0.10.0"
       DVM_TARGET_VERSION=""
     }
 
-    # Remove Deno path from the global environment variable `PATH` that added
-    # by DVM.
+    # Remove the Deno path added by DVM from the global PATH environment variable.
     dvm_strip_path() {
       echo "$PATH" | tr ":" "\n" | grep -v "$DVM_DIR" | tr "\n" ":"
     }
   }
 
-  ######################
-  ## Handle Parameter ##
-  ######################
+  #######################
+  ## Handle Parameters ##
+  #######################
   {
-    # Check all parameters and try to match available options.
+  # Check all parameters and match available options.
     dvm_parse_options() {
       while [ "$#" -gt "0" ]
       do
@@ -112,14 +111,13 @@ export DVM_VERSION="v0.10.0"
     }
   }
 
-  ###########
-  ## Input ##
-  ###########
+  ################
+  ## User Input ##
+  ################
   {
-    # Print a prompt message, and get the confirm (yes or no) from the user
-    # input.
+    # Print a prompt message and get confirmation (yes or no) from the user.
     # Parameters:
-    # $1: the prompt message.
+    # $1: The prompt message.
     dvm_confirm_with_prompt() {
       local confirm
       local prompt
@@ -147,20 +145,19 @@ export DVM_VERSION="v0.10.0"
           ;;
         esac
 
-        echo -n "Please type 'y' or 'n': "
+        echo -n "Please enter 'y' or 'n': "
       done
     }
   }
 
-  ###################
-  ## Network Tools ##
-  ###################
+  #######################
+  ## Network Utilities ##
+  #######################
   {
-    # Download file from the specific url, and save the file to the specific
-    # path.
+    # Download a file from a specific URL and save it to the specified path.
     # Parameters:
-    # - $1: downloading url.
-    # - $2: the path of downloaded file.
+    # - $1: The URL to download from.
+    # - $2: The path to save the downloaded file.
     dvm_download_file() {
       local url
       local file
@@ -204,11 +201,11 @@ export DVM_VERSION="v0.10.0"
       mv "$downloading_file" "$file"
     }
 
-    # Send a GET request to the specific url, and save response to the
+    # Send a GET request to a specific URL and save the response to the
     # `DVM_REQUEST_RESPONSE` variable.
     # Parameters:
-    # - $1: request url.
-    # - $2...: options for curl.
+    # - $1: The request URL.
+    # - $2...: Additional options for curl.
     dvm_request() {
       local url
 
@@ -254,9 +251,9 @@ export DVM_VERSION="v0.10.0"
   ## Output ##
   ############
   {
-    # Print debug message in the verbose mode.
+    # Print debug messages in verbose mode.
     # Parameters:
-    # - $1...: the message to print.
+    # - $1...: The message(s) to print.
     dvm_debug() {
       if [ "$DVM_VERBOSE_MODE" = true ]
       then
@@ -264,9 +261,9 @@ export DVM_VERSION="v0.10.0"
       fi
     }
 
-    # Print messages without quiet mode.
+    # Print messages unless in quiet mode.
     # Parameters:
-    # - $1...: the message to print.
+    # - $1...: The message(s) to print.
     dvm_print() {
       if [ "$DVM_QUIET_MODE" = true ]
       then
@@ -276,24 +273,24 @@ export DVM_VERSION="v0.10.0"
       echo -e "$@"
     }
 
-    # Print error message with red color text.
+    # Print error messages in red text.
     # Parameters:
-    # $1...: the message to print.
+    # - $1...: The error message(s) to print.
     dvm_print_error() {
       dvm_print_with_color "31" "[ERR]" "$@"
     }
 
-    # Print warning message with yellow color text.
+    # Print warning messages in yellow text.
     # Parameters:
-    # $1...: the message to print.
+    # - $1...: The warning message(s) to print.
     dvm_print_warning() {
       dvm_print_with_color "33" "[WARN]" "$@"
     }
 
-    # Print message with the specific color.
+    # Print a message with a specific color.
     # Parameters:
-    # - $1: the color code.
-    # - $2...: the message to print.
+    # - $1: The color code.
+    # - $2...: The message(s) to print.
     dvm_print_with_color() {
       local color="$1"
 
@@ -500,11 +497,10 @@ export DVM_VERSION="v0.10.0"
 ## Command alias ##
 ###################
 {
-  # Set an alias to the specific Deno version, and it will overwrite if the
-  # alias was created.
+  # Set an alias for a specific Deno version. If the alias already exists, it will be overwritten.
   # Parameters:
-  # $1: the alias name to be set.
-  # $2: the Deno version to alias.
+  # $1: The alias name to set.
+  # $2: The Deno version to alias.
   dvm_set_alias() {
     local alias_name
     local version
@@ -538,7 +534,7 @@ export DVM_VERSION="v0.10.0"
 
     if [ ! -f "$DVM_DIR/versions/$version/deno" ]
     then
-      dvm_print_error "deno $version is not installed."
+      dvm_print_error "Deno $version is not installed."
       dvm_failure
       return
     fi
@@ -563,7 +559,7 @@ export DVM_VERSION="v0.10.0"
     dvm_clean_download_cache
   }
 
-  # Clean downloading caches in the disk.
+  # Remove download caches from disk.
   dvm_clean_download_cache() {
     if [ ! -d "$DVM_DIR/download" ]
     then
@@ -591,8 +587,8 @@ export DVM_VERSION="v0.10.0"
 ## Command current ##
 #####################
 {
-  # Gets the current Deno version and prints. It will print `system (vX.X.X)`
-  # if Deno doesn't install by DVM.
+  # Get and print the current Deno version. If Deno was not installed by DVM, prints
+  # `system (vX.X.X)`.
   dvm_print_current_version() {
     local deno_version
 
@@ -618,8 +614,7 @@ export DVM_VERSION="v0.10.0"
 ## Command deactivate ##
 ########################
 {
-  # Deactivate the active Deno version that added into the global environment
-  # variable `PATH` by DVM
+  # Deactivate the active Deno version that was added to the global PATH by DVM.
   dvm_deactivate() {
     local path_without_dvm
 
@@ -634,7 +629,7 @@ export DVM_VERSION="v0.10.0"
     path_without_dvm=$(dvm_strip_path)
     export PATH="$path_without_dvm"
 
-    dvm_print "Deno has been deactivated, you can run \"dvm use $DVM_DENO_VERSION\" to restore it."
+    dvm_print "Deno has been deactivated. You can run \"dvm use $DVM_DENO_VERSION\" to reactivate it."
 
     unset DVM_DENO_VERSION
   }
@@ -644,11 +639,10 @@ export DVM_VERSION="v0.10.0"
 ## Command doctor ##
 ####################
 {
-  # Scan the installed versions, and try to finding the invalid versions (the
-  # versions from path and Deno `-v` option are not same). It'll try to fix the
-  # invalid versions if it run in the `fix` mode.
+  # Scan installed versions and try to find invalid versions (where the version in the path and
+  # the Deno `-v` output do not match). Attempts to fix invalid versions if run in `fix` mode.
   # Parameters:
-  # $1: the mode of the doctor command.
+  # $1: The mode of the doctor command.
   dvm_scan_and_fix_versions() {
     local mode
     local raw_output
@@ -712,8 +706,7 @@ export DVM_VERSION="v0.10.0"
     fi
   }
 
-  # Try to moving the Deno files to the correct path, and remove it if the
-  # version was existed.
+  # Move Deno files to the correct path, and remove them if the version already exists.
   dvm_fix_invalid_versions() {
     local version
 
@@ -736,14 +729,14 @@ export DVM_VERSION="v0.10.0"
 
     rmdir "$DVM_DIR/doctor_temp"
 
-    dvm_print "Invalid version(s) has been fixed."
+    dvm_print "Invalid version(s) have been fixed."
   }
 
-  # Print the invalid (versions from file and path are not same) and the
-  # corrupted (unable to run) versions.
+  # Print invalid versions (where the version in the file and path do not match) and corrupted
+  # versions (unable to run).
   # Parameters:
-  # $1: invalid versions list.
-  # $2: corrupted versions list.
+  # $1: List of invalid versions.
+  # $2: List of corrupted versions.
   dvm_print_doctor_message() {
     local invalid_message
     local corrupted_message
@@ -753,7 +746,7 @@ export DVM_VERSION="v0.10.0"
 
     if [ -z "$invalid_message" ] && [ -z "$corrupted_message" ]
     then
-      dvm_print "Everything is ok."
+      dvm_print "All versions are valid."
       return
     fi
 
@@ -769,7 +762,7 @@ export DVM_VERSION="v0.10.0"
       dvm_print "$corrupted_message"
     fi
 
-    dvm_print "You can run \"dvm doctor --fix\" to fix these errors."
+    dvm_print "You can run \"dvm doctor --fix\" to attempt to fix these errors."
   }
 }
 
@@ -827,10 +820,10 @@ export DVM_VERSION="v0.10.0"
 ## Command install ##
 #####################
 {
-  # Try to build the binary file of Deno with the specified version, and move
-  # the build target file to the versions directory.
+  # Build the Deno binary for the specified version and move the build output to the versions
+  # directory.
   # Parameters:
-  # - $1: The Deno version to building.
+  # - $1: The Deno version to build.
   dvm_build_deno() {
     local version
     version="$1"
@@ -871,7 +864,7 @@ export DVM_VERSION="v0.10.0"
     fi
   }
 
-  # Check the dependencies for building Deno from the source code.
+  # Check dependencies required for building Deno from source.
   dvm_check_build_dependencies() {
     for command in git rustc cargo cc cmake
     do
@@ -884,10 +877,8 @@ export DVM_VERSION="v0.10.0"
     done
   }
 
-  # Try to check the local clone of the source code, and fetch the latest data
-  # if the local clone is valid. It will delete the source code directory and
-  # clone it again later if the directory is not the repo of the Deno source
-  # code.
+  # Check the local clone of the Deno source code and fetch the latest data if valid. If the
+  # directory is not a valid Deno repo, it will be deleted and re-cloned later.
   dvm_check_local_deno_clone() {
     local old_dir
 
@@ -924,7 +915,7 @@ export DVM_VERSION="v0.10.0"
     git clone --recurse-submodules https://github.com/denoland/deno.git "$DVM_DIR/deno_code"
   }
 
-  # Move the build output file to the versions file.
+  # Move the build output file to the versions directory.
   # Parameters:
   # - $1: The Deno version to install.
   dvm_copy_build_target_to_versions_dir() {
@@ -940,12 +931,12 @@ export DVM_VERSION="v0.10.0"
     cp "$DVM_DIR/deno_code/target/release/deno" "$DVM_DIR/versions/$version"
   }
 
-  # Download Deno with the specific version from GitHub or the specific
-  # registry (specify by `DVM_INSTALL_REGISTRY` variable). It will download
-  # Deno to the cache directory, and move it to versions directory after
-  # completed.
+  # Download Deno for the specified version from GitHub or a custom registry (specified by
+  # `DVM_INSTALL_REGISTRY`).
+  # Downloads Deno to the cache directory, then moves it to the versions directory after
+  # completion.
   # Parameters:
-  # - $1: the Deno version to download.
+  # - $1: The Deno version to download.
   dvm_download_deno() {
     local version
     local url
@@ -989,12 +980,11 @@ export DVM_VERSION="v0.10.0"
       rm "$temp_file"
     fi
 
-    dvm_print_error "failed to download deno $version."
+    dvm_print_error "Failed to download Deno $version."
     dvm_failure
   }
 
-  # Extract the Deno compressed file, and add execute permission to the binary
-  # file.
+  # Extract the Deno compressed file and add execute permission to the binary.
   dvm_extract_file() {
     local target_dir
 
@@ -1037,20 +1027,20 @@ export DVM_VERSION="v0.10.0"
     esac
   }
 
-  # Calls GitHub api to getting deno latest release tag name.
+  # Call the GitHub API to get the latest Deno release tag name.
   dvm_get_latest_version() {
     # the url of github api
     local latest_url
     # the latest release tag name
     local tag_name
 
-    dvm_print "\ntry to getting deno latest version ..."
+    dvm_print "\nTrying to get the latest Deno version ..."
 
     latest_url="https://dl.deno.land/release-latest.txt"
 
     if ! dvm_request "$latest_url"
     then
-      dvm_print_error "failed to getting deno latest version."
+      dvm_print_error "Failed to get the latest Deno version."
       dvm_failure
       return
     fi
@@ -1059,20 +1049,20 @@ export DVM_VERSION="v0.10.0"
 
     if [ -z "$tag_name" ]
     then
-      dvm_print_error "failed to getting deno latest version."
+      dvm_print_error "Failed to get the latest Deno version."
       dvm_failure
       return
     fi
 
-    dvm_print "Found deno latest version $tag_name"
+    dvm_print "Found latest Deno version: $tag_name"
 
     DVM_TARGET_VERSION="$tag_name"
     DVM_INSTALL_SKIP_VALIDATION=true
   }
 
-  # Get remote package name by host os and architecture.
+  # Get the remote package name based on host OS and architecture.
   # Parameters:
-  # - $1: the deno version to install.
+  # - $1: The Deno version to install.
   dvm_get_package_data() {
     local target_version
 
@@ -1088,7 +1078,7 @@ export DVM_VERSION="v0.10.0"
       [ "$DVM_TARGET_ARCH" = 'arm64' ] &&
       dvm_compare_version "$target_version" "v1.6.0"
     then
-      dvm_print_error "Mac with M-series chips (aarch64-darwin) support deno v1.6.0 and above versions only."
+      dvm_print_error "Macs with M-series chips (aarch64-darwin) support Deno v1.6.0 and above only."
       dvm_failure
       return
     fi
@@ -1097,7 +1087,7 @@ export DVM_VERSION="v0.10.0"
       [ "$DVM_TARGET_ARCH" = 'arm64' ] &&
       dvm_compare_version "$target_version" "v1.40.3"
     then
-      dvm_print_error "Linux with ARM64 chips (aarch64-linux) support deno v1.40.3 and above versions only."
+      dvm_print_error "Linux with ARM64 chips (aarch64-linux) support Deno v1.40.3 and above only."
       dvm_failure
       return
     fi
@@ -1134,7 +1124,7 @@ export DVM_VERSION="v0.10.0"
         DVM_TARGET_NAME='deno-x86_64-pc-windows-msvc.zip'
         ;;
       *)
-        dvm_print_error "unsupported operating system $DVM_TARGET_OS ($DVM_TARGET_ARCH)."
+        dvm_print_error "Unsupported operating system: $DVM_TARGET_OS ($DVM_TARGET_ARCH)."
         dvm_failure
         return
         ;;
@@ -1183,11 +1173,11 @@ export DVM_VERSION="v0.10.0"
     DVM_INSTALL_SKIP_VALIDATION=true
   }
 
-  # Install Deno with the specific version, it'll try to get version from the
-  # parameter, .dvmrc file (current directory and home directory), or the
+  # Install Deno for the specified version. Tries to get the version from the
+  # parameter, .dvmrc file (current directory or home directory), or the
   # latest Deno version.
   # Parameters:
-  # - $1: the Deno version to install. (Optional)
+  # - $1: The Deno version to install. (Optional)
   dvm_install_version() {
     local version
 
@@ -1209,7 +1199,7 @@ export DVM_VERSION="v0.10.0"
 
     if [ -f "$DVM_DIR/versions/$version/deno" ]
     then
-      dvm_print "Deno $version has been installed."
+      dvm_print "Deno $version is already installed."
       dvm_success
       return
     fi
@@ -1233,14 +1223,13 @@ export DVM_VERSION="v0.10.0"
       return
     fi
 
-    dvm_print "Deno $version has installed."
+    dvm_print "Deno $version has been installed."
 
     dvm_use_version "$version"
     dvm_set_default_alias_after_install "$version"
   }
 
-  # Try to install Deno from the network with the binary file, or try to build
-  # Deno from the source code.
+  # Try to install Deno from the network using the binary file, or build Deno from source code.
   # Parameters:
   # - $1: The Deno version to install.
   dvm_install_deno() {
@@ -1270,7 +1259,7 @@ export DVM_VERSION="v0.10.0"
     esac
   }
 
-  # Download and install the pre-compiled Deno binary file from the network.
+  # Download and install the pre-compiled Deno binary from the network.
   # Parameters:
   # - $1: The Deno version to install.
   dvm_install_deno_by_binary() {
@@ -1286,21 +1275,20 @@ export DVM_VERSION="v0.10.0"
 
     if [ "$DVM_INSTALL_SKIP_CACHE" = true ] || [ ! -f "$DVM_DIR/download/$version/deno.$DVM_TARGET_TYPE" ]
     then
-      dvm_print "Downloading and installing deno $version..."
+      dvm_print "Downloading and installing Deno $version..."
       if ! dvm_download_deno "$version"
       then
         dvm_failure
         return
       fi
     else
-      dvm_print "Installing deno $version from cache..."
+      dvm_print "Installing Deno $version from cache..."
     fi
 
     dvm_extract_file "$version"
   }
 
-  # Download the source code of Deno from the network, and try to building the
-  # binary file.
+  # Download the Deno source code from the network and build the binary file.
   # Parameters:
   # - $1: The Deno version to install.
   dvm_install_deno_by_source() {
@@ -1322,9 +1310,9 @@ export DVM_VERSION="v0.10.0"
     dvm_build_deno "$version"
   }
 
-  # Check the version string whether it is a prefix or not.
+  # Check whether the version string is a prefix or a full version.
   # Parameters:
-  # - $1: the string to check.
+  # - $1: The string to check.
   dvm_is_version_prefix() {
     local result
     local version
@@ -1350,9 +1338,9 @@ export DVM_VERSION="v0.10.0"
     fi
   }
 
-  # Try to set the installed version as the alias 'default' if no default set.
+  # Set the installed version as the 'default' alias if no default is set.
   # Parameters:
-  # - $1: the Deno version to set to default.
+  # - $1: The Deno version to set as default.
   dvm_set_default_alias_after_install() {
     local version="$1"
 
@@ -1364,10 +1352,10 @@ export DVM_VERSION="v0.10.0"
     fi
 
     echo "$version" > "$DVM_DIR/aliases/default"
-    dvm_print "Creating default alias: default -> $version"
+    dvm_print "Created default alias: default -> $version"
   }
 
-  # Try to validate the build output file.
+  # Validate the build output file.
   # Parameters:
   # - $1: The Deno version to install.
   dvm_validate_build_target() {
@@ -1378,7 +1366,7 @@ export DVM_VERSION="v0.10.0"
 
     if ! [ -f "$DVM_DIR/deno_code/target/release/deno" ]
     then
-      dvm_print_error "no output found."
+      dvm_print_error "No build output found."
       dvm_failure
       return
     fi
@@ -1386,7 +1374,7 @@ export DVM_VERSION="v0.10.0"
     version=$("$DVM_DIR/deno_code/target/release/deno" --version | grep deno | cut -d " " -f 2)
     if [ "v$version" != "$target_version" ]
     then
-      dvm_print_error "unmatched build target version v$version"
+      dvm_print_error "Build target version mismatch: v$version"
       dvm_debug "build file version: v$version"
       dvm_debug "target version: $version"
       dvm_failure
@@ -1422,34 +1410,34 @@ export DVM_VERSION="v0.10.0"
 
       if ! dvm_download_file "$sha256sum_url" "$sha256sum_file"
       then
-        dvm_print_error "failed to download sha256 file."
+        dvm_print_error "Failed to download SHA256 file."
         dvm_failure
         return
       fi
 
-      dvm_print "Computing checksum with sha256sum..."
+      dvm_print "Computing checksum with sha256sum ..."
       checksum=$(shasum -a 256 "$download_file" | cut -d " " -f 1)
       checksum_expected=$(cut -d " " -f 1 < "$sha256sum_file" )
       dvm_debug "checksum: $checksum, expected checksum: $checksum_expected"
 
       if [ "$checksum" != "$checksum_expected" ]
       then
-        dvm_print_error "Checksums failed."
+        dvm_print_error "Checksum verification failed."
         dvm_failure
         return
       fi
 
-      dvm_print "Checksums matched!"
+      dvm_print "Checksum matched!"
       rm "$sha256sum_file"
     fi
 
     mv "$download_file" "$DVM_DIR/download/$version/deno.$DVM_TARGET_TYPE"
   }
 
-  # Get remote data by GitHub api (Get a release by tag name) to validate the
-  # version from the parameter.
+  # Get remote data from the GitHub API (get a release by tag name) to validate the version from
+  # the parameter.
   # Parameters:
-  # - $1: the version to validate.
+  # - $1: The version to validate.
   dvm_validate_remote_version() {
     local version
     local target_version
@@ -1482,7 +1470,7 @@ export DVM_VERSION="v0.10.0"
 
     if ! dvm_request "$tag_url"
     then
-      dvm_print_warning "failed to validating deno version."
+      dvm_print_warning "Failed to validate Deno version."
     fi
 
     tag_name=$(echo "$DVM_REQUEST_RESPONSE" | sed 's/"/\n/g' | grep tag_name -A 2 | grep v)
@@ -1491,10 +1479,10 @@ export DVM_VERSION="v0.10.0"
     then
       if echo "$DVM_REQUEST_RESPONSE" | grep "Not Found" > /dev/null
       then
-        dvm_print_error "deno '$version' not found, use 'ls-remote' command to get available versions."
+        dvm_print_error "Deno '$version' not found. Use the 'ls-remote' command to list available versions."
         dvm_failure
       else
-        dvm_print_warning "failed to validating deno version."
+        dvm_print_warning "Failed to validate Deno version."
         dvm_debug "validation response: $DVM_REQUEST_RESPONSE"
       fi
     fi
@@ -1505,7 +1493,7 @@ export DVM_VERSION="v0.10.0"
 ## Command list ##
 ##################
 {
-  # List all aliases and get the version of the alias name.
+  # List all aliases and their corresponding Deno versions.
   dvm_list_aliases() {
     local aliased_version
 
@@ -1539,7 +1527,7 @@ export DVM_VERSION="v0.10.0"
     done
   }
 
-  # List all Deno versions that have been installed.
+  # List all installed Deno versions.
   dvm_list_local_versions() {
     local version
 
@@ -1576,7 +1564,7 @@ export DVM_VERSION="v0.10.0"
 ## Command ls-remote ##
 #######################
 {
-  # Try to get all remote version from the local cache or the remote server.
+  # Try to get all remote versions from the local cache or the remote server.
   dvm_get_remote_versions() {
     local last_version
     local cache_file
@@ -1643,7 +1631,7 @@ export DVM_VERSION="v0.10.0"
     DVM_REMOTE_VERSIONS=$(cat "$cache_file")
   }
 
-  # Call https://deno.com/versions.json to getting all stable versions.
+  # Call https://deno.com/versions.json to get all stable versions.
   dvm_get_versions_from_deno_versions_json() {
     local versions
 
@@ -1651,7 +1639,7 @@ export DVM_VERSION="v0.10.0"
 
     if ! dvm_request "https://deno.com/versions.json"
     then
-      dvm_print_error "failed to list remote versions from deno.com."
+      dvm_print_error "Failed to list remote versions from deno.com."
       dvm_failure
       return
     fi
@@ -1660,10 +1648,9 @@ export DVM_VERSION="v0.10.0"
     DVM_REMOTE_VERSIONS=$(echo "$versions" | sed 's/"/\n/g' | grep -E "^v[0-9]+\.[0-9]+\.[0-9]+$" | sort -V)
   }
 
-  # Call GitHub API to getting all versions (release tag names) from the
-  # Deno repo.
+  # Call the GitHub API to get all versions (release tag names) from the Deno repo.
   # Parameters:
-  # - $1: the last version that already fetched (optional).
+  # - $1: The last version that was already fetched (optional).
   dvm_get_versions_from_network() {
     local request_url
     local all_versions
@@ -1683,7 +1670,7 @@ export DVM_VERSION="v0.10.0"
     do
       if ! dvm_request "$request_url" "--include"
       then
-        dvm_print_error "failed to list remote versions."
+        dvm_print_error "Failed to list remote versions."
         dvm_failure
         return
       fi
@@ -1705,8 +1692,7 @@ export DVM_VERSION="v0.10.0"
     DVM_REMOTE_VERSIONS=$(echo -e "$all_versions" | sed '/^$/d' | sed 'x;1!H;$!d;x')
   }
 
-  # Get all available versions from network, and list them with installation
-  # status.
+  # Get all available versions from the network and list them with installation status.
   dvm_list_remote_versions() {
     if ! dvm_get_remote_versions
     then
@@ -1734,14 +1720,14 @@ export DVM_VERSION="v0.10.0"
 ## Command purge ##
 ###################
 {
-  # Remove all components of DVM from the host.
+  # Remove all components of DVM from the system.
   dvm_purge_dvm() {
     local content
 
-    # remove DVM directory, all installed versions will also removed.
+    # Remove DVM directory; all installed versions will also be removed.
     rm -rf "$DVM_DIR"
 
-    # get profile file and remove DVM configs.
+    # Get profile file and remove DVM configuration lines.
     dvm_get_profile_file
 
     content=$(sed "/Deno Version Manager/d;/DVM_DIR/d;/DVM_BIN/d" "$DVM_PROFILE_FILE")
@@ -1789,19 +1775,19 @@ export DVM_VERSION="v0.10.0"
 ## Command run ##
 #################
 {
-  # Run the Deno of the specific version without activate.
+  # Run the specified Deno version without activating it.
   # Parameters:
-  # $1: the version of Deno to be run.
-  # $2...: the parameters that passing to the Deno.
+  # $1: The version of Deno to run.
+  # $2...: The parameters to pass to Deno.
   dvm_run_with_version() {
     if [ ! -f "$DVM_DIR/versions/$DVM_TARGET_VERSION/deno" ]
     then
-      dvm_print_error "deno $DVM_TARGET_VERSION is not installed."
+      dvm_print_error "Deno $DVM_TARGET_VERSION is not installed."
       dvm_failure
       return
     fi
 
-    dvm_print "Running with deno $DVM_TARGET_VERSION."
+    dvm_print "Running with Deno $DVM_TARGET_VERSION."
 
     dvm_debug "target deno version: $DVM_TARGET_VERSION"
     dvm_debug "run deno with parameters:" "$@"
@@ -1814,9 +1800,9 @@ export DVM_VERSION="v0.10.0"
 ## Command which ##
 ###################
 {
-  # Get the path of the active version or the specific version of Deno.
+  # Get the path of the active Deno version or a specific version.
   # Parameters:
-  # $1: the version of Deno, or 'current'.
+  # $1: The version of Deno, or 'current'.
   dvm_locate_version() {
     local target_version
 
@@ -1844,9 +1830,9 @@ export DVM_VERSION="v0.10.0"
 ## Command unalias ##
 #####################
 {
-  # Remove an alias name of a Deno version.
+  # Remove an alias for a Deno version.
   # Parameters:
-  # $1: the alias name to be remove.
+  # $1: The alias name to remove.
   dvm_rm_alias() {
     local alias_name
     local aliased_version
@@ -1870,7 +1856,7 @@ export DVM_VERSION="v0.10.0"
 
     if [ ! -f "$DVM_DIR/aliases/$alias_name" ]
     then
-      dvm_print_error "alias $alias_name does not exist."
+      dvm_print_error "Alias $alias_name does not exist."
       dvm_failure
       return
     fi
@@ -1879,7 +1865,7 @@ export DVM_VERSION="v0.10.0"
 
     rm "$DVM_DIR/aliases/$alias_name"
 
-    dvm_print "Deleted alias $alias_name."
+    dvm_print "Alias $alias_name has been deleted."
     dvm_print "Restore it with 'dvm alias $alias_name $aliased_version'."
   }
 }
@@ -1888,10 +1874,10 @@ export DVM_VERSION="v0.10.0"
 ## Command uninstall ##
 #######################
 {
-  # Uninstall the specific version of Deno from the computer. It cannot
-  # uninstall the active Deno version or installing from another source.
+  # Uninstall the specified version of Deno from the computer. Cannot uninstall the active Deno
+  # version or versions installed from another source.
   # Parameters:
-  # - $1: the Deno version to uninstall.
+  # - $1: The Deno version to uninstall.
   dvm_uninstall_version() {
     local input_version
 
@@ -1901,7 +1887,7 @@ export DVM_VERSION="v0.10.0"
 
     if [ "$DVM_DENO_VERSION" = "$DVM_TARGET_VERSION" ]
     then
-      dvm_print "Cannot active deno version ($DVM_DENO_VERSION)."
+      dvm_print "Cannot uninstall the active Deno version ($DVM_DENO_VERSION)."
       dvm_failure
       return
     fi
@@ -1910,7 +1896,7 @@ export DVM_VERSION="v0.10.0"
     then
       rm -rf "$DVM_DIR/versions/$DVM_TARGET_VERSION"
 
-      dvm_print "Uninstalled deno $DVM_TARGET_VERSION."
+      dvm_print "Uninstalled Deno $DVM_TARGET_VERSION."
     else
       dvm_print "Deno $DVM_TARGET_VERSION is not installed."
     fi
@@ -1926,7 +1912,7 @@ export DVM_VERSION="v0.10.0"
 ## Command upgrade ##
 #####################
 {
-  # Gets the latest version of DVM from the GitHub or Gitee repo.
+  # Get the latest version of DVM from the GitHub or Gitee repo.
   dvm_get_dvm_latest_version() {
     local request_url
 
@@ -1958,7 +1944,7 @@ export DVM_VERSION="v0.10.0"
     fi
   }
 
-  # Upgrade the DVM itself to the specific version.
+  # Upgrade DVM itself to the specified version.
   dvm_update_dvm() {
     local cwd
 
@@ -1976,7 +1962,7 @@ export DVM_VERSION="v0.10.0"
     # reset changes if exists
     if git reset --hard HEAD && git fetch --all && git pull origin master --tags && git checkout "$DVM_LATEST_VERSION"
     then
-      dvm_print "DVM has upgrade to latest version, please restart your terminal or run \`source $DVM_PROFILE_FILE\` to apply changes."
+      dvm_print "DVM has been upgraded to the latest version. Please restart your terminal or run \`source $DVM_PROFILE_FILE\` to apply the changes."
 
       cd "$cwd" || dvm_failure
     else
@@ -1990,11 +1976,9 @@ export DVM_VERSION="v0.10.0"
 ## Command use ##
 #################
 {
-  # Create a symbolic link file to make the specified deno version as active
-  # version, the symbolic link is linking to the specified deno executable
-  # file.
+  # Set the specified Deno version or alias as the active version by updating PATH.
   # Parameters:
-  # - $1: deno version or alias name to use.
+  # - $1: Deno version or alias name to use.
   dvm_use_version() {
     # deno executable file version
     local deno_version
@@ -2022,16 +2006,16 @@ export DVM_VERSION="v0.10.0"
       if [ -n "$deno_version" ] && [ "$DVM_TARGET_VERSION" != "v$deno_version" ]
       then
         # print warning message when deno version is different with parameter.
-        dvm_print_warning "You may had upgraded this version, it is v$deno_version now."
+        dvm_print_warning "This version may have been upgraded; it is now v$deno_version."
       fi
 
       # export PATH with the target dir in front
       path_without_dvm=$(dvm_strip_path)
       export PATH="$target_dir":${path_without_dvm}
 
-      dvm_print "Using deno $DVM_TARGET_VERSION now."
+      dvm_print "Now using Deno $DVM_TARGET_VERSION."
     else
-      dvm_print "Deno $DVM_TARGET_VERSION is not installed, you can run 'dvm install $DVM_TARGET_VERSION' to install it."
+      dvm_print "Deno $DVM_TARGET_VERSION is not installed. You can run 'dvm install $DVM_TARGET_VERSION' to install it."
       dvm_failure
     fi
   }

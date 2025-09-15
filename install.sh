@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
-# Installation script for Deno Version Manager
+
+# DVM Installation Script (Deno Version Manager)
 # Copyright (C) 2020 ~ 2025, Chen Su and all contributors.
 
-# Ensure the script is downloaded completely
+## Ensure the script is fully downloaded before running
 {
 
 dvm_add_into_profile_file() {
@@ -30,7 +31,7 @@ dvm_check_dir() {
   then
     mkdir -p "$DVM_DIR"
   else
-    echo "directory $DVM_DIR already exists."
+    echo "Directory $DVM_DIR already exists."
     exit 1
   fi
 }
@@ -54,13 +55,13 @@ dvm_get_latest_version() {
 
   if ! dvm_has curl
   then
-    echo "curl is required."
+    echo "Error: curl is required."
     exit 1
   fi
 
   if ! response=$(curl -s "$request_url")
   then
-    echo "Failed to get the latest DVM version."
+    echo "Error: Failed to retrieve the latest DVM version."
     exit 1
   fi
 
@@ -103,7 +104,7 @@ dvm_install() {
 
   dvm_add_into_profile_file
 
-  echo "DVM has been installed, please restart your terminal or run \`source $DVM_PROFILE_FILE\` to apply changes."
+  echo "DVM has been installed. Please restart your terminal or run \`source $DVM_PROFILE_FILE\` to apply the changes."
 }
 
 dvm_install_latest_version() {
@@ -121,7 +122,7 @@ dvm_install_latest_version() {
 
   if ! dvm_has git
   then
-    echo "git is require."
+    echo "Error: git is required."
     exit 1
   fi
 
@@ -129,20 +130,20 @@ dvm_install_latest_version() {
 
   if ! ${cmd}
   then
-    echo "failed to download DVM."
+    echo "Error: Failed to download DVM."
     exit 1
   fi
 }
 
 dvm_print_help() {
-  echo "DVM installation script"
+  echo "DVM Installation Script"
   echo
   echo "Usage: install.sh [-r <github|gitee>] [-d <dvm_dir>]"
   echo
   echo "Options:"
-  echo "  -r <github|gitee>   Set the repository server, default github."
-  echo "  -d dir              Set the dvm install directory, default ~/.dvm."
-  echo "  -h                  Print help."
+  echo "  -r <github|gitee>   Specify the repository server (default: github)."
+  echo "  -d <dir>           Specify the DVM installation directory (default: ~/.dvm)."
+  echo "  -h                  Show this help message."
   echo
   echo "Example:"
   echo "  install.sh -r github -d ~/.dvm"

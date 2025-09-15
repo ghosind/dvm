@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Shell completion for Deno Version Manager
+
+# Bash completion for Deno Version Manager
 # Copyright (C) 2020 ~ 2025, Chen Su and all contributors.
 
 if ! type dvm &> /dev/null
@@ -7,7 +8,7 @@ then
   return
 fi
 
-# Add available aliases into auto-completion options list.
+# Add available aliases to the auto-completion options list.
 _dvm_add_aliases_to_opts() {
   if [ ! -d "$DVM_DIR/aliases" ]
   then
@@ -31,7 +32,7 @@ _dvm_add_aliases_to_opts() {
   done
 }
 
-# Add commands and top-level option (--help and --version) to options.
+# Add commands and top-level options (--help and --version) to the options list.
 _dvm_add_command_and_top_option() {
   if [[ ${cur} == -* ]]
   then
@@ -42,7 +43,7 @@ _dvm_add_command_and_top_option() {
   fi
 }
 
-# Add the specified options into the options list if no one was inputted.
+# Add the specified options to the options list if none have been input yet.
 _dvm_add_exclusive_option() {
   if _dvm_no_option_input "${@}"
   then
@@ -50,14 +51,14 @@ _dvm_add_exclusive_option() {
   fi
 }
 
-# Add options for command install.
+# Add options for the install command.
 _dvm_add_install_option() {
   _dvm_add_exclusive_option "--from-binary" "--from-source"
   _dvm_add_options "--registry=" "--skip-validation" "--skip-download-cache"
   _dvm_add_options "--sha256sum" "--no-sha256sum"
 }
 
-# Add the specified option to the options list.
+# Add the specified options to the options list.
 _dvm_add_options() {
   for opt in "${@}"
   do
@@ -68,7 +69,7 @@ _dvm_add_options() {
   done
 }
 
-# Add common options into auto-completion options list.
+# Add common options to the auto-completion options list.
 _dvm_add_options_to_opts() {
   local prev
 
@@ -89,7 +90,7 @@ _dvm_add_options_to_opts() {
   _dvm_add_options "--verbose"
 }
 
-# Add available installed versions into auto-completion options list.
+# Add available installed versions to the auto-completion options list.
 _dvm_add_versions_to_opts() {
   if [ ! -d "$DVM_DIR/versions" ]
   then
@@ -112,7 +113,7 @@ _dvm_add_versions_to_opts() {
   done
 }
 
-# Set auto-completion with specific command.
+# Set auto-completion for a specific command.
 _dvm_completion() {
   local command
   local cur
@@ -175,12 +176,12 @@ _dvm_completion() {
   COMPREPLY=( "$(compgen -W "${opts}" -- "${cur}")" )
 }
 
-# Check if any Deno version has been activated that installed by DVM.
+# Check if any Deno version installed by DVM is currently active.
 _dvm_has_active_version() {
   echo "$PATH" | grep -q "$DVM_DIR/versions"
 }
 
-# Checks whether the parameters list have non-option parameter or not.
+# Check whether the parameter list contains any non-option parameters.
 _dvm_has_non_option_parameter() {
   local cur
   cur="$1"
@@ -202,7 +203,7 @@ _dvm_has_non_option_parameter() {
   false
 }
 
-# Check whether the specified options are inputted or not
+# Check whether the specified options have been input.
 _dvm_no_option_input() {
   for opt in "${@}"
   do
