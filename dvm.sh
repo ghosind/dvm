@@ -6,7 +6,7 @@
 
 { # Ensure the integrality of this script
 
-export DVM_VERSION="v0.10.0"
+export DVM_VERSION="v0.10.1"
 
 ######################
 ## Helper Functions ##
